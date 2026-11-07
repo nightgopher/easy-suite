@@ -2,23 +2,55 @@
 import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { withBase } from '../../lib/site';
+import { withBase, absoluteUrl, OG_IMAGE, CANONICAL_ORIGIN } from '../../lib/site';
 import { formatDate } from '../../lib/format';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  const sorted = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  return sorted.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, newer: sorted[i - 1] ?? null, older: sorted[i + 1] ?? null },
+  }));
 }
 
-type Props = { post: CollectionEntry<'blog'> };
+type Props = {
+  post: CollectionEntry<'blog'>;
+  newer: CollectionEntry<'blog'> | null;
+  older: CollectionEntry<'blog'> | null;
+};
 
-const { post } = Astro.props;
-const { Content } = await render(post);
+const { post, newer, older } = Astro.props;
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const canonical = absoluteUrl(`/blog/${post.id}/`);
+const author = { '@type': 'Person', name: 'nightgopher', url: 'https://github.com/nightgopher' };
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+  keywords: post.data.tags.join(', '),
+  inLanguage: 'zh-CN',
+  image: OG_IMAGE,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+  author,
+  publisher: { '@type': 'Organization', name: 'Easy Suite', url: `${CANONICAL_ORIGIN}/easy-suite/` },
+};
 ---
-<Base title={`${post.data.title} · Easy Suite 博客`} description={post.data.description}>
+<Base
+  title={`${post.data.title} · Easy Suite 博客`}
+  description={post.data.description}
+  ogType="article"
+  publishedTime={post.data.pubDate}
+  schema={schema}
+>
   <main>
     <article class="post">
-      <div class="container post-container">
+      <div class={`container ${toc.length > 0 ? 'post-container-wide' : 'post-container'}`}>
         <header class="post-header">
           <div class="post-meta">
             <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
@@ -31,9 +63,45 @@ const { Content } = await render(post);
           <p class="post-desc">{post.data.description}</p>
         </header>
 
-        <div class="prose">
-          <Content />
+        <div class={`post-body ${toc.length > 0 ? 'has-toc' : ''}`}>
+          <div class="prose">
+            <Content />
+          </div>
+
+          {toc.length > 0 && (
+            <nav class="toc" aria-label="目录">
+              <p class="toc-title">目录</p>
+              <ul>
+                {toc.map((h) => (
+                  <li class={`toc-h${h.depth}`}>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
         </div>
+
+        {(older || newer) && (
+          <nav class="post-nav" aria-label="上下篇">
+            {older ? (
+              <a class="post-nav-link" href={withBase(`/blog/${older.id}/`)}>
+                <span class="post-nav-dir">← 较早一篇</span>
+                <span class="post-nav-title">{older.data.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {newer ? (
+              <a class="post-nav-link post-nav-next" href={withBase(`/blog/${newer.id}/`)}>
+                <span class="post-nav-dir">较新一篇 →</span>
+                <span class="post-nav-title">{newer.data.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+          </nav>
+        )}
 
         <footer class="post-footer">
           <a href={withBase('/blog/')}>← 返回博客列表</a>
@@ -41,4 +109,33 @@ const { Content } = await render(post);
       </div>
     </article>
   </main>
+
+  <script>
+    /* TOC scrollspy：滚动时高亮当前所在小节 */
+    const toc = document.querySelector('.toc');
+    if (toc) {
+      const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>('a'));
+      const byId = new Map<string, HTMLAnchorElement>();
+      links.forEach((a) => {
+        const id = decodeURIComponent(a.hash.slice(1));
+        if (id) byId.set(id, a);
+      });
+      const setActive = (id: string) => {
+        links.forEach((a) => a.classList.remove('active'));
+        byId.get(id)?.classList.add('active');
+      };
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) setActive(entry.target.id);
+          }
+        },
+        { rootMargin: '-90px 0px -65% 0px' }
+      );
+      byId.forEach((_, id) => {
+        const el = document.getElementById(id);
+        if (el) observer.observe(el);
+      });
+    }
+  </script>
 </Base>

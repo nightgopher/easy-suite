@@ -165,10 +165,110 @@
 .notfound h1 { font-size: clamp(26px, 3vw, 34px); margin-bottom: 12px; }
 .notfound .hero-cta { margin-top: 28px; }
 
+/* ---------- 文章页增强：宽屏 TOC / 上下篇 / 代码块复制 ---------- */
+
+.post-container-wide { max-width: 1120px; }
+
+.post-body { min-width: 0; }
+.post-body.has-toc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 224px;
+  gap: 56px;
+  align-items: start;
+}
+
+.toc {
+  position: sticky;
+  top: 86px;
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  font-size: 13px;
+}
+.toc-title {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin-bottom: 10px;
+}
+.toc ul { list-style: none; }
+.toc a {
+  display: block;
+  padding: 4.5px 14px;
+  margin-left: 1px;
+  border-left: 1px solid var(--border-subtle);
+  color: var(--text-tertiary);
+  line-height: 1.55;
+  transition: color 0.2s, border-color 0.2s;
+}
+.toc a:hover { color: var(--text-primary); }
+.toc a.active { color: var(--accent-agent); border-left-color: var(--accent-agent); }
+.toc-h3 a { padding-left: 28px; }
+
+/* 锚点定位避开固定导航 */
+.prose h2, .prose h3, .prose h4 { scroll-margin-top: 84px; }
+
+.post-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 36px;
+}
+.post-nav-link {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.post-nav-link:hover {
+  border-color: rgba(130, 213, 202, 0.4);
+  background: var(--bg-hover);
+}
+.post-nav-dir { font-size: 12px; color: var(--text-tertiary); transition: color 0.2s; }
+.post-nav-link:hover .post-nav-dir { color: var(--accent-agent); }
+.post-nav-title { font-size: 14px; color: var(--text-secondary); line-height: 1.5; transition: color 0.2s; }
+.post-nav-link:hover .post-nav-title { color: var(--text-primary); }
+.post-nav-next { text-align: right; }
+
+/* 文章代码块复制按钮（Shiki pre 由脚本包进 .pre-wrap） */
+.pre-wrap { position: relative; }
+.pre-copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 3px 10px;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: color 0.2s, border-color 0.2s, opacity 0.2s;
+}
+.pre-wrap:hover .pre-copy-btn { opacity: 1; }
+.pre-copy-btn:hover { color: var(--text-primary); border-color: var(--border-strong); }
+.pre-copy-btn.done { color: #7fc98e; border-color: rgba(127, 201, 142, 0.4); }
+
 /* ---------- 响应式 ---------- */
 
 @media (max-width: 1000px) {
   .blog-hero { padding-top: 130px; }
   .post { padding-top: 130px; }
   .post-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1100px) {
+  .post-body.has-toc { grid-template-columns: 1fr; }
+  .post-body.has-toc .toc { display: none; }
+  .post-container-wide { max-width: 780px; }
+}
+
+@media (max-width: 680px) {
+  .post-nav { grid-template-columns: 1fr; }
+  .post-nav-next { text-align: left; }
 }

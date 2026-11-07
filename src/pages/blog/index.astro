@@ -2,16 +2,33 @@
 import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { withBase } from '../../lib/site';
+import { withBase, absoluteUrl } from '../../lib/site';
 import { formatDate } from '../../lib/format';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Easy Suite 博客',
+  url: absoluteUrl('/blog/'),
+  inLanguage: 'zh-CN',
+  description: 'EasyAgent 与 EasyGateway 的产品动态、使用技巧与构建思路。',
+  blogPost: posts.map((post) => ({
+    '@type': 'BlogPosting',
+    headline: post.data.title,
+    url: absoluteUrl(`/blog/${post.id}/`),
+    datePublished: post.data.pubDate.toISOString(),
+    author: { '@type': 'Person', name: 'nightgopher', url: 'https://github.com/nightgopher' },
+  })),
+};
 ---
 <Base
   title="博客 · Easy Suite — EasyAgent × EasyGateway"
   description="EasyAgent 与 EasyGateway 的产品动态、使用技巧与构建思路。"
+  schema={schema}
 >
   <main>
     <!-- ===== 列表页头 ===== -->

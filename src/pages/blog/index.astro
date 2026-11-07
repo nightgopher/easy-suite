@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { withBase } from '../../lib/site';
+import { formatDate } from '../../lib/format';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+<Base
+  title="博客 · Easy Suite — EasyAgent × EasyGateway"
+  description="EasyAgent 与 EasyGateway 的产品动态、使用技巧与构建思路。"
+>
+  <main>
+    <!-- ===== 列表页头 ===== -->
+    <section class="blog-hero">
+      <div class="container">
+        <p class="eyebrow"><span class="dot"></span>Easy Suite 博客</p>
+        <h1>产品动态与技术文章</h1>
+        <p class="blog-sub">记录 EasyAgent 与 EasyGateway 的迭代进展、使用技巧与构建思路。</p>
+      </div>
+    </section>
+
+    <!-- ===== 文章列表 ===== -->
+    <section class="blog-list">
+      <div class="container">
+        {posts.length === 0 && <p class="blog-empty">还没有文章，敬请期待。</p>}
+        <div class="post-grid">
+          {posts.map((post: CollectionEntry<'blog'>) => (
+            <a class="post-card" href={withBase(`/blog/${post.id}/`)}>
+              <div class="post-card-meta">
+                <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+                {post.data.tags.length > 0 && (
+                  <span class="post-card-tags">{post.data.tags.map((t) => `#${t}`).join('  ')}</span>
+                )}
+              </div>
+              <h2>{post.data.title}</h2>
+              <p>{post.data.description}</p>
+              <span class="post-card-more">阅读全文 →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>

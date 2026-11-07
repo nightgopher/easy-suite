@@ -62,4 +62,16 @@ npm run preview   # 预览构建产物（含 /easy-suite/ 前缀）
 
 ## 部署
 
-推送 `main` 即自动构建发布（GitHub Actions：`.github/workflows/deploy.yml`，Pages source = GitHub Actions）。构建失败时线上站点保持上一版本。
+- **主站**：推送 `main` 自动构建发布到 GitHub Pages（`.github/workflows/deploy.yml`，Pages source = GitHub Actions）。构建失败时线上站点保持上一版本。
+- **镜像**：同一仓库接入腾讯 EdgeOne Pages（免费、默认域名免备案、国内可访问）后，push `main` 双站同步更新。
+
+### 镜像接入（EdgeOne Pages，一次性）
+
+1. 登录 [EdgeOne Pages 控制台](https://console.cloud.tencent.com/edgeone/pages) → 创建项目 → 导入 Git 仓库 `nightgopher/easy-suite`（GitHub 授权）。
+2. 构建配置（框架一般自动识别为 Astro）：
+   - **构建命令**：`PUBLIC_SITE_BASE=/ npm run build`（关键：根路径部署必须切换 base）
+   - **输出目录**：`dist`
+   - **生产分支**：`main`
+3. 部署完成获得默认域名（`*.edgeone.app`），国内可直接访问。
+
+镜像适配已内置：镜像构建的 canonical / og:url / sitemap / RSS 始终指向主站 `nightgopher.github.io/easy-suite`，搜索引擎只收录主站，镜像只服务访问主站有困难的人群。若构建报 Node 版本错误，在项目环境变量设 `NODE_VERSION=22`（仓库已带 `.nvmrc`）。

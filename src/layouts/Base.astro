@@ -1,7 +1,7 @@
 ---
 import '../styles/site.css';
 import '../styles/blog.css';
-import { withBase, CANONICAL_ORIGIN, OG_IMAGE } from '../lib/site';
+import { withBase, CANONICAL_ORIGIN, PRIMARY_PATH_BASE, OG_IMAGE } from '../lib/site';
 
 interface Props {
   title: string;
@@ -13,10 +13,14 @@ interface Props {
 
 const { title, description, ogType = 'website', publishedTime, schema } = Astro.props;
 
-/* canonical：Astro.url.pathname 已含 base 前缀；目录页补齐尾斜杠，静态文件（如 rss.xml）保持原样 */
-const rawPath = Astro.url.pathname;
-const canonicalPath = /\.[a-z]+$/.test(rawPath) || rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
-const canonical = `${CANONICAL_ORIGIN}${canonicalPath}`;
+/* canonical：剥离构建 base 后固定拼主站子路径——镜像构建下也指向主站同一页面 */
+const buildBase = import.meta.env.BASE_URL.replace(/\/+$/, '');
+let pagePath = Astro.url.pathname;
+if (buildBase && pagePath.startsWith(buildBase)) {
+  pagePath = pagePath.slice(buildBase.length) || '/';
+}
+const suffix = /\.[a-z]+$/.test(pagePath) || pagePath.endsWith('/') ? pagePath : `${pagePath}/`;
+const canonical = `${CANONICAL_ORIGIN}${PRIMARY_PATH_BASE}${suffix}`;
 ---
 <!DOCTYPE html>
 <html lang="zh-CN">

@@ -1,9 +1,42 @@
 ---
 import Base from '../layouts/Base.astro';
+import { CANONICAL_ORIGIN } from '../lib/site';
+
+const author = { '@type': 'Person', name: 'nightgopher', url: 'https://github.com/nightgopher' };
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', name: 'Easy Suite', url: `${CANONICAL_ORIGIN}/easy-suite/`, inLanguage: 'zh-CN' },
+    {
+      '@type': 'SoftwareSourceCode',
+      name: 'EasyAgent',
+      description: 'Go 驱动的个人 AI 编程助手与 Agent 工作台（桌面 / Android / Web / TUI / 飞书 / MCP）',
+      url: 'https://github.com/nightgopher/easyagent',
+      codeRepository: 'https://github.com/nightgopher/easyagent',
+      programmingLanguage: 'Go',
+      license: 'https://github.com/nightgopher/easyagent/blob/main/LICENSE',
+      author,
+      softwareVersion: 'v0.38.0',
+    },
+    {
+      '@type': 'SoftwareSourceCode',
+      name: 'EasyGateway',
+      description: '个人 AI 基础设施网关：三协议兼容、能力调度、账号渠道、技能中心、记忆与助理',
+      url: 'https://github.com/nightgopher/easygateway',
+      codeRepository: 'https://github.com/nightgopher/easygateway',
+      programmingLanguage: 'Go',
+      license: 'https://github.com/nightgopher/easygateway/blob/main/LICENSE',
+      author,
+      softwareVersion: 'v0.3.18',
+    },
+  ],
+};
 ---
 <Base
   title="Easy Suite · EasyAgent × EasyGateway — 个人 AI 基础设施"
   description="Go 驱动的个人 AI 基础设施：EasyAgent 覆盖桌面、Android、Web、TUI 与飞书的 Agent 工作台；EasyGateway 统一入口、按能力调度多 Provider 的 AI 网关。开源，MIT。"
+  schema={schema}
 >
 <main>
 <!-- ===== Hero ===== -->

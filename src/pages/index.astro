@@ -1,42 +1,10 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Suite · EasyAgent × EasyGateway — 个人 AI 基础设施</title>
-<meta name="description" content="Go 驱动的个人 AI 基础设施：EasyAgent 覆盖桌面、Android、Web、TUI 与飞书的 Agent 工作台；EasyGateway 统一入口、按能力调度多 Provider 的 AI 网关。开源，MIT。">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-
-<!-- ===== 导航 ===== -->
-<header class="nav" id="top">
-  <div class="container nav-inner">
-    <a class="brand" href="#top" aria-label="Easy Suite 首页">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 6.5V17a3 3 0 0 0 3 3h13a0 0 0 0 1 0 0 3 3 0 0 0-3-3H7a3 3 0 0 0-3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/></svg>
-      </span>
-      <span class="brand-text">Easy<em>Suite</em></span>
-    </a>
-    <nav class="nav-links" id="navLinks" aria-label="站内导航">
-      <a href="#easyagent" class="link-agent">EasyAgent</a>
-      <a href="#easygateway" class="link-gateway">EasyGateway</a>
-      <a href="#synergy">协同</a>
-      <a href="https://nightgopher.github.io" target="_blank" rel="noopener">博客 ↗</a>
-    </nav>
-    <div class="nav-actions">
-      <a class="btn btn-ghost" href="https://github.com/nightgopher/easyagent" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.54-3.87-1.54-.53-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.02 1.75 2.68 1.24 3.34.95.1-.74.4-1.24.72-1.53-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12v3.14c0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
-        GitHub
-      </a>
-      <button class="nav-toggle" id="navToggle" aria-label="打开菜单" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
-</header>
-
+---
+import Base from '../layouts/Base.astro';
+---
+<Base
+  title="Easy Suite · EasyAgent × EasyGateway — 个人 AI 基础设施"
+  description="Go 驱动的个人 AI 基础设施：EasyAgent 覆盖桌面、Android、Web、TUI 与飞书的 Agent 工作台；EasyGateway 统一入口、按能力调度多 Provider 的 AI 网关。开源，MIT。"
+>
 <main>
 <!-- ===== Hero ===== -->
 <section class="hero">
@@ -302,39 +270,4 @@ cp .env.example .env   # 填写 Provider 与密钥
   </div>
 </section>
 </main>
-
-<!-- ===== 页脚 ===== -->
-<footer class="footer">
-  <div class="container footer-grid">
-    <div class="footer-brand">
-      <span class="brand-text">Easy<em>Suite</em></span>
-      <p>Go 驱动的个人 AI 基础设施。<br>由 <a href="https://github.com/nightgopher" target="_blank" rel="noopener">@nightgopher</a> 维护。</p>
-    </div>
-    <div class="footer-col">
-      <h4>项目</h4>
-      <a href="https://github.com/nightgopher/easyagent" target="_blank" rel="noopener">EasyAgent 仓库</a>
-      <a href="https://github.com/nightgopher/easyagent/releases/latest" target="_blank" rel="noopener">EasyAgent Releases</a>
-      <a href="https://github.com/nightgopher/easygateway" target="_blank" rel="noopener">EasyGateway 仓库</a>
-      <a href="https://github.com/nightgopher/easygateway/releases/latest" target="_blank" rel="noopener">EasyGateway Releases</a>
-    </div>
-    <div class="footer-col">
-      <h4>文档</h4>
-      <a href="https://github.com/nightgopher/easyagent/blob/main/docs/README.md" target="_blank" rel="noopener">EasyAgent 文档索引</a>
-      <a href="https://github.com/nightgopher/easyagent/blob/main/docs/CONFIG.md" target="_blank" rel="noopener">EasyAgent 配置</a>
-      <a href="https://github.com/nightgopher/easygateway/blob/main/go-gateway/README.md" target="_blank" rel="noopener">EasyGateway 网关文档</a>
-      <a href="https://github.com/nightgopher/easygateway/blob/main/desktop/README.md" target="_blank" rel="noopener">EasyGateway 桌面端</a>
-    </div>
-    <div class="footer-col">
-      <h4>更多</h4>
-      <a href="https://nightgopher.github.io" target="_blank" rel="noopener">个人博客</a>
-      <a href="https://github.com/nightgopher/easyagent/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
-    </div>
-  </div>
-  <div class="container footer-bottom">
-    <p>© 2026 nightgopher · EasyAgent &amp; EasyGateway · 本站基于 GitHub Pages 发布</p>
-  </div>
-</footer>
-
-<script src="js/main.js"></script>
-</body>
-</html>
+</Base>

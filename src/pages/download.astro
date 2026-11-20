@@ -1,0 +1,200 @@
+---
+import Base from '../layouts/Base.astro';
+import { withBase } from '../lib/site';
+
+/**
+ * 下载页：所有链接走 dl 分发层（dl.hwj123hwj.asia），?ch=site 做渠道归因。
+ * latest 由分发层解析（边缘缓存 1 小时），页面无需随发版更新；
+ * {v} 占位符由分发层用最新版本号替换（用于带版本号的资产名，如 server deb）。
+ */
+const DL = 'https://dl.hwj123hwj.asia';
+const ea = (asset: string) => `${DL}/dl/easyagent/latest/${asset}?ch=site`;
+const RELEASES = 'https://github.com/nightgopher/easyagent/releases/latest';
+const GW_RELEASES = 'https://github.com/nightgopher/easygateway/releases/latest';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'EasyAgent',
+  operatingSystem: 'macOS, Linux, Windows, Android',
+  applicationCategory: 'DeveloperApplication',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'CNY' },
+  softwareVersion: 'v0.51.0',
+  author: { '@type': 'Person', name: 'nightgopher', url: 'https://github.com/nightgopher' },
+};
+---
+<Base
+  title="下载 · Easy Suite — EasyAgent × EasyGateway"
+  description="下载 EasyAgent（macOS / Linux / Windows / Android）与 EasyGateway：dl.hwj123hwj.asia 统一分发，中国大陆自动分流 Gitee 镜像。开源，MIT。"
+  schema={schema}
+>
+<main class="dl-page">
+  <!-- ===== 页头 ===== -->
+  <section class="container">
+    <p class="dl-eyebrow"><span class="dot"></span>开源 · MIT · 持续更新</p>
+    <h1>下载</h1>
+    <p class="dl-sub">
+      所有下载经 <code>dl.hwj123hwj.asia</code> 统一分发：中国大陆自动分流至 Gitee 镜像，其他地区直达 GitHub Releases。
+      分发层只记录匿名聚合统计（IP 当日哈希去重，不收集原始 IP 与个人身份）。
+    </p>
+  </section>
+
+  <!-- ===== EasyAgent ===== -->
+  <section class="container dl-section" id="easyagent">
+    <header class="dl-head">
+      <h2>EasyAgent</h2>
+      <p class="dl-tagline">个人 AI 编程助手与 Agent 工作台（桌面 / 移动 / CLI）</p>
+      <span class="dl-chip" data-repo="easyagent"><i class="dot dot-agent"></i>最新版 <b class="ver">v0.51.0</b></span>
+    </header>
+
+    <div class="dl-grid">
+      <article class="dl-card">
+        <h3>macOS <small>Apple Silicon</small></h3>
+        <p>MyGo 原生桌面 app，凭据存系统钥匙串，随 Release 签名公证。</p>
+        <a class="btn btn-agent" href={ea('easyagent-native-darwin-arm64.dmg')}>下载 .dmg</a>
+        <a class="dl-minor" href={ea('checksums.txt')}>SHA-256 校验</a>
+      </article>
+
+      <article class="dl-card">
+        <h3>Linux <small>x86_64</small></h3>
+        <p>原生桌面安装包（deb），亦提供 arm64 版本。</p>
+        <a class="btn btn-agent" href={ea('easyagent-native-linux-amd64.deb')}>下载 .deb</a>
+        <a class="dl-minor" href={ea('easyagent-native-linux-arm64.deb')}>arm64 版</a>
+      </article>
+
+      <article class="dl-card">
+        <h3>Windows <small>x86_64</small></h3>
+        <p>原生桌面安装程序，NSIS 引导安装。</p>
+        <a class="btn btn-agent" href={ea('easyagent-native-windows-amd64-setup.exe')}>下载 .exe</a>
+        <a class="dl-minor" href={ea('checksums.txt')}>SHA-256 校验</a>
+      </article>
+
+      <article class="dl-card">
+        <h3>Android <small>apk</small></h3>
+        <p>移动客户端，支持远程接管桌面会话；另有 MyGo 版并存分发。</p>
+        <a class="btn btn-agent" href={ea('easyagent-android.apk')}>下载 .apk</a>
+        <a class="dl-minor" href={ea('easyagent-mygo-android.apk')}>MyGo 版</a>
+      </article>
+    </div>
+
+    <div class="codebox">
+      <div class="codebox-head"><span>Linux / macOS 命令行一键安装</span><button class="copy-btn" type="button" data-copy>复制</button></div>
+<pre><code>curl -fsSL https://dl.hwj123hwj.asia/dl/easyagent/install.sh | bash</code></pre>
+    </div>
+
+    <details class="dl-more">
+      <summary>服务器部署与其他平台</summary>
+      <ul>
+        <li><a href={ea('easyagent-server_{v}-1_amd64.deb')}>服务端 .deb（amd64，自动带最新版本号）</a></li>
+        <li><a href={ea('easyagent-server_{v}-1_arm64.deb')}>服务端 .deb（arm64）</a></li>
+        <li><a href={RELEASES}>全部资产（tar.gz / 各平台核心与 bridge 二进制 / 历史版本）→ GitHub Releases</a></li>
+        <li><a href="https://github.com/nightgopher/easyagent/blob/main/docs/MINI_DEPLOY.md">迷你主机部署指南（docs/MINI_DEPLOY.md）</a></li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- ===== EasyGateway ===== -->
+  <section class="container dl-section" id="easygateway">
+    <header class="dl-head">
+      <h2>EasyGateway</h2>
+      <p class="dl-tagline">统一入口、按能力调度多 Provider 的 AI 网关</p>
+      <span class="dl-chip" data-repo="easygateway"><i class="dot dot-gateway"></i>最新版 <b class="ver">v0.3.18</b></span>
+    </header>
+
+    <div class="dl-grid dl-grid-wide">
+      <article class="dl-card">
+        <h3>服务端 <small>Linux / macOS</small></h3>
+        <p>deb 服务端与桌面端随 Release 发布。</p>
+        <a class="btn btn-gateway" href={GW_RELEASES}>前往 Releases ↓</a>
+      </article>
+      <article class="dl-card">
+        <h3>一键安装</h3>
+        <p>脚本经分发层代理，安装资产自动走多源回退。</p>
+        <div class="codebox">
+          <div class="codebox-head"><span>Linux / macOS</span><button class="copy-btn" type="button" data-copy>复制</button></div>
+<pre><code>curl -fsSL https://dl.hwj123hwj.asia/dl/easygateway/install.sh | bash</code></pre>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== 分发说明 ===== -->
+  <section class="container dl-notes">
+    <h2>分发说明</h2>
+    <ul>
+      <li>中国大陆 IP 自动分流至 <a href="https://gitee.com/weijian-huang/easyagent" target="_blank" rel="noopener">Gitee 镜像</a>（仅 latest 且镜像清单内的资产，随发布自动同步）；命令行安装也可手动指定 <code>EA_MIRROR_REPO=weijian-huang/easyagent</code>。</li>
+      <li>安装脚本内置多源回退：分发层不可达时自动回退 GitHub，再回退 Gitee，安装永不因单点失败中断。</li>
+      <li>桌面端更新检查走同一分发域名；更新清单边缘缓存 10 分钟，回源 GitHub latest。</li>
+    </ul>
+  </section>
+</main>
+</Base>
+
+<style>
+  .dl-page { padding: 4rem 0 5rem; }
+  .dl-eyebrow {
+    font-size: .8rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted, #7a8699);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .dl-eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; display: inline-block; }
+  .dl-page h1 { font-size: 2.6rem; margin: .6rem 0 1rem; }
+  .dl-sub { max-width: 46rem; color: var(--muted, #8b95a7); line-height: 1.7; }
+  .dl-sub code { background: rgba(122, 134, 153, .14); padding: .1rem .35rem; border-radius: 4px; }
+
+  .dl-section { margin-top: 3.5rem; }
+  .dl-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .9rem; margin-bottom: 1.4rem; }
+  .dl-head h2 { font-size: 1.5rem; margin: 0; }
+  .dl-tagline { color: var(--muted, #8b95a7); margin: 0; }
+  .dl-chip {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: .78rem; color: var(--muted, #8b95a7);
+    border: 1px solid rgba(122, 134, 153, .3); border-radius: 999px;
+    padding: .18rem .7rem;
+  }
+  .dl-chip .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .dl-chip .dot-agent { background: #34d399; }
+  .dl-chip .dot-gateway { background: #60a5fa; }
+  .dl-chip .ver { color: inherit; }
+
+  .dl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.1rem;
+    margin-bottom: 1.4rem;
+  }
+  .dl-card {
+    border: 1px solid rgba(122, 134, 153, .22);
+    border-radius: 12px;
+    padding: 1.2rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .65rem;
+    background: rgba(122, 134, 153, .05);
+  }
+  .dl-card h3 { font-size: 1.05rem; margin: 0; }
+  .dl-card h3 small { color: var(--muted, #7a8699); font-weight: 400; margin-left: .4rem; }
+  .dl-card p { margin: 0; font-size: .86rem; color: var(--muted, #8b95a7); line-height: 1.6; flex: 1; }
+  .dl-card .btn { font-size: .85rem; padding: .5rem 1.1rem; }
+  .dl-minor { font-size: .78rem; color: var(--muted, #7a8699); text-decoration: none; border-bottom: 1px dashed rgba(122, 134, 153, .4); }
+  .dl-minor:hover { color: #34d399; border-bottom-color: #34d399; }
+
+  .dl-more { margin-top: .2rem; font-size: .88rem; }
+  .dl-more summary { cursor: pointer; color: var(--muted, #8b95a7); }
+  .dl-more ul { margin: .8rem 0 0; padding-left: 1.2rem; line-height: 2; }
+  .dl-more a { color: inherit; }
+
+  .dl-grid-wide { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  #easygateway .codebox { margin-top: .2rem; }
+
+  .dl-notes { margin-top: 3.5rem; font-size: .85rem; color: var(--muted, #8b95a7); }
+  .dl-notes h2 { font-size: 1.05rem; color: inherit; margin-bottom: .8rem; }
+  .dl-notes ul { padding-left: 1.2rem; line-height: 1.9; }
+  .dl-notes code { background: rgba(122, 134, 153, .14); padding: .1rem .35rem; border-radius: 4px; }
+  .dl-notes a { color: inherit; }
+</style>

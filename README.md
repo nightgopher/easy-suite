@@ -21,13 +21,23 @@ easy-suite/
 │   ├── layouts/Base.astro  # 共享导航/页脚 + 交互脚本（菜单/复制/版本号刷新）
 │   ├── pages/
 │   │   ├── index.astro     # 首页（产品介绍）
+│   │   ├── download.astro  # 下载页（全站下载链接统一走 dl 分发层）
 │   │   ├── 404.astro
 │   │   ├── rss.xml.js
 │   │   └── blog/{index.astro,[slug].astro}   # 博客列表 / 文章详情
 │   ├── styles/{site.css,blog.css}            # 「青夜」视觉 tokens + 博客样式
 │   └── lib/{site.ts,format.ts}
+├── worker/                 # easy-suite-dl：dl 分发层 Worker（302 分流 + 更新清单代理 + 匿名统计）
 └── .github/workflows/deploy.yml              # push main → 构建并发布
 ```
+
+## 分发层（dl.hwj123hwj.asia）
+
+下载页、安装脚本与客户端更新统一走 `dl.hwj123hwj.asia`（Cloudflare Worker）：
+国内 302 分流 Gitee 镜像、海外直达 GitHub Releases，更新清单边缘缓存并记录心跳，
+统计只做匿名聚合（IP 当日哈希去重，不落原始 IP）。URL 契约、分流规则、统计口径与
+部署步骤见 [worker/README.md](./worker/README.md)。分发层不可达时，install.sh 与
+更新器自动回退 GitHub / Gitee，安装与更新不因单点失败中断。
 
 ## 写文章
 

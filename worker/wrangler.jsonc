@@ -1,0 +1,23 @@
+{
+  // Easy Suite 分发层 Worker。2026-11-20 已上线：zone hwj123hwj.asia 已在 Cloudflare
+  // 托管（NS 自 DNSPod 切入），custom_domain dl.hwj123hwj.asia 已绑定。
+  // 本地部署：CLOUDFLARE_API_TOKEN=... npm run deploy（wrangler 的 Node fetch 在本机
+  // 有 undici 问题，也可用 esbuild bundle + scripts API 直传，见 worker/README.md）。
+  "name": "easy-suite-dl",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  // workers.dev 在大陆被 DNS 污染，仅作海外/代理环境后备验证通道；稳定后可关
+  "workers_dev": true,
+  "vars": {
+    "SITE_ORIGIN": "https://www.hwj123hwj.asia"
+  },
+  "analytics_engine_datasets": [
+    {
+      "binding": "AE",
+      "dataset": "easy_suite_dl"
+    }
+  ],
+  "routes": [
+    { "pattern": "dl.hwj123hwj.asia", "custom_domain": true }
+  ]
+}

@@ -1,0 +1,114 @@
+---
+import Base from '../layouts/Base.astro';
+import { withBase, absoluteUrl, OG_IMAGE } from '../lib/site';
+
+/**
+ * 分发看板（官网统一入口）：数据来自 dl 分发层 /stats.json（CORS 已开放），
+ * 前端渲染。dl.hwj123hwj.asia/stats 302 到本页，收藏旧链接自动跟过来。
+ */
+const canonical = absoluteUrl('/stats/');
+---
+<Base title="分发看板 · Easy Suite" description="EasyAgent 分发看板：下载量、更新心跳、客户端版本分布的匿名聚合统计。数据来自 dl.hwj123hwj.asia 分发层。" schema={{
+  '@context': 'https://schema.org', '@type': 'WebPage',
+  name: 'Easy Suite 分发看板', inLanguage: 'zh-CN', url: canonical, image: OG_IMAGE,
+}}>
+<main class="stats-page">
+  <section class="container">
+    <p class="stats-eyebrow"><span class="dot"></span>dl.hwj123hwj.asia 匿名聚合统计 · 只含当日哈希去重的 IP · <a href="https://dl.hwj123hwj.asia/stats.json">JSON</a></p>
+    <h1>分发看板</h1>
+    <p class="stats-sub">下载与更新心跳的实时聚合：官网与命令行安装计一次下载，客户端每次检查更新计一次心跳。</p>
+  </section>
+  <section class="container" id="stats-root">
+    <p class="stats-loading">加载统计数据…</p>
+  </section>
+</main>
+
+<script>
+  interface Row { [k: string]: string | number }
+  interface Stats {
+    totals: { downloads: number; heartbeats: number; heartbeats7d: number; countries: number };
+    dailyDownloads: { day: string; hits: number }[];
+    dailyHeartbeats: { day: string; hits: number }[];
+    assets: { asset: string; country: string; channel: string; hits: number }[];
+    versions: { clientVer: string; heartbeats: number }[];
+  }
+
+  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  function dailyBar(rows: { day: string; hits: number }[], color: string): string {
+    if (rows.length === 0) return '<p class="stats-empty">暂无数据</p>';
+    // viewBox 固定 720x130：柱子尺寸不随数据条数缩放；栅格至少 7 格、柱宽封顶 48px。
+    // 注意：Astro 页面 <script> 里不能用嵌套模板字符串（编译器限制），以下全部用拼接。
+    const W = 720, H = 130, plotH = 104;
+    const slots = Math.max(rows.length, 7);
+    const slot = W / slots;
+    const bw = Math.min(48, slot - 6);
+    const max = Math.max(1, ...rows.map((r) => r.hits));
+    const parts = ['<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" class="stats-bars">'];
+    rows.forEach((r, i) => {
+      const h = Math.max(2, Math.round((r.hits / max) * plotH));
+      const x = i * slot + (slot - bw) / 2;
+      parts.push('<rect x="' + x + '" y="' + (plotH - h) + '" width="' + bw + '" height="' + h + '" rx="3" fill="' + color + '"><title>' + esc(r.day) + '：' + r.hits + '</title></rect>');
+      if (slots <= 20 || i % 2 === 0) {
+        parts.push('<text x="' + (i * slot + slot / 2) + '" y="' + (H - 6) + '" text-anchor="middle" class="stats-bar-label">' + esc(r.day.slice(5)) + '</text>');
+      }
+    });
+    parts.push('</svg>');
+    return parts.join('');
+  }
+
+  function table(headers: string[], rows: string[][]): string {
+    if (rows.length === 0) return '<p class="stats-empty">暂无数据</p>';
+    const head = headers.map((h, i) => '<th' + (i === headers.length - 1 ? ' class="num"' : '') + '>' + h + '</th>').join('');
+    const body = rows.map((r) => '<tr>' + r.map((c, i) => '<td' + (i === headers.length - 1 ? ' class="num"' : '') + '>' + esc(c) + '</td>').join('') + '</tr>').join('');
+    return '<table><tr>' + head + '</tr>' + body + '</table>';
+  }
+
+  function render(s: Stats): string {
+    const cards = [
+      { label: '下载量（累计）', value: s.totals.downloads },
+      { label: '更新心跳（累计）', value: s.totals.heartbeats },
+      { label: '近 7 天心跳', value: s.totals.heartbeats7d },
+      { label: '覆盖国家', value: s.totals.countries },
+    ];
+    const cardHtml = cards.map((c) => '<div class="stats-card"><b>' + c.value + '</b><span>' + c.label + '</span></div>').join('');
+    return '<div class="stats-cards">' + cardHtml + '</div>'
+      + '<div class="stats-panel"><h2>每日下载</h2>' + dailyBar(s.dailyDownloads, '#34d399') + '</div>'
+      + '<div class="stats-panel"><h2>每日更新心跳</h2>' + dailyBar(s.dailyHeartbeats, '#60a5fa') + '</div>'
+      + '<div class="stats-panel"><h2>下载资产明细</h2>' + table(['资产', '国家', '渠道', '次数'], s.assets.map((a) => [a.asset, a.country, a.channel, String(a.hits)])) + '</div>'
+      + '<div class="stats-panel"><h2>客户端版本分布（心跳上报）</h2>' + table(['版本', '心跳'], s.versions.map((v) => [v.clientVer, String(v.heartbeats)])) + '</div>';
+  }
+
+  const root = document.getElementById('stats-root');
+  if (root) {
+    fetch('https://dl.hwj123hwj.asia/stats.json')
+      .then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json() as Promise<Stats>; })
+      .then((s) => { root.innerHTML = render(s); })
+      .catch((e) => { root.innerHTML = `<p class="stats-error">看板暂不可用：${esc(String(e).slice(0, 120))}——分发下载不受影响，稍后重试。</p>`; });
+  }
+</script>
+</Base>
+
+<style>
+  .stats-page { padding: 3.5rem 0 5rem; }
+  .stats-eyebrow { font-size: .8rem; color: var(--muted, #7a8699); display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  .stats-eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; display: inline-block; }
+  .stats-eyebrow a { color: inherit; }
+  .stats-page h1 { font-size: 2.2rem; margin: .6rem 0 1rem; }
+  .stats-sub { max-width: 46rem; color: var(--muted, #8b95a7); line-height: 1.7; margin-bottom: 2rem; }
+  .stats-loading, .stats-empty, .stats-error { color: var(--muted, #7a8699); font-size: .9rem; }
+  .stats-error { color: #f87171; }
+  .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .9rem; margin-bottom: 1.2rem; }
+  .stats-card { background: rgba(122, 134, 153, .06); border: 1px solid rgba(122, 134, 153, .22); border-radius: 12px; padding: 1.1rem 1.2rem; }
+  .stats-card b { display: block; font-size: 1.9rem; line-height: 1.2; }
+  .stats-card span { font-size: .78rem; color: var(--muted, #8b95a7); }
+  .stats-panel { background: rgba(122, 134, 153, .06); border: 1px solid rgba(122, 134, 153, .22); border-radius: 12px; padding: 1.1rem 1.2rem; margin-bottom: 1.2rem; }
+  .stats-panel h2 { font-size: .95rem; margin: 0 0 .8rem; font-weight: 600; }
+  .stats-bars { width: 100%; height: 130px; }
+  .stats-bar-label { font-size: 9px; fill: var(--muted, #8b95a7); }
+  .stats-panel table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  .stats-panel th { text-align: left; color: var(--muted, #7a8699); font-weight: 500; padding: .35rem .5rem; border-bottom: 1px solid rgba(122, 134, 153, .22); }
+  .stats-panel td { padding: .35rem .5rem; border-bottom: 1px solid rgba(122, 134, 153, .22); }
+  .stats-panel tr:last-child td { border-bottom: 0; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+</style>

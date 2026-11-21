@@ -24,6 +24,10 @@ export interface Env {
   AE?: AnalyticsEngineDataset;
   /** 官网主入口，根路径 302 目标 */
   SITE_ORIGIN: string;
+  /** AE SQL API 的读取 token（secret），/stats 看板查询用；缺失时看板降级为不可用提示 */
+  AE_QUERY_TOKEN?: string;
+  /** AE 所在账号 id（secret 或 var），/stats 查询用 */
+  AE_ACCOUNT_ID?: string;
 }
 
 interface Target {
@@ -103,6 +107,8 @@ export default {
       if ((m = path.match(/^\/upd\/([^/]+)\/([^/]+\.json)$/)) && REPO_RE.test(m[1]) && ASSET_RE.test(m[2])) {
         return serveUpd(request, env, m[1], m[2], url);
       }
+      if (path === '/stats') return serveStatsPage(env);
+      if (path === '/stats.json') return serveStatsJson(env);
       return json({ error: 'not found' }, 404);
     } catch (error) {
       return json({ error: 'internal', detail: String(error).slice(0, 200) }, 500);
@@ -279,4 +285,126 @@ function json(body: unknown, status: number): Response {
     status,
     headers: { 'content-type': 'application/json; charset=utf-8' },
   });
+}
+
+/* ── /stats 看板：Worker 经 SQL API 查自己的 AE 数据集，固定聚合查询，无参数入口 ── */
+
+interface StatsPayload {
+  totals: { downloads: number; heartbeats: number; heartbeats7d: number; countries: number };
+  dailyDownloads: { day: string; hits: number }[];
+  dailyHeartbeats: { day: string; hits: number }[];
+  assets: { asset: string; country: string; channel: string; hits: number }[];
+  versions: { clientVer: string; heartbeats: number }[];
+}
+
+/** AE SQL API 单次查询；非 200 或空响应抛错，由调用方聚合降级 */
+async function aeQuery(env: Env, sql: string): Promise<Record<string, string>[]> {
+  const accountId = env.AE_ACCOUNT_ID;
+  const token = env.AE_QUERY_TOKEN;
+  if (!accountId || !token) throw new Error('AE 查询凭据未配置');
+  const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/analytics_engine/sql`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'text/plain' },
+    body: sql,
+  });
+  if (!response.ok) throw new Error(`AE SQL ${response.status}`);
+  const payload = (await response.json()) as { data?: Record<string, string>[] };
+  return payload.data ?? [];
+}
+
+async function fetchStats(env: Env): Promise<StatsPayload> {
+  // AE 的 ClickHouse 子集：count() 无参、时间列为 timestamp、无 uniq——
+  // "活跃客户端"以 7 天心跳次数近似（流量小时两者几乎相等）。
+  const [dailyDl, dailyUpd, assets, versions, active] = await Promise.all([
+    aeQuery(env, "SELECT toStartOfDay(timestamp) AS day, count() AS hits FROM easy_suite_dl WHERE blob1 = 'dl' GROUP BY day ORDER BY day"),
+    aeQuery(env, "SELECT toStartOfDay(timestamp) AS day, count() AS hits FROM easy_suite_dl WHERE blob1 = 'upd' GROUP BY day ORDER BY day"),
+    aeQuery(env, "SELECT blob4 AS asset, blob6 AS country, blob5 AS channel, count() AS hits FROM easy_suite_dl WHERE blob1 = 'dl' GROUP BY blob4, blob6, blob5 ORDER BY hits DESC LIMIT 30"),
+    aeQuery(env, "SELECT blob7 AS clientVer, count() AS heartbeats FROM easy_suite_dl WHERE blob1 = 'upd' AND blob7 != '' GROUP BY blob7 ORDER BY heartbeats DESC LIMIT 15"),
+    aeQuery(env, "SELECT count() AS heartbeats7d FROM easy_suite_dl WHERE blob1 = 'upd' AND timestamp > NOW() - INTERVAL '7' DAY"),
+  ]);
+  const downloads = dailyDl.reduce((sum, r) => sum + Number(r.hits || 0), 0);
+  const heartbeats = dailyUpd.reduce((sum, r) => sum + Number(r.hits || 0), 0);
+  const countries = new Set(assets.map((r) => r.country).filter(Boolean)).size;
+  return {
+    totals: {
+      downloads,
+      heartbeats,
+      heartbeats7d: Number(active[0]?.heartbeats7d || 0),
+      countries,
+    },
+    dailyDownloads: dailyDl.map((r) => ({ day: String(r.day), hits: Number(r.hits || 0) })),
+    dailyHeartbeats: dailyUpd.map((r) => ({ day: String(r.day), hits: Number(r.hits || 0) })),
+    assets: assets.map((r) => ({ asset: r.asset || '', country: r.country || '', channel: r.channel || '', hits: Number(r.hits || 0) })),
+    versions: versions.map((r) => ({ clientVer: r.clientVer || '', heartbeats: Number(r.heartbeats || 0) })),
+  };
+}
+
+async function serveStatsJson(env: Env): Promise<Response> {
+  try {
+    const stats = await fetchStats(env);
+    return json(stats, 200);
+  } catch (error) {
+    return json({ error: 'stats unavailable', detail: String(error).slice(0, 120) }, 503);
+  }
+}
+
+/** 看板页：服务端组装数据、内联 SVG 图，无外部 JS/CSS 依赖 */
+async function serveStatsPage(env: Env): Promise<Response> {
+  let stats: StatsPayload | null = null;
+  let error = '';
+  try {
+    stats = await fetchStats(env);
+  } catch (e) {
+    error = String(e).slice(0, 160);
+  }
+  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const dailyBar = (rows: { day: string; hits: number }[], color: string) => {
+    const max = Math.max(1, ...rows.map((r) => r.hits));
+    if (rows.length === 0) return '<p class="empty">暂无数据</p>';
+    return `<svg viewBox="0 0 ${rows.length * 26} 120" preserveAspectRatio="none" class="bars">` +
+      rows.map((r, i) => {
+        const h = Math.max(2, Math.round((r.hits / max) * 100));
+        return `<rect x="${i * 26 + 4}" y="${110 - h}" width="18" height="${h}" rx="3" fill="${color}"><title>${esc(r.day)}：${r.hits}</title></rect>` +
+          `<text x="${i * 26 + 13}" y="119" text-anchor="middle" class="bar-label">${esc(r.day.slice(5))}</text>`;
+      }).join('') + '</svg>';
+  };
+  const cards = stats ? [
+    { label: '下载量（累计）', value: String(stats.totals.downloads) },
+    { label: '更新心跳（累计）', value: String(stats.totals.heartbeats) },
+    { label: '近 7 天心跳', value: String(stats.totals.heartbeats7d) },
+    { label: '覆盖国家', value: String(stats.totals.countries) },
+  ] : [];
+  const html = `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分发看板 · Easy Suite</title><style>
+:root{color-scheme:dark;--bg:#0b1020;--card:#131a30;--line:#26304a;--muted:#8b95a7;--text:#e8ecf4;--green:#34d399;--blue:#60a5fa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:2.5rem 1.2rem 4rem}
+h1{font-size:1.5rem;margin:0 0 .3rem}.sub{color:var(--muted);font-size:.85rem;margin-bottom:2rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.9rem;margin-bottom:2rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.2rem}
+.card b{display:block;font-size:1.9rem;line-height:1.2}.card span{font-size:.78rem;color:var(--muted)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.2rem;margin-bottom:1.2rem}
+.panel h2{font-size:.95rem;margin:0 0 .8rem;font-weight:600}
+.bars{width:100%;height:130px}.bar-label{font-size:9px;fill:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{text-align:left;color:var(--muted);font-weight:500;padding:.35rem .5rem;border-bottom:1px solid var(--line)}
+td{padding:.35rem .5rem;border-bottom:1px solid var(--line)}tr:last-child td{border-bottom:0}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.empty{color:var(--muted);margin:0}.err{color:#f87171}
+a{color:var(--blue);text-decoration:none}
+</style></head><body><div class="wrap">
+<h1>Easy Suite 分发看板</h1>
+<p class="sub">dl.hwj123hwj.asia 匿名聚合统计 · 只含当日哈希去重的 IP · <a href="https://nightgopher.github.io/easy-suite/">官网</a> · <a href="/stats.json">JSON</a></p>
+${stats ? `
+<div class="cards">${cards.map((c) => `<div class="card"><b>${c.value}</b><span>${c.label}</span></div>`).join('')}</div>
+<div class="panel"><h2>每日下载</h2>${dailyBar(stats.dailyDownloads, '#34d399')}</div>
+<div class="panel"><h2>每日更新心跳</h2>${dailyBar(stats.dailyHeartbeats, '#60a5fa')}</div>
+<div class="panel"><h2>下载资产明细</h2>${stats.assets.length ? `<table><tr><th>资产</th><th>国家</th><th>渠道</th><th style="text-align:right">次数</th></tr>
+${stats.assets.map((a) => `<tr><td>${esc(a.asset)}</td><td>${esc(a.country)}</td><td>${esc(a.channel)}</td><td class="num">${a.hits}</td></tr>`).join('')}</table>` : '<p class="empty">暂无数据</p>'}</div>
+<div class="panel"><h2>客户端版本分布（心跳上报）</h2>${stats.versions.length ? `<table><tr><th>版本</th><th style="text-align:right">心跳</th></tr>
+${stats.versions.map((v) => `<tr><td>${esc(v.clientVer)}</td><td class="num">${v.heartbeats}</td></tr>`).join('')}</table>` : '<p class="empty">暂无数据——客户端心跳自 v0.52 起开始上报</p>'}</div>
+` : `<div class="panel"><p class="err">看板暂不可用：${esc(error)}</p><p class="sub">需要配置 AE_QUERY_TOKEN 与 AE_ACCOUNT_ID（secret），见 worker/README.md</p></div>`}
+</div></body></html>`;
+  return new Response(html, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } });
 }

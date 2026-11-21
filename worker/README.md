@@ -13,7 +13,13 @@ EasyAgent / EasyGateway 的统一分发入口：302 分流 + 更新清单代理 
 | `GET /dl/<repo>/<tag>/<asset>` | 指定版本资产 302；资产名支持 `{v}` 占位符（替换为去掉 v 前缀的版本号） |
 | `GET /upd/<repo>/<manifest>.json?v=<客户端版本>` | 更新清单代理（回源 GitHub latest，边缘缓存 10 分钟）+ 心跳统计 |
 | `GET /healthz` | 健康检查 |
+| `GET /stats` | **分发看板**：下载/心跳总量、每日趋势、资产明细、客户端版本分布（服务端渲染，零外部依赖） |
+| `GET /stats.json` | 看板数据 JSON 版（程序化消费） |
 | `GET /` | 302 到官网 |
+
+**看板依赖**：secret `AE_QUERY_TOKEN`（AE SQL API 读 token）+ var `AE_ACCOUNT_ID`。SQL API 方言注意：
+时间列叫 `timestamp`（非 `_timestamp`/`interval_start`）、`count()` 无参、无 `uniq`（活跃客户端以
+心跳次数近似）、时间函数用 `toStartOfDay`/`NOW() - INTERVAL 'N' DAY`。统计任何一步失败不影响主流程。
 
 `<repo>` 当前支持：`easyagent`、`easygateway`（`worker/src/index.ts` 的 `TARGETS`）。
 

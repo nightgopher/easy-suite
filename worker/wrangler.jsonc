@@ -9,7 +9,8 @@
   // workers.dev 在大陆被 DNS 污染，仅作海外/代理环境后备验证通道；稳定后可关
   "workers_dev": true,
   "vars": {
-    "SITE_ORIGIN": "https://www.hwj123hwj.asia"
+    "SITE_ORIGIN": "https://www.hwj123hwj.asia",
+    "AE_ACCOUNT_ID": "80b783d13428d5d24ff7e6c686bd1efa"
   },
   "analytics_engine_datasets": [
     {

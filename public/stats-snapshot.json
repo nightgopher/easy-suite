@@ -61,11 +61,11 @@
  ],
  "versions": [
   {
-   "clientVer": "0.50.4",
+   "clientVer": "0.51.0",
    "heartbeats": 1
   },
   {
-   "clientVer": "0.51.0",
+   "clientVer": "0.50.4",
    "heartbeats": 1
   }
  ],
@@ -75,5 +75,5 @@
   "heartbeats7d": 5,
   "countries": 2
  },
- "generatedAt": "2026-11-21T20:59:55Z"
+ "generatedAt": "2026-11-21T21:58:55Z"
 }

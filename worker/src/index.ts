@@ -107,7 +107,10 @@ export default {
       if ((m = path.match(/^\/upd\/([^/]+)\/([^/]+\.json)$/)) && REPO_RE.test(m[1]) && ASSET_RE.test(m[2])) {
         return serveUpd(request, env, m[1], m[2], url);
       }
-      if (path === '/stats') return serveStatsPage(env);
+      // 看板统一托管在官网（/easy-suite/stats/）；dl 只保留 JSON 数据源。
+      // 旧收藏 /stats 302 过去，浏览器地址栏从此只有官网一个入口。
+      // 302 固定指主站（nightgopher.github.io），不随 SITE_ORIGIN（www 镜像未接入）漂移。
+      if (path === '/stats') return redirect('https://nightgopher.github.io/easy-suite/stats/');
       if (path === '/stats.json') return serveStatsJson(env);
       return json({ error: 'not found' }, 404);
     } catch (error) {
@@ -342,78 +345,16 @@ async function fetchStats(env: Env): Promise<StatsPayload> {
 async function serveStatsJson(env: Env): Promise<Response> {
   try {
     const stats = await fetchStats(env);
-    return json(stats, 200);
+    // 官网 /easy-suite/stats/ 页面跨域拉取此端点渲染看板
+    return new Response(JSON.stringify(stats), {
+      status: 200,
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'access-control-allow-origin': '*',
+        'cache-control': 'no-store',
+      },
+    });
   } catch (error) {
     return json({ error: 'stats unavailable', detail: String(error).slice(0, 120) }, 503);
   }
-}
-
-/** 看板页：服务端组装数据、内联 SVG 图，无外部 JS/CSS 依赖 */
-async function serveStatsPage(env: Env): Promise<Response> {
-  let stats: StatsPayload | null = null;
-  let error = '';
-  try {
-    stats = await fetchStats(env);
-  } catch (e) {
-    error = String(e).slice(0, 160);
-  }
-  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  const dailyBar = (rows: { day: string; hits: number }[], color: string) => {
-    if (rows.length === 0) return '<p class="empty">暂无数据</p>';
-    // viewBox 固定 720x130：柱子尺寸不随数据条数缩放（否则单天数据时整图被
-    // preserveAspectRatio="none" 拉伸数十倍）。栅格至少 7 格，柱宽封顶 48px。
-    const W = 720, H = 130, plotH = 104;
-    const slots = Math.max(rows.length, 7);
-    const slot = W / slots;
-    const bw = Math.min(48, slot - 6);
-    const max = Math.max(1, ...rows.map((r) => r.hits));
-    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="bars">` +
-      rows.map((r, i) => {
-        const h = Math.max(2, Math.round((r.hits / max) * plotH));
-        const x = i * slot + (slot - bw) / 2;
-        const label = slots <= 20 || i % 2 === 0
-          ? `<text x="${i * slot + slot / 2}" y="${H - 6}" text-anchor="middle" class="bar-label">${esc(r.day.slice(5))}</text>`
-          : '';
-        return `<rect x="${x}" y="${plotH - h}" width="${bw}" height="${h}" rx="3" fill="${color}"><title>${esc(r.day)}：${r.hits}</title></rect>${label}`;
-      }).join('') + '</svg>';
-  };
-  const cards = stats ? [
-    { label: '下载量（累计）', value: String(stats.totals.downloads) },
-    { label: '更新心跳（累计）', value: String(stats.totals.heartbeats) },
-    { label: '近 7 天心跳', value: String(stats.totals.heartbeats7d) },
-    { label: '覆盖国家', value: String(stats.totals.countries) },
-  ] : [];
-  const html = `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>分发看板 · Easy Suite</title><style>
-:root{color-scheme:dark;--bg:#0b1020;--card:#131a30;--line:#26304a;--muted:#8b95a7;--text:#e8ecf4;--green:#34d399;--blue:#60a5fa}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
-.wrap{max-width:960px;margin:0 auto;padding:2.5rem 1.2rem 4rem}
-h1{font-size:1.5rem;margin:0 0 .3rem}.sub{color:var(--muted);font-size:.85rem;margin-bottom:2rem}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.9rem;margin-bottom:2rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.2rem}
-.card b{display:block;font-size:1.9rem;line-height:1.2}.card span{font-size:.78rem;color:var(--muted)}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.2rem;margin-bottom:1.2rem}
-.panel h2{font-size:.95rem;margin:0 0 .8rem;font-weight:600}
-.bars{width:100%;height:130px}.bar-label{font-size:9px;fill:var(--muted)}
-table{width:100%;border-collapse:collapse;font-size:.85rem}
-th{text-align:left;color:var(--muted);font-weight:500;padding:.35rem .5rem;border-bottom:1px solid var(--line)}
-td{padding:.35rem .5rem;border-bottom:1px solid var(--line)}tr:last-child td{border-bottom:0}
-.num{text-align:right;font-variant-numeric:tabular-nums}
-.empty{color:var(--muted);margin:0}.err{color:#f87171}
-a{color:var(--blue);text-decoration:none}
-</style></head><body><div class="wrap">
-<h1>Easy Suite 分发看板</h1>
-<p class="sub">dl.hwj123hwj.asia 匿名聚合统计 · 只含当日哈希去重的 IP · <a href="https://nightgopher.github.io/easy-suite/">官网</a> · <a href="/stats.json">JSON</a></p>
-${stats ? `
-<div class="cards">${cards.map((c) => `<div class="card"><b>${c.value}</b><span>${c.label}</span></div>`).join('')}</div>
-<div class="panel"><h2>每日下载</h2>${dailyBar(stats.dailyDownloads, '#34d399')}</div>
-<div class="panel"><h2>每日更新心跳</h2>${dailyBar(stats.dailyHeartbeats, '#60a5fa')}</div>
-<div class="panel"><h2>下载资产明细</h2>${stats.assets.length ? `<table><tr><th>资产</th><th>国家</th><th>渠道</th><th style="text-align:right">次数</th></tr>
-${stats.assets.map((a) => `<tr><td>${esc(a.asset)}</td><td>${esc(a.country)}</td><td>${esc(a.channel)}</td><td class="num">${a.hits}</td></tr>`).join('')}</table>` : '<p class="empty">暂无数据</p>'}</div>
-<div class="panel"><h2>客户端版本分布（心跳上报）</h2>${stats.versions.length ? `<table><tr><th>版本</th><th style="text-align:right">心跳</th></tr>
-${stats.versions.map((v) => `<tr><td>${esc(v.clientVer)}</td><td class="num">${v.heartbeats}</td></tr>`).join('')}</table>` : '<p class="empty">暂无数据——客户端心跳自 v0.52 起开始上报</p>'}</div>
-` : `<div class="panel"><p class="err">看板暂不可用：${esc(error)}</p><p class="sub">需要配置 AE_QUERY_TOKEN 与 AE_ACCOUNT_ID（secret），见 worker/README.md</p></div>`}
-</div></body></html>`;
-  return new Response(html, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } });
 }

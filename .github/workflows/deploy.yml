@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy (GitHub Pages + dl worker)
 
 on:
   push:
@@ -44,3 +44,47 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  dl-worker:
+    # dl 分发层（worker/）自动部署：仅在 worker 相关文件有变更时执行，
+    # 使用与 Pages 部署相同的 push main 触发，消除唯一的手动部署环节。
+    # 前置：repo secret CLOUDFLARE_API_TOKEN（Workers Scripts Write 权限）。
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect worker changes
+        id: changes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (context.eventName === 'workflow_dispatch') {
+              core.setOutput('changed', 'true');
+              return;
+            }
+            const compare = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: context.payload.before,
+              head: context.payload.after,
+            });
+            const touched = compare.data.files.some(f => f.filename.startsWith('worker/'));
+            core.setOutput('changed', String(touched));
+      - name: Checkout
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/checkout@v4
+      - name: Setup Node
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install wrangler
+        if: steps.changes.outputs.changed == 'true'
+        run: npm install -g wrangler@latest
+      - name: Typecheck & deploy dl worker
+        if: steps.changes.outputs.changed == 'true'
+        working-directory: worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          npm install --no-fund --no-audit
+          npm run typecheck
+          npm run deploy

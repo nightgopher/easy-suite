@@ -1,0 +1,33 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { absoluteUrl, OG_IMAGE } from '../lib/site';
+
+const entries = await getCollection('changelog');
+const entry = entries[0];
+if (!entry) throw new Error('changelog 快照缺失：先运行 scripts/sync-docs.mjs');
+const { Content } = await render(entry);
+const canonical = absoluteUrl('/changelog/');
+---
+<Base title="版本更新记录 · Easy Suite" description="EasyAgent 与 EasyGateway 的版本更新记录（CHANGELOG）：新功能、修复与发布说明，自动同步自 easyagent 仓库。" schema={{
+  '@context': 'https://schema.org', '@type': 'WebPage',
+  name: 'EasyAgent 版本更新记录', inLanguage: 'zh-CN', url: canonical, image: OG_IMAGE,
+}}>
+<main class="changelog-page">
+  <section class="container">
+    <p class="changelog-eyebrow"><span class="dot"></span>自动同步自 easyagent 仓库 · 当前最新版见<a href="https://github.com/nightgopher/easyagent/releases/latest" target="_blank" rel="noopener">Releases</a></p>
+    <h1>版本更新记录</h1>
+    <article class="prose changelog-body">
+      <Content />
+    </article>
+  </section>
+</main>
+</Base>
+
+<style>
+  .changelog-page { padding: 3.5rem 0 5rem; }
+  .changelog-eyebrow { font-size: .8rem; color: var(--muted, #7a8699); display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  .changelog-eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; display: inline-block; }
+  .changelog-eyebrow a { color: inherit; }
+  .changelog-page h1 { font-size: 2.2rem; margin: .6rem 0 1.5rem; }
+</style>

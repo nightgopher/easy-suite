@@ -1,0 +1,210 @@
+# Android 发布验收
+
+每次发布记录候选 SHA、APK 版本/签名、测试设备/API、检查结果和报告链接。失败项修复后重跑，未执行项标为未执行；构建成功不等于 UI 验收通过。
+
+## v0.51.0 发布候选
+
+本轮变化在 Go 核心（技能使用统计埋点与 `skills-stats` 子命令、管家预设保存修复）、桌面端（MyGo v0.10.0 底座）与新增的 MyGo Android 客户端（`easyagent-mygo-android.apk`，与 Kotlin APK 并存分发，暂为调试签名）。Kotlin 工程的 `mobile-native/` 源码与 v0.49.0 相同，Kotlin APK 代码内容一致；Kotlin versionCode 为 `5100300`，MyGo APK versionCode 由 MyGo 按同版本号推导。最终提交、APK 签名和摘要以附注 tag 与 Release 的 `release.json` / `checksums.txt` 为准。
+
+- 发布流水线要求对候选 SHA 重新运行 API 31 / 34 / 35 界面矩阵、单测、lint 和构建，结果以对应的 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)为准；流水线完成前不记为通过。
+- MyGo Android 客户端已在 Android 17 API 36 模拟器实测：远程主机（HTTP + 无令牌 loopback）自动连接、历史会话加载、发送消息与流式回复渲染（回复 "MyGo Android works" 原样呈现）、斜杠命令面板、用量统计与草稿恢复均通过；未执行实体手机与正式 APK 跨版本覆盖安装验收，带令牌主机在真机上的凭据保存（mygo.Secrets 路径）待真机复核。
+- 此前版本的验收记录不计为本轮通过。
+
+## v0.47.0 发布候选
+
+本轮新增远程专家市场（Go 核心、原生桌面端）并打磨设置界面交互，`mobile-native/` 源码与 v0.46.5 相同。候选版本为 `0.47.0`，versionCode 为 `4700300`；最终提交、APK 签名和摘要以附注 tag 与 Release 的 `release.json` / `checksums.txt` 为准。
+
+- 发布流水线要求对候选 SHA 重新运行 API 31 / 34 / 35 界面矩阵、单测、lint 和构建，结果以对应的 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)为准；流水线完成前不记为通过。
+- 本轮未执行实体手机、实体相机、蜂窝网络或正式 APK 跨版本覆盖安装验收；此前版本的验收记录不计为本轮通过。
+
+## v0.44.0 发布候选
+
+本轮 Android 端无功能变化，`mobile-native/` 源码与 v0.43.0 相同。候选版本为 `0.44.0`，versionCode 为 `4400300`；最终提交、APK 签名和摘要以附注 tag 与 Release 的 `release.json` / `checksums.txt` 为准。
+
+- 发布流水线要求对候选 SHA 重新运行 API 31 / 34 / 35 界面矩阵、单测、lint 和构建，结果以对应的 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)为准；流水线完成前不记为通过。
+- 本轮未执行实体手机、实体相机、蜂窝网络或正式 APK 跨版本覆盖安装验收；此前版本的验收记录不计为本轮通过。
+
+## v0.43.0 发布候选
+
+本轮 Android 端无功能变化，`mobile-native/` 源码与 v0.42.0 相同。候选版本为 `0.43.0`，versionCode 为 `4300300`；最终提交、APK 签名和摘要以附注 tag 与 Release 的 `release.json` / `checksums.txt` 为准。
+
+- 发布流水线要求对候选 SHA 重新运行 API 31 / 34 / 35 界面矩阵、单测、lint 和构建，结果以对应的 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)为准；流水线完成前不记为通过。
+- 本轮未执行实体手机、实体相机、蜂窝网络或正式 APK 跨版本覆盖安装验收；此前版本的验收记录不计为本轮通过。
+
+## v0.39.2 发布候选
+
+本轮在 v0.39.1 的签名钥匙串修复之上，将 macOS 公证改为免钥匙串的显式凭据提交，`mobile-native/` 源码与 v0.39.0 相同。候选版本为 `0.39.2`，versionCode 为 `3902300`；最终提交、APK 签名和摘要以附注 tag 与 Release 的 `release.json` / `checksums.txt` 为准。
+
+- v0.39.0 / v0.39.1 的候选 SHA 因 tag 不可变规则无法携带流水线修复，tag 保留且不发布 Release；本轮对同一份 Android 源码按 v0.39.2 重新走发布流水线，结果以对应的 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)为准。
+- 本轮未执行实体手机、实体相机、蜂窝网络或正式 APK 跨版本覆盖安装验收；此前版本的验收记录不计为本轮通过。
+
+## v0.39.1 发布候选
+
+本轮仅修复发布流水线在自托管 macOS 签名机上的钥匙串解析顺序，`mobile-native/` 源码与 v0.39.0 相同。候选版本为 `0.39.1`，versionCode 为 `3901300`；最终提交、APK 签名和摘要以附注 tag 与 Release 的 `release.json` / `checksums.txt` 为准。
+
+- v0.39.0 的候选 SHA 因 tag 不可变规则无法携带签名修复，该 tag 保留且不发布 Release；本轮对同一份 Android 源码按 v0.39.1 重新走发布流水线，结果以对应的 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)为准。
+- 本轮未执行实体手机、实体相机、蜂窝网络或正式 APK 跨版本覆盖安装验收；此前版本的验收记录不计为本轮通过。
+
+## v0.39.0 发布候选
+
+本轮下线内置音乐功能并裁剪测试套件，`mobile-native/` 源码与 v0.38.0 相同。候选版本为 `0.39.0`，versionCode 为 `3900300`；最终提交、APK 签名和摘要以附注 tag 与 Release 的 `release.json` / `checksums.txt` 为准。
+
+- 发布流水线要求对同一候选 SHA 重新运行 API 31 / 34 / 35 界面矩阵、单测、lint 和构建，结果以对应的 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)为准；流水线完成前不记为通过。API 35 的 UI 用例在 PR 上曾出现两次不同用例的失败，重跑后通过，该矩阵存在不稳定性。
+- 本轮未执行实体手机、实体相机、蜂窝网络或正式 APK 跨版本覆盖安装验收；此前版本的验收记录不计为本轮通过。
+
+## v0.38.0 发布候选
+
+本轮新增桌面端飞书登录 EasyCode 和账号模型调用，`mobile-native/` 源码与 v0.37.2 相同。候选版本为 `0.38.0`，versionCode 为 `3800300`；最终提交、APK 签名和摘要以附注 tag 与 Release 的 `release.json` / `checksums.txt` 为准。
+
+- 发布流水线要求对同一候选 SHA 重新运行 API 31 / 34 / 35 界面矩阵、单测、lint 和构建，结果以对应的 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)为准；流水线完成前不记为通过。
+- 本轮未执行实体手机、实体相机、蜂窝网络或正式 APK 跨版本覆盖安装验收；此前版本的验收记录不计为本轮通过。
+
+## v0.37.2 发布候选
+
+本轮修复 Android 配对成功后在主线程关闭 TLS 导致凭据丢失、扫码默认横屏，以及无已保存主机时无法返回主页和长配对码撑满页面的问题。版本为 `0.37.2`，versionCode 为 `3702300`；最终候选 SHA、正式签名和摘要以附注 tag 与 `release.json` / `checksums.txt` 为准。
+
+- Android 15 / API 35 arm64 独立模拟器在旧实现上复现 `NetworkOnMainThreadException`：电脑已登记 1 台设备，手机尚未保存凭据。修复后通过真实 MainActivity 与香港中继的配对、加密保存、读取聊天内容、界面重建与连接清理，电脑仍只登记 1 台测试设备。
+- 新增自包含的 Android 原生 TLS 回归，覆盖配对后的 Keystore 保存、会话与 WebSocket 恢复、取消清理，以及保存失败后点击重试不会再次配对；扫码界面验证竖屏并保留截图。公网复现使用临时电脑身份，不接触真实用户会话，CI 回归不依赖公网中继。
+- 新增空主页及主机增删后的导航、长配对码输入、扫码失败后返回、配对进行中和凭据未保存时的离开确认测试；扫描返回使用模拟结果，实体相机识码仍需人工验收。
+- 主页调整后的[首轮三平台测试](https://github.com/nightgopher/easyagent/actions/runs/41615619079)发现更新测试仍等待旧的连接页，已改为验证主页和连接页的更新入口。API 31 的一次配对测试在 15 秒测试等待结束前未完成，日志未记录最终原因；测试等待现覆盖网络请求自身的超时，并在失败时输出无凭据的隧道诊断，保留真实 TLS 和重试断言。
+- v0.37.1 的 [PR 三平台矩阵](https://github.com/nightgopher/easyagent/actions/runs/41604957314)全部通过，但 [Release 首轮](https://github.com/nightgopher/easyagent/actions/runs/41606421030)在 API 31 / 34 的连接池检查中发现测试时序问题：配对和聊天已成功，取消后的 WebSocket 回调尚未释放连接。测试现等待关闭回调及网络执行器结束，再断言连接数为零；未删除断言、跳过用例或重跑旧版本凑绿，原标签保留且不公开。
+- 发布前完整运行单测、lint、签名 APK 构建演练与 API 31 / 34 / 35 UI 矩阵；最终 SHA 的结果以 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml) 为准，流水线完成前不记为通过。
+- RMX6699 实体机、实体相机识码、蜂窝切换及正式 APK 覆盖安装未执行。未清除现有设备记录或替换正在使用的客户端；旧失败配对留下的凭据需要在电脑上手动撤销。
+
+## v0.37.0 发布候选
+
+本轮增加中继扫码/粘贴配对、设备凭据保存及每台主机独立的端到端 TLS 传输。版本为 `0.37.0`，versionCode 为 `3700300`；最终候选 SHA、正式证书和资产摘要以附注 tag 与 `release.json` / `checksums.txt` 为准。
+
+- 本地 JVM 单测、Debug / Release lint、Debug 构建和一次性证书 Release APK 演练通过；测试证书不作为正式升级身份。OkHttp 与本地 Go fixture、公网中继的联调覆盖一次性配对、REST / WebSocket、约 1.2 MiB 附件上下行、错误公钥拒绝、重连及撤销。
+- UI 矩阵保留原有全部用例，增加无效配对码不会保存凭据且仍可改用直连的回归。API 31 / 34 / 35 的报告与截图见 [PR #63](https://github.com/nightgopher/easyagent/pull/63) 和最终同一 SHA 的 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)；流水线完成前不记为通过。
+- 实体相机扫码、蜂窝网络切换、真实模型/业务账号、正式 APK 跨版本覆盖安装及手机/平板人工检查未执行。现有设备和正在运行的桌面应用保持原状，网络 fixture 的通过不代替这些人工项目。
+
+## v0.33.0 发布候选
+
+本轮新增桌面壁纸、会话全文搜索与主机工具按需发现，调整只读工具并发；Android 生产代码未变，新增协议投影单测以确认客户端兼容工具发现事件与上下文可选字段。候选版本为 `0.33.0`，versionCode 为 `3300300`；最终 SHA、APK 签名和校验和以附注 tag 与 Release 的 `release.json` / `checksums.txt` 为准。
+
+- 本轮未新增本地 Android 设备验收；实体网络切换、真实业务账号、正式 APK 跨版本覆盖安装、强退重启和手机／平板人工检查均标为未执行，不沿用历史版本的通过结论。
+- 发布流水线要求同一候选 SHA 的 API 31／34／35 界面矩阵、单测、lint 与构建全部通过；报告和截图见 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)，在流水线完成前不记为通过。
+- 工具发现 PR 的首次 API 35 检查失败于模拟器的 Pixel Launcher 无响应弹窗，截图显示弹窗覆盖应用并导致 Espresso 失去焦点；保留[原始报告和截图](https://github.com/nightgopher/easyagent/actions/runs/41159359902)。合入最新主线后重新运行完整矩阵，不跳过失败用例。
+- APK 继续使用固定发布证书，并随完整版本提供 APK 和 ZIP；正式包的身份、版本及 SHA-256 由发布流水线验证。
+
+## v0.32.0 发布候选
+
+本轮修改原生桌面设置、连接修复与共享技能解析；`mobile-native/` 源码与 v0.31.0 相同。候选版本为 `0.32.0`，versionCode 为 `3200300`；最终 SHA、APK 签名与校验和以附注 tag 和 Release 的 `release.json` / `checksums.txt` 为准。
+
+- 本轮未在本地新增 Android 设备验收；实体网络切换、真实业务账号、正式 APK 跨版本覆盖安装与强退重启均标为未执行，不沿用历史版本的通过结论。
+- 发布流水线仍要求同一候选 SHA 的 API 31／34／35 界面矩阵、单测、lint 与构建全部通过；检查结果与截图见 [v0.32.0 Release 运行](https://github.com/nightgopher/easyagent/actions/workflows/release.yml)。在流水线完成前，不将这些项目记录为已通过。
+- APK 继续使用固定发布证书，并随完整版本提供 APK 和 ZIP；Android 更新器按清单中的源码 tree 判断本轮是否需要提示升级。
+
+## 自动检查
+
+```sh
+cd mobile-native
+./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
+bash ../scripts/check-android-ui.sh
+```
+
+第二条命令需要已启动的模拟器或测试设备。`Android UI` 工作流自动运行 Android 12/API 31、14/API 34、15/API 35；发布流程复用相同工作流并检验候选 SHA。报告在 `app/build/reports/androidTests/connected`，XML 在 `app/build/outputs/androidTest-results`。API 31 以上的截图由测试写入 `/data/local/tmp/easyagent-ui`，CI 收集到对应 API 的 artifact 中。
+
+`RuntimeUiTest` 使用真实 MainActivity 和本地 HTTP/WebSocket fixture，检查：
+
+- 错误令牌得到 401，修正后成功连接；Android Keystore 加密和重新读取凭据。
+- 从界面保存、切换两台主机；各主机草稿互不覆盖。
+- 历史恢复、等待态后的分段实时文本、思考内容与工具输出刷新、批准与拒绝审批，校验实际发出的确认请求。
+- 任务运行时消息入队、停止请求；后台恢复和 WebSocket 重连。
+- 横屏、深色模式，并输出实际屏幕截图。
+
+测试不调用实际模型或飞书服务。它覆盖界面与客户端协议，真实运行主机的部署检查另见 [systemd 验证](../security_model/#验证-systemd-服务包)。
+
+`UpdateUiTest` 另覆盖自动检查与手动入口、网络错误重试、损坏下载、包名/版本不符及签名不一致的 APK 拒绝，以及安装授权被拒绝后重新授权、系统安装确认页与取消返回。脚本临时构建同证书的 `99.0.0` Debug 测试包，并另用一次性证书重签一份；测试包只进入生成的 androidTest assets，不提交或发布。检查新版本、清单和下载使用本地 MockWebServer；系统安装器实际读取校验后的 FileProvider URI，确认页截图保存在同一 CI artifact。
+
+## 每次发布补充检查
+
+| 项目 | 操作与通过条件 |
+|---|---|
+| 安装与升级 | 在测试设备安装候选 APK，用同证书新版本覆盖升级；保存的主机及凭据可恢复，版本号正确 |
+| 重启恢复 | 强制结束进程再打开；主机配置可恢复，令牌可解密，重新获取会话状态 |
+| 网络切换 | 断网、Wi-Fi/移动网络切换后可恢复；离线发送保留草稿，没有重复执行 |
+| 真实服务 | 连接测试运行主机完成一次流式对话、审批拒绝/批准、排队与停止；不使用生产目录做破坏性测试 |
+| 屏幕与输入 | 至少手机与平板各一组，检查横竖屏、软键盘和深浅色；按钮、审批内容和输入框可用 |
+| 发布身份 | 正式 APK 的签名、版本与 SHA-256 校验通过；Debug 或临时证书 APK 不作为正式升级结论 |
+
+## v0.22.0 模拟器基线
+
+2026-10-22，功能基线为 `cc76ac4e7636e4ff2aebdd6b7f560c301522243d`，使用 Debug APK 与模拟运行主机。[API 31/34/35 CI 报告与截图](https://github.com/nightgopher/easyagent/actions/runs/39828974883)均通过；正式发布另对 tag 指向的确定 SHA 重跑相同矩阵，最终提交与资产校验值记录在 Release 的 `release.json` 和 `checksums.txt` 中。
+
+| 环境 | 结果 |
+|---|---|
+| Android 12/API 31，arm64 手机模拟器 | 4 项 UI 用例通过 |
+| Android 14/API 34，arm64 手机模拟器 | 4 项 UI 用例通过，截图已检查 |
+| Android 15/API 35，arm64 平板模拟器 | 4 项 UI 用例通过，深色横屏截图已检查 |
+
+Android 14 另完成 Debug APK 的初次安装、同版本 `adb install -r` 覆盖安装、强制结束进程再启动；主机名称和配置文件保持不变，重启后的 HTTP 请求仍使用解密出的正确测试令牌。此项不代替正式签名的跨版本升级验收。
+
+## v0.22.0 正式签名升级检查
+
+2026-10-22，在独立 Android 14/API 34 arm64 模拟器上，从 GitHub 下载并校验正式 v0.21.1 APK，覆盖安装使用相同固定发布证书签名的本机 v0.22.0 候选 APK（versionCode `2200300`）。候选使用上述功能基线及 v0.22.0 版本元数据，连接本地 HTTP/WebSocket 模拟主机。
+
+| 检查 | 结果 |
+|---|---|
+| 发布身份 | 两个版本均通过固定证书、应用标识、版本号及非 Debug 属性校验；旧 APK 下载 SHA-256 与 GitHub 资产一致 |
+| 跨版本覆盖安装 | `adb install -r` 成功；主机名称、配置及加密令牌文件逐字节保持一致，升级后发出的会话请求包含正确解密后的测试令牌 |
+| 强退与重启 | 强制结束进程后重开，所选主机、会话列表和已解密的测试凭据均恢复 |
+| 同设备重复安装与截图 | Debug UI 测试重复运行通过，截图保存在 shell 临时目录，不依赖被卸载应用的共享存储归属 |
+
+实体手机的蜂窝网络切换和真实模型/业务账号仍是每次 Release 的人工检查项，本次未执行。模拟器检查不将这些项目记为通过。
+
+## v0.22.1 发布验收
+
+v0.22.0 的正式发布门禁在 Android 15 上发现流式文字不刷新的问题，未公开 Release，原 tag 保留。消息对象原地更新时，Compose 会跳过只按对象身份比较的消息行；v0.22.1 将显示字段改为可观察状态，覆盖正文、思考、工具结果、状态和展开状态。
+
+回归用例先等待「生成中…」实际显示，再发送第一段和后续文本。该用例在旧代码上失败，修复后通过；新增用例逐段检查思考内容、折叠展开及工具的部分输出、最终结果和完成状态。HTTP/WebSocket fixture 的运行快照保留原始事件，重连时按同一协议恢复。
+
+| 本地检查（2026-10-22） | 结果 |
+|---|---|
+| Android 15/API 35 arm64 模拟器 | 5 项 UI 用例、JVM 单测与 lint 通过 |
+| 正式签名候选 APK | 固定证书、非 Debug、应用标识、versionName `0.22.1` 和 versionCode `2201300` 校验通过 |
+| v0.21.1 → v0.22.1 覆盖升级 | Android 14/API 34 arm64 模拟器通过；配置和加密令牌文件保持一致，升级后仍发出正确鉴权请求 |
+| 强退与重启 | 升级后再次强退重开，主机、会话列表及凭据恢复通过 |
+
+最终候选由 v0.22.1 的附注 tag 确定，Release 工作流对同一 SHA 重跑 API 31/34/35 的 5 项 UI 用例，并保存报告和截图。最终提交及 APK 校验值以该 Release 的 `release.json` 和 `checksums.txt` 为准；实体蜂窝网络及真实业务账号仍未执行。
+
+## v0.23.0 集成验收
+
+2026-10-22，候选集成 #263、#270–#277、#279、#280，并保留 v0.22.1 的消息可观察状态修复。版本为 `0.23.0`，正式 versionCode 为 `2300300`；最终 SHA 由附注 tag 与 Release 清单确定。
+
+- Android 15/API 35 arm64 独立模拟器的 8 项真实 Activity UI 用例通过，JVM 单测与 lint 通过。保留原 5 项，新增附件上传/渲染/移除、发送确认保留后来添加的附件、循环弹窗创建/停止，以及后台通知批准/拒绝和点按恢复会话。
+- 集成回归在旧代码下复现输入框、附件不刷新的问题；修复后通过。循环弹窗由实际 UI 用例发现加载态不消失，修复后创建/停止流程通过。
+- 通知用例实际读取系统通知及调用其 PendingIntent，校验发送给模拟运行主机的批准/拒绝请求；前台同会话不发通知。
+- 固定发布证书签名的 v0.22.1 → v0.23.0 覆盖升级在 Android 14/API 34 arm64 独立模拟器通过：versionCode `2300300`，配置及加密令牌文件逐字节保持一致；强制结束进程重开后，主机和使用解密令牌的鉴权请求恢复。
+- Android 12/API 31、14/API 34、15/API 35 的最终候选由 PR 和 Release 流水线重新验证，报告与截图保存在对应 Actions artifact。
+- 实体蜂窝网络、实体相机/相册及真实麦克风/ASR 账号未验收；上传、图片解析和转写协议由本地 fixture / JVM 测试覆盖，不将这些结果记为真机验收通过。
+
+## v0.24.0 发布验收
+
+2026-10-23，候选集成 #286–#289。正式 APK 的 versionName 为 `0.24.0`、versionCode 为 `2400300`；最终候选 SHA 由附注 tag `v0.24.0` 确定，记录于 Release 的 `release.json`。
+
+- Android 通知回归测试按当前审批内容精确等待通知，并复用同一次查询取得的通知对象，避免旧审批通知尚未撤销时误点或二次查询时通知已消失；审批请求、前台抑制和点按返回会话的断言保留。
+- 合并前的 Android 12/API 31、14/API 34、15/API 35 UI 回归通过。正式发布对 tag 对应 SHA 重跑完整矩阵，并保存测试报告与截图；报告可从 [Release 工作流](https://github.com/nightgopher/easyagent/actions/workflows/release.yml) 的 `v0.24.0` 运行查看。
+- 正式 APK 由固定发布证书签名，发布流水线检查签名指纹、应用标识、版本和非 Debug 属性，并检查 ZIP 内 APK 与独立 APK 完全一致；最终 SHA-256 以同一 Release 的 `checksums.txt` 为准。
+- 合并检查的一次 Android 14/API 34 运行在循环任务测试清理阶段出现 Compose `SlotTable` 越界；[首次失败日志](https://github.com/nightgopher/easyagent/actions/runs/39924455395/attempts/1)保留。该次通知用例通过，崩溃前有 Compose/Espresso 未空闲记录；相同提交在独立 Android 14/API 34 arm64 模拟器上连续三轮完整测试通过（每轮 8 项）；CI 同 SHA 的一次诊断复跑也通过（同一运行的 attempt 2）。该问题尚未稳定复现，不将复跑通过视为根因已修复。
+- 本轮未执行实体设备的蜂窝网络、相机、麦克风/ASR 验收，也未执行正式 APK 的跨版本覆盖安装与重启恢复；此前版本的升级记录仅作历史基线，不计为本轮通过。
+
+## v0.25.0 应用内更新验收
+
+2026-10-23，功能候选为 `a40bf0579adf4f384eb437a45561606a0f59c010`。APK versionName 为 `0.25.0`，versionCode 为 `2500300`；最终发布 SHA 与资产哈希由附注 tag `v0.25.0` 和 Release 的 `release.json` / `checksums.txt` 确定。
+
+- 独立 Android 14/API 34 arm64 模拟器：47 项 JVM 单测、13 项真实 Activity UI 用例、Debug Lint 和 Release Lint 均通过；43 项发布脚本测试及临时证书 Release APK 构建校验通过。
+- 下载真实的同证书测试 APK，核对摘要、身份后到达 Android「更新此应用」确认页；拒绝未知来源安装授权、再次授权、取消安装均保留下载。实际测试错误签名、错误包名/版本和损坏字节，均不能进入安装。
+- 从 GitHub 下载 v0.24.0 正式 APK，核对 SHA-256 和固定发布证书后安装；保存测试主机及令牌，再用相同固定发布证书签名的上述候选 APK 覆盖升级。版本和签名校验通过，主机配置及加密凭据文件的 SHA-256 升级前后相同；升级后及强退重启后均恢复所选主机，并向本地模拟主机发出正确鉴权请求。
+- API 31/34/35 的 PR 与正式 Release 工作流重跑同一组 13 项 UI 用例，报告及系统安装确认截图保存在对应 Actions artifact；本地记录不替代最终 SHA 的流水线结果。
+- 实体设备、不同厂商安装器及蜂窝网络未执行人工验收；没有修改用户正在使用的桌面客户端或运行主机。旧安卓客户端需先手动覆盖安装一次 v0.25.0，后续才有应用内更新入口。
+
+## v0.31.0 发布候选
+
+功能基线为 `41bc96d3c250047f7941f32cc7c9f4a0efd36e74`，最终发布 SHA 以附注 tag 和 Release 清单为准。
+
+- 合并前 CI 的 API 31／34／35 各 20 项界面测试通过；发布工作流对候选 SHA 再执行完整矩阵。
+- 本地 API 34／35 arm64 模拟器各 15 项 RuntimeUiTest 通过；API 34 的系统通知实际触摸打开会话连续 4 次通过，模型选择修复在 API 35 连续 15 次通过。
+- 本地 JVM 单元测试 83 项、lint、Debug 应用和测试 APK 构建通过；这些结果不作为正式签名升级的替代。
+- 尚未执行实体手机蜂窝网络切换、真实业务账号和正式候选的跨版本覆盖安装；正式 APK 身份与校验和由发布流程验证，未将这些人工项目记为通过。

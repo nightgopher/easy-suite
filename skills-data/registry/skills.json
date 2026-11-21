@@ -17,8 +17,8 @@
       "语音转文字",
       "ASR"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill asr",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/asr",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill asr",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/asr",
     "sourcePath": "skills/asr",
     "lastUpdated": "2026-05-02T15:49:31.000Z"
   },
@@ -34,8 +34,8 @@
     ],
     "scenarios": [],
     "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill butler",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/butler",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill butler",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/butler",
     "sourcePath": "skills/butler",
     "lastUpdated": "2026-06-16T07:10:28.000Z"
   },
@@ -58,8 +58,8 @@
       "会话收尾归档",
       "butler-archive"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill butler-archive",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/butler-archive",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill butler-archive",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/butler-archive",
     "sourcePath": "skills/butler-archive",
     "lastUpdated": "2026-11-21T01:14:24.000Z"
   },
@@ -81,8 +81,8 @@
       "生成标题",
       "发布文案"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill content-adapt",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/content-adapt",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill content-adapt",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/content-adapt",
     "sourcePath": "skills/content-adapt",
     "lastUpdated": "2026-06-04T12:23:42.000Z"
   },
@@ -109,8 +109,8 @@
       "跨平台发布",
       "content repurpose"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill content-repurposer",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/content-repurposer",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill content-repurposer",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/content-repurposer",
     "sourcePath": "skills/content-repurposer",
     "lastUpdated": "2026-06-05T14:35:44.601Z"
   },
@@ -127,8 +127,8 @@
     ],
     "scenarios": [],
     "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill darwin-skill",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/darwin-skill",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill darwin-skill",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/darwin-skill",
     "sourcePath": "skills/darwin-skill",
     "lastUpdated": "2026-05-30T12:12:15.258Z"
   },
@@ -150,8 +150,8 @@
       "上传视频",
       "发布视频"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill douyin-upload",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/douyin-upload",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill douyin-upload",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/douyin-upload",
     "sourcePath": "skills/douyin-upload",
     "lastUpdated": "2026-06-04T12:23:42.000Z"
   },
@@ -168,8 +168,8 @@
     ],
     "scenarios": [],
     "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill drawio-skill",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/drawio-skill",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill drawio-skill",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/drawio-skill",
     "sourcePath": "skills/drawio-skill",
     "lastUpdated": "2026-05-05T15:45:55.000Z",
     "author": "Agents365-ai",
@@ -194,8 +194,8 @@
       "封面图",
       "generate image"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill image-provider",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/image-provider",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill image-provider",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/image-provider",
     "sourcePath": "skills/image-provider",
     "lastUpdated": "2026-05-02T15:49:31.000Z"
   },
@@ -212,8 +212,8 @@
     ],
     "scenarios": [],
     "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill impeccable",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/impeccable",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill impeccable",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/impeccable",
     "sourcePath": "skills/impeccable",
     "lastUpdated": "2026-07-04T00:00:00.000Z",
     "author": "pbakaus",
@@ -242,8 +242,8 @@
       "新模型价格",
       "供应商对比"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill llm-price-tracker",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/llm-price-tracker",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill llm-price-tracker",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/llm-price-tracker",
     "sourcePath": "skills/llm-price-tracker",
     "lastUpdated": "2026-05-02T15:49:31.000Z"
   },
@@ -269,8 +269,8 @@
       "MEMORY 管理",
       "长期记忆"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill memory-organizer",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/memory-organizer",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill memory-organizer",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/memory-organizer",
     "sourcePath": "skills/memory-organizer",
     "lastUpdated": "2026-04-15T02:36:07.000Z"
   },
@@ -293,8 +293,8 @@
       "公众号排版",
       "推送草稿箱"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill mp-weixin-ops",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/mp-weixin-ops",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill mp-weixin-ops",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/mp-weixin-ops",
     "sourcePath": "skills/mp-weixin-ops",
     "lastUpdated": "2026-05-02T15:49:31.000Z"
   },
@@ -312,8 +312,8 @@
     ],
     "scenarios": [],
     "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill officecli-docx",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/officecli-docx",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill officecli-docx",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/officecli-docx",
     "sourcePath": "skills/officecli-docx",
     "lastUpdated": "2026-05-06T08:34:08.000Z",
     "author": "iOfficeAI",
@@ -340,8 +340,8 @@
       "短剧制作",
       "生成视频"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill short-drama-pipeline",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/short-drama-pipeline",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill short-drama-pipeline",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/short-drama-pipeline",
     "sourcePath": "skills/short-drama-pipeline",
     "lastUpdated": "2026-05-02T15:49:31.000Z"
   },
@@ -364,8 +364,8 @@
       "口播脚本",
       "文案二创"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill short-video-replicator",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/short-video-replicator",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill short-video-replicator",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/short-video-replicator",
     "sourcePath": "skills/short-video-replicator",
     "lastUpdated": "2026-05-02T15:49:31.000Z"
   },
@@ -383,8 +383,8 @@
     ],
     "scenarios": [],
     "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill stock-analysis",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/stock-analysis",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill stock-analysis",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/stock-analysis",
     "sourcePath": "skills/stock-analysis",
     "lastUpdated": "2026-06-05T14:32:34.833Z"
   },
@@ -407,8 +407,8 @@
       "提取URL内容",
       "深度调研"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill tavily",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/tavily",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill tavily",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/tavily",
     "sourcePath": "skills/tavily",
     "lastUpdated": "2026-05-02T15:49:31.000Z"
   },
@@ -430,8 +430,8 @@
       "TTS",
       "合成语音"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill tts",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/tts",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill tts",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/tts",
     "sourcePath": "skills/tts",
     "lastUpdated": "2026-05-02T15:49:31.000Z"
   },
@@ -453,8 +453,8 @@
       "理解视频",
       "视频总结"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill vertex-video-reader",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/vertex-video-reader",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill vertex-video-reader",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/vertex-video-reader",
     "sourcePath": "skills/vertex-video-reader",
     "lastUpdated": "2026-05-02T15:49:31.000Z"
   },
@@ -476,8 +476,8 @@
       "分析视频",
       "抽帧"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill video-analyze",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/video-analyze",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill video-analyze",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/video-analyze",
     "sourcePath": "skills/video-analyze",
     "lastUpdated": "2026-06-04T12:23:42.000Z"
   },
@@ -500,8 +500,8 @@
       "生成字幕",
       "视频剪辑"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill videocut",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/videocut",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill videocut",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/videocut",
     "sourcePath": "skills/videocut",
     "lastUpdated": "2026-05-02T15:49:31.000Z"
   },
@@ -519,8 +519,8 @@
     ],
     "scenarios": [],
     "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill weread-skills",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/weread-skills",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill weread-skills",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/weread-skills",
     "sourcePath": "skills/weread-skills",
     "lastUpdated": "2026-06-05T14:32:34.846Z"
   },
@@ -548,8 +548,8 @@
       "推特日报",
       "Twitter日报"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill x-digest",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/x-digest",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill x-digest",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/x-digest",
     "sourcePath": "skills/x-digest",
     "lastUpdated": "2026-11-19T13:23:59.408Z"
   },
@@ -573,8 +573,8 @@
       "跟进日报",
       "x-followup"
     ],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill x-follow",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/x-follow",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill x-follow",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/x-follow",
     "sourcePath": "skills/x-follow",
     "lastUpdated": "2026-11-20T15:54:33.346Z"
   },
@@ -592,8 +592,8 @@
     ],
     "scenarios": [],
     "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/custom-skills --skill xiaohongshu-cli",
-    "githubUrl": "https://github.com/nightgopher/custom-skills/tree/main/skills/xiaohongshu-cli",
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill xiaohongshu-cli",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/xiaohongshu-cli",
     "sourcePath": "skills/xiaohongshu-cli",
     "lastUpdated": "2026-05-06T08:13:58.000Z",
     "author": "jackwener"

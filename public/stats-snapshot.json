@@ -1,0 +1,79 @@
+{
+ "dailyDownloads": [
+  {
+   "day": "2026-11-20 00:00:00",
+   "hits": 8
+  }
+ ],
+ "dailyHeartbeats": [
+  {
+   "day": "2026-11-20 00:00:00",
+   "hits": 1
+  },
+  {
+   "day": "2026-11-21 00:00:00",
+   "hits": 4
+  }
+ ],
+ "assets": [
+  {
+   "asset": "release.json",
+   "country": "KR",
+   "channel": "direct",
+   "hits": 2
+  },
+  {
+   "asset": "easyagent-native-darwin-arm64.dmg",
+   "country": "KR",
+   "channel": "site",
+   "hits": 1
+  },
+  {
+   "asset": "release.json",
+   "country": "CN",
+   "channel": "direct",
+   "hits": 1
+  },
+  {
+   "asset": "easyagent-native-darwin-arm64.dmg",
+   "country": "CN",
+   "channel": "site",
+   "hits": 1
+  },
+  {
+   "asset": "easyagent-bridge-darwin-arm64",
+   "country": "KR",
+   "channel": "direct",
+   "hits": 1
+  },
+  {
+   "asset": "easyagent-darwin-arm64",
+   "country": "KR",
+   "channel": "direct",
+   "hits": 1
+  },
+  {
+   "asset": "checksums.txt",
+   "country": "KR",
+   "channel": "direct",
+   "hits": 1
+  }
+ ],
+ "versions": [
+  {
+   "clientVer": "0.50.4",
+   "heartbeats": 1
+  },
+  {
+   "clientVer": "0.51.0",
+   "heartbeats": 1
+  }
+ ],
+ "totals": {
+  "downloads": 8,
+  "heartbeats": 5,
+  "heartbeats7d": 5,
+  "countries": 2
+ },
+ "generatedAt": "2026-11-21T17:07:58Z"
+}

@@ -24,6 +24,8 @@ const canonical = absoluteUrl('/stats/');
 </main>
 
 <script>
+  import { withBase } from '../lib/site';
+
   interface Row { [k: string]: string | number }
   interface Stats {
     totals: { downloads: number; heartbeats: number; heartbeats7d: number; countries: number };
@@ -31,6 +33,7 @@ const canonical = absoluteUrl('/stats/');
     dailyHeartbeats: { day: string; hits: number }[];
     assets: { asset: string; country: string; channel: string; hits: number }[];
     versions: { clientVer: string; heartbeats: number }[];
+    generatedAt?: string;
   }
 
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -80,11 +83,19 @@ const canonical = absoluteUrl('/stats/');
   }
 
   const root = document.getElementById('stats-root');
-  if (root) {
-    fetch('https://dl.hwj123hwj.asia/stats.json')
+  function loadStats(src: string, label: string): Promise<void> {
+    return fetch(src)
       .then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json() as Promise<Stats>; })
-      .then((s) => { root.innerHTML = render(s); })
-      .catch((e) => { root.innerHTML = `<p class="stats-error">看板暂不可用：${esc(String(e).slice(0, 120))}——分发下载不受影响，稍后重试。</p>`; });
+      .then((s) => {
+        root!.innerHTML = render(s)
+          + '<p class="stats-note">数据来源：' + label + (s.generatedAt ? ' · 快照时间 ' + esc(s.generatedAt) : '') + '</p>';
+      });
+  }
+  if (root) {
+    // 首选 dl 分发层实时数据；失败（大陆直连 Cloudflare 不稳等）回退同源每小时快照
+    loadStats('https://dl.hwj123hwj.asia/stats.json', 'dl 分发层实时')
+      .catch(() => loadStats(withBase('/stats-snapshot.json'), '每小时快照'))
+      .catch((e) => { root.innerHTML = '<p class="stats-error">看板暂不可用：' + esc(String(e).slice(0, 120)) + '——分发下载不受影响，稍后重试。</p>'; });
   }
 </script>
 </Base>
@@ -98,6 +109,7 @@ const canonical = absoluteUrl('/stats/');
   .stats-sub { max-width: 46rem; color: var(--muted, #8b95a7); line-height: 1.7; margin-bottom: 2rem; }
   .stats-loading, .stats-empty, .stats-error { color: var(--text-tertiary, #8fa79b); font-size: .9rem; }
   .stats-error { color: #f87171; }
+  .stats-note { font-size: .75rem; color: var(--text-tertiary, #8fa79b); margin-top: .8rem; }
   .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .9rem; margin-bottom: 1.2rem; }
   .stats-card { background: var(--bg-secondary, #132122); border: 1px solid var(--bg-hover, #213333); border-radius: 12px; padding: 1.1rem 1.2rem; }
   .stats-card b { display: block; font-size: 1.9rem; line-height: 1.2; }

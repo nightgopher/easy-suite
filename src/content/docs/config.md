@@ -1,0 +1,201 @@
+# 配置
+
+环境变量示例见 [`.env.example`](https://github.com/nightgopher/easyagent/tree/main/.env.example)，配置实现见 [`sdk/config/config.go`](https://github.com/nightgopher/easyagent/tree/main/sdk/config/config.go)。当前只读取 `EA_*` 名称，不再回退到 `PI_GO_*`；飞书桥接地址 `PI_AGENT_URL` 是仍在使用的独立变量。
+
+## 加载顺序
+
+核心入口先查找当前目录 `easyagent.yaml`，否则查找 `~/.easyagent/config.yaml`，再应用环境变量，最后应用已解析的命令行运行选项。
+
+环境加载会补充 `.env` → `.env.local` → `~/.easyagent/.env` → `~/.easyagent/.env.local`，已有的非空环境值不会被覆盖。因此 `.env.local` **不是覆盖层**。设置 `EA_ENV_FILE` 时仅加载指定文件及其 `.local` 文件。`EA_HOME` 可改变默认用户配置目录。
+
+桥接的 dotenv 加载与核心不同：指定 `EA_ENV_FILE` 时只加载该文件，否则加载当前目录和用户配置目录中的 `.env`；另可读取 `/feishu setup` 保存的凭据。systemd 部署建议使用显式 EnvironmentFile，见 [部署文档](../mini_deploy/)。
+
+## 模型与认证
+
+OpenAI 兼容服务：
+
+```dotenv
+EA_PROVIDER=openai
+EA_BASE_URL=http://localhost:4001
+EA_MODEL=your-model-id
+EA_API_KEY=your-api-key
+```
+
+应显式填写自己的模型与地址。`EA_MODEL`、`EA_BASE_URL`、`EA_API_KEY` 分别优先于 `OPENAI_MODEL`、`OPENAI_BASE_URL`、`OPENAI_API_KEY`。
+
+智谱 GLM Coding Plan（订阅额度）走同一 OpenAI 兼容通道，地址带版本段时不再叠加 `/v1`：
+
+```dotenv
+EA_PROVIDER=openai
+EA_BASE_URL=https://open.bigmodel.cn/api/coding/paas/v4
+EA_MODEL=glm-5.3
+EA_API_KEY=your-coding-plan-key
+```
+
+国际版把地址域名换成 `https://api.z.ai/api/coding/paas/v4`。思考开关用 `EA_THINKING=enabled/disabled`（GLM 会随工具调用轮次自动回放 reasoning_content）；Coding Plan 端点不提供 `/models` 模型目录，模型 ID 需显式填写。桌面端「设置 → 模型连接」内置同名选项。
+
+Anthropic 使用 `EA_PROVIDER=anthropic` 和 `ANTHROPIC_API_KEY`、`ANTHROPIC_MODEL`、`ANTHROPIC_BASE_URL`。CLI 支持 `openai` / `anthropic` / `deepv`；开发测试注入 mock 或使用本地模拟接口，`EA_PROVIDER=mock` 不是有效的 CLI 配置。Provider 默认为空，正常使用需配置。
+
+EasyCode 账号可在 macOS / Linux 桌面「设置 → 模型连接 → EasyCode 飞书登录」中使用。CLI 运行 `easyagent easycode login` 完成飞书授权后，会选择账号可用模型并作为后续 CLI 对话的默认模型；可用 `easyagent easycode models` 查看模型，`easyagent easycode use <模型 ID>` 切换，或首次登录时使用 `easyagent easycode login --model <模型 ID>` 指定。`easyagent easycode status` 查询状态，`easyagent easycode off` 停用 CLI 的 EasyCode 模式并恢复原配置（保留登录），`easyagent easycode logout` 退出账号。模型目录暂不可用时登录仍会保存，可稍后列出并选择模型。
+
+远程 SSH 登录可执行 `easyagent easycode login --no-browser`，并在本机另一个终端按提示运行 SSH 本地端口转发，然后在本机浏览器打开登录地址。回调仅监听远程主机的回环地址。CLI 的模型选择不会更改桌面或 `serve` 的模型配置；命令所在 shell 显式设置的 `EA_PROVIDER` 优先于保存的 CLI 选择，`EA_MODEL` / `OPENAI_MODEL` 可覆盖 EasyCode 模型。`.env` 中的旧默认配置则在 `easycode off` 后恢复。
+
+EasyAgent 的 EasyCode 凭据位于 `EA_HOME/easycode/credentials.json`，使用用户私有目录和文件权限，并独立于 EasyCode 原客户端。访问令牌到期自动续期；退出只删除这份本机凭据。桌面使用自身的 `EA_HOME=core-home`，与普通 CLI 各自登录。默认服务是 `https://api-code.deepvlab.ai`；测试或自建服务可通过 `EA_EASYCODE_BASE_URL` 指定 HTTPS 地址（本机回环地址允许 HTTP）。
+
+`EA_SERVER_API_KEY` 单独设置 HTTP API Bearer 令牌，不改变上游模型密钥。未设置时兼容使用 `EA_API_KEY` 作为服务令牌。使用 Anthropic 时，上游密钥来自 `ANTHROPIC_API_KEY`。
+
+桌面客户端启动自己的本地服务时生成独立的随机 `EA_SERVER_API_KEY`，保留用户模型配置；远程连接使用目标服务的令牌。
+
+扫码中继使用独立的设备凭据，不向手机或中继发放 Owner Key。中继服务单独使用 `EA_RELAY_REGISTRATION_KEY` 控制电脑注册，默认监听回环 `127.0.0.1:8787`，须置于 HTTPS/WSS 代理后；[部署与配对说明](../relay_access_design/)。
+
+| 服务配置 | 默认 / 行为 |
+|---|---|
+| `EA_HOST` / `EA_PORT` | `127.0.0.1` / `8080`；`serve --listen` 可指定监听地址 |
+| `EA_SERVER_API_KEY` | HTTP API 独立令牌，优先于 `EA_API_KEY`；`/health` 公开 |
+| `EA_API_KEY` | OpenAI 兼容上游密钥，兼容作为未单独配置时的服务令牌 |
+| 未设置 API Key | 默认仅接受 loopback 来源的 API 请求 |
+| `EA_ALLOW_NO_AUTH=1` | 显式放开普通 API；不能用于绕过飞书设置管理接口的认证 |
+| `EA_ALLOWED_ORIGINS` | 逗号分隔的允许来源，按部署需求配置 |
+| 错误令牌限流 | 同一非 loopback 来源 1 分钟内错误令牌达 10 次，封禁 5 分钟（返回 `429` 与 `Retry-After`，封禁期内正确令牌也被拒绝）；不带令牌的请求不计数，loopback 不受限。来源取直连地址，不信任 `X-Forwarded-For`，经反向代理时所有请求会共用代理地址 |
+
+Web 页面可加载不代表 API 已获授权。远程使用需要登录；WebSocket 的认证细节见 [API](../api/)。
+
+### 模型图片能力
+
+`EA_MODELS_FILE` 可指向本地模型目录 JSON（默认 `~/.easyagent/models.json`，不存在时读取数据目录的 `models.json`）：
+
+```json
+[
+  {"id":"my-text-model","provider":"openai","supports_images":false},
+  {"id":"my-vision-model","provider":"openai","input_modalities":["text","image"]}
+]
+```
+
+网关 `/v1/models` 的条目可提供 `supports_images`、`supports_vision` 或 `input_modalities`（按此顺序取明确值）；本地明确配置优先。缺失元数据时保持原有图片行为，不按模型名前缀推断。目录在应用初始化时加载，修改文件后需重启核心。
+
+明确不支持图片的模型会收到文字提示，要求切换视觉模型；上传图片、历史工具图片和新读取的图片/截图均不会作为图片块发往上游。工具结果也显示提示。原始用户附件仍保存在会话历史中，切换视觉模型后可继续使用。`GET /models` 的条目和当前模型通过可选 `supports_images` 字段暴露此能力。
+
+## 工具和文件路径
+
+| 变量 | 默认值 | 作用 |
+|---|---|---|
+| `EA_WORKSPACE` | 当前工作目录 | 会话工作目录 |
+| `EA_DATA_DIR` | `./data` | 会话运行数据 |
+| `EA_HOME` | `~/.easyagent` | 用户配置与凭据目录 |
+| `EA_ENABLE_BASH` | `false` | 启用命令执行工具 |
+| `EA_AUTO_APPROVE` | `false` | 跳过交互工具确认，对应 `-y`（CLI 的 `-y` 还会解除文件工具路径限制，见下） |
+| `EA_DEFAULT_ACCESS_MODE` | 沿用 `EA_AUTO_APPROVE`，未开启时为 `ask` | 新会话默认 `ask` / `full`；已保存的主机设置优先 |
+| `EA_ALLOW_OUTSIDE_WORKSPACE` | `false` | 允许文件工具访问工作区外路径 |
+| `EA_ENABLE_WEB` | `true` | 启用网页抓取工具，设为 `false` 可关闭 |
+| `EA_ENABLE_WEB_SEARCH` | `true` | 启用搜索工具，设为 `false` 可关闭 |
+| `EA_WEB_TIMEOUT_SECONDS` | `30` | 网页请求超时 |
+| `EA_MAX_OUTPUT_LEN` | `51200` | 工具输出长度上限（50KB，对齐 pi） |
+| `EA_SYNOPSIS_THRESHOLD` | `51200` | 输出概览化阈值：超过该长度的大输出对模型替换为结构概览（可用 `full_output` 工具按 ref 取回全文）。read/grep 等内容型工具豁免 |
+| `EA_ALLOWED_TOOLS` / `EA_BLOCKED_TOOLS` | 空 | 逗号分隔的工具过滤名单 |
+| `EA_PROMPT_TEMPLATE` | 空 | 自定义系统提示模板 |
+
+搜索和公开网页抓取默认启用；未保存主机开关时，已有配置文件或环境变量中显式设置的 `false` 仍然有效。CLI 也可用 `--web=false` / `--web-search=false` 关闭，或用 `--web=true` / `--web-search=true` 覆盖已有配置。`EA_ALLOWED_TOOLS` 和 `EA_BLOCKED_TOOLS` 仍可限制这两个工具。默认搜索先请求 DuckDuckGo，失败时在同一次超时预算内尝试 Bing RSS；查询会发送给所用的搜索服务。设置 `SEARXNG_URL` 后仅使用指定的 SearXNG，不会向其他搜索服务回退。`WEB_SEARCH_TIMEOUT` 设置总超时秒数，默认 15 秒。网络限制、服务反爬或模型不支持工具调用仍可能使搜索不可用。
+
+桌面「设置 → 工具权限 → 内置工具」和网页设置可分别启停文件读取、文件修改、终端命令、联网搜索和读取网页，显示开关的配置来源及工具过滤后的实际状态。文件读取包含 `read`、`grep`、`find`、`ls`；文件修改包含 `write`、`edit`、`patch`、`delete_file`；终端开关控制 `bash` 和后台任务工具。这些开关只控制对应内置工具，不限制终端命令或其他已授权工具的能力，也不替代审批策略。
+
+开关保存在当前运行主机的 `<EA_DATA_DIR>/settings.json`，影响保存后新建或重新加载的会话；已经加载的会话和正在执行的任务保留原工具配置。桌面、网页、手机和飞书通过同一个主机服务时共享设置；独立 CLI 只有指向相同 `EA_DATA_DIR` 时才读取同一份设置。启动时的默认值、YAML 和环境变量提供初始状态，用户保存的主机设置覆盖它们，显式 `--web` / `--web-search` 参数优先并在界面显示为不可编辑。`EA_ALLOWED_TOOLS` / `EA_BLOCKED_TOOLS` 仍独立约束工具；即使开关打开，工具也可能因此不可用或部分可用。
+
+`easyagent serve --allow-outside-workspace` 与环境开关等效。默认检查绝对路径、相对路径及符号链接，防止文件工具逃出工作区；放开后仍受运行用户的系统权限限制。CLI 的 `-y` 会同时跳过审批并解除此路径限制，`--allow-outside-workspace=false` 可在 `-y` 下单独收回；API 认证始终独立。HTTP 工作区文件接口仍有自己的路径检查，不能把文件工具开关理解为所有 API 的任意路径访问许可。
+
+Bash 并非文件路径沙箱；启用它就授予相应系统命令能力。启用后同时提供 `bash_output` / `bash_kill`：`bash` 带 `run_in_background` 时立即返回任务 ID，适合开发服务器、监听和长构建；前台命令到达 `timeout` 仍未结束时不再被终止，而是自动移交后台任务（返回任务 ID，续用 `bash_output` / `bash_kill`），`sleep` 开头的命令除外；后台任务不受 `timeout` 限制，会话关闭或程序退出时终止。serve 模式的 Web 与桌面客户端提供工具审批，等待批准会在两分钟后自动拒绝。SDK 调用者须提供自己的确认回调；不能依赖 TUI 的提示保护服务。`-y` / `EA_AUTO_APPROVE=true` 会显式跳过审批，包括未信任的 MCP 工具。危险命令识别不是安全边界，隔离与 HTTPS 部署见 [安全模型](../security_model/)。
+
+## 默认工具权限
+
+桌面「设置 → 工具权限」与 Web 设置页可分别保存普通客户端和飞书的默认权限。飞书默认为 `full`（完全权限），普通客户端未设置时沿用 `EA_AUTO_APPROVE`，通常为 `ask`（每次询问）。保存到当前主机 `<dataDir>/settings.json`，无需重启；只影响新会话。每个会话的权限会独立保存，重启后保留。已有会话可在会话权限菜单切换；飞书可用 `/new` 创建采用新默认值的会话。
+
+YAML 可配置：
+
+```yaml
+default_access_mode: ask
+channel_access_modes:
+  feishu: full
+```
+
+`full` 自动批准普通工具确认，不解除 MCP 的独立信任要求、必须回答的问题、工具启用开关或工作区路径限制。飞书选择 `ask` 后，通过已配对使用者的机器人私聊卡片允许一次或拒绝；普通工具审批两分钟未处理会拒绝，绝不会因超时自动放行。
+
+## 工具按需加载
+
+默认 `off`（完整加载）。设置 → 模型连接 → 工具加载可选择 `local`（按需加载）；Web 设置页也提供相同的主机设置。保存后下一次任务生效，当前任务继续使用开始时的目录与策略。
+
+```yaml
+tool_search: local
+```
+
+也可设置 `EA_TOOL_SEARCH=local` 或 `easyagent serve --tool-search local`。启动优先级：默认值 → YAML → 环境变量 → `<dataDir>/settings.json` 的 `tool_search_mode` → 显式 CLI 参数。运行时 API 保存会更新主机策略。非法模式报错，设置不会写入客户端的主题/语言偏好。
+
+按需模式保持基础文件、终端、交互等工具常驻；MCP 和显式标记的网页、电脑控制、技能市场工具先由 `search_tools` 检索，下一次模型请求获得匹配工具的完整参数，随后按原名执行。现有工具过滤和审批继续生效；服务的 `alwaysLoad: true` 可让该服务的 MCP 工具常驻，详见 [MCP](../mcp/)。
+
+已安装 Skills 的名称、简介与路径仍提供给模型，正文按需读取，不经过工具搜索。搜索采用本地关键词匹配，不额外请求模型或向量服务；可能增加一次模型调用。关闭/过滤 `search_tools` 或没有延迟候选时，使用当前允许的完整工具集合。实现及恢复行为见 [设计记录](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/tool-discovery.md)。
+
+## 可选能力
+
+| 配置 | 用途 |
+|---|---|
+| `EA_EXECUTION_MODE=ssh`、`EA_SSH_HOST`、`EA_SSH_PORT`、`EA_SSH_WORKDIR` | SSH 执行后端；端口默认 22 |
+| `EA_MCP_CONFIG` / `--mcp-config` / YAML `mcp_config` | 用户 MCP 配置文件，默认 `EA_HOME/mcp.json`；项目文件与授权见 [MCP](../mcp/) |
+| `EA_KB_REPO_PATH` | 知识库目录；未设置时运行入口使用 `~/agent-lessons` |
+| `EA_SKILL_MARKET`、`EA_SKILL_MARKET_BASE_URL`、`EA_SKILL_MARKET_SKILL_DIR` | 技能市场（EasyCode 官方 skill store）；默认开启，`EA_SKILL_MARKET=0` 关闭。安装到 `EA_SKILL_MARKET_SKILL_DIR`（默认 `~/.agents/skills`），下一轮或新会话生效，见 [技能市场](../skill_market/) |
+| `EA_EXPERT_MARKET`、`EA_EXPERT_MARKET_BASE_URL` | 专家市场（同一商城的专家/专家团模板目录，源为 easycode-skills-workspace 的 `catalog/expert-templates.json`）；默认开启，`EA_EXPERT_MARKET=0` 关闭且 REST 端点 `/experts/market/*` 不注册。YAML 对应 `expert_market_base_url`。桌面端「业务 Agent → 专家市场」浏览与一键安装，安装即写入业务 Agent/专家团，下次执行生效；模板绑定的技能缺失时在响应 `missing_skills` 中提示 |
+| `ASR_API_KEY`、`ASR_MODEL`、`ASR_BASE_URL` | 语音识别；未设置 ASR Key 时可回退到 SiliconFlow Key |
+| `EA_FEISHU_ENV_FILE`、`FEISHU_OWNER_STATE_FILE` | 托管飞书配置与配对状态，见 [飞书](../feishu/) |
+| `FEISHU_BUILTIN_APP_SECRET` | 预注册内置应用的浏览器授权流程所需密钥；原随源码发布的值已移除并轮换，只能通过环境变量提供 |
+
+不要将运行 `.env`、访问令牌或配对状态提交到 Git。部署更新保留这些独立文件。
+
+### 语音识别的网关回退
+
+`ASR_API_KEY` 与 `ASR_BASE_URL` 可显式配置专用语音服务；文件中的专用 ASR 凭据、地址与模型会保留。没有专用配置时，`SILICONFLOW_API_KEY` 使用默认 SiliconFlow 地址；否则复用 OpenAI 兼容网关的密钥和地址。显式设置其他 `ASR_BASE_URL` 时必须同时提供语音密钥，不会将网关或 SiliconFlow 凭据转发到该地址。地址可包含 `/v1`，网关需支持 `audio/transcriptions` 与 `ASR_MODEL`（默认 `TeleAI/TeleSpeechASR`）。
+
+本机飞书设置支持扫码授权并确认保存应用凭据；授权凭据存于该主机的 EasyAgent 配置目录，不回显密钥。保存不会自动启动桥接，需另行启动或重启 `easyagent-bridge`。托管 systemd 桥接继续使用已有自建应用和使用者配对设置。扫码使用飞书注册接口，服务不可用时可使用自建应用。
+
+## 实验性电脑控制
+
+`EA_ENABLE_COMPUTER_USE`（默认 `false`）与 `EA_COMPUTER_APPROVAL_POLICY`（`ask` 默认，或 `auto`）控制新建/重新加载的编码会话。桌面设置保存在数据目录的 `settings.json`，启动时覆盖环境与 YAML 中的对应项；已加载会话保持配置快照。
+
+从 v0.14.0 起，macOS 14+ 的桌面安装包内置原生 `EasyAgent Computer Use` helper，自动从应用资源目录发现，不需要安装或配置 CUA MCP。首次使用在设置中的「电脑控制」分区启用并点击「请求系统权限」，按照 macOS 提示为 EasyAgent / EasyAgent Computer Use 授予辅助功能和屏幕录制权限；返回应用会自动刷新状态。如系统要求退出重开，请重启 EasyAgent。系统授权不会被应用自动代办。v0.17.1 及此前公开包使用 ad hoc 测试签名，更新后已有授权可能因签名变化而失效：即使系统开关显示开启，进程的权限探测仍会返回未授权。此时在辅助功能和屏幕录制中移除旧 EasyAgent 条目，再用「+」添加 `/Applications/EasyAgent.app`，并退出重开；两项权限需分别处理。Linux、Windows 及旧版 macOS 暂不支持。
+
+上述 ad hoc 问题适用于 v0.17.1 及此前的公开包。从 v0.17.2 起正式构建固定同一证书与 Bundle ID，并拒绝缺少固定签名的发布；从旧身份迁移时可能仍需确认一次系统授权。验证必须从实际 EasyAgent 进程发起：从终端或其他已授权应用启动 helper 的权限状态不能代替桌面端结果。签名配置与跨版本身份检查见 [发布指南](../releasing/#macos-固定代码身份)。
+
+从 v0.15.0 起，电脑控制改为后台目标窗口模式：先由 `list_apps` 获取应用和窗口身份，再为截图、状态与动作指定 `bundle_id`、`pid`、`window_id`；坐标以目标窗口左上角为原点。截图可读取被其他应用遮挡的目标窗口，点击、文本选择、编辑与滚动通过指定窗口的辅助功能控件执行，普通按键发往目标进程，不移动用户鼠标或激活应用。文本点击与输入应放在同一动作批；未适配的控件（例如缺少辅助功能支持的画布）明确报错，不能改用全局鼠标。滚动量按窗口中心滚动区的宽高换算为滚动位置增量，正向右/下，不保证精确像素距离。你可继续使用其他应用；同时编辑同一目标窗口仍会冲突。窗口关闭、身份变化或应用不支持后台操作时明确停止，不退回全局前台控制。旧会话中的无目标动作需要重新观察并指定目标。
+
+电脑控制包括应用与窗口列表、目标窗口截图、目标窗口的辅助功能元素树、坐标点击、文字输入、组合键、滚动及等待。截图直接作为图像回传给支持视觉输入的模型，并在会话历史中持久化；仅文本模型不能正确使用截图。每个截图像素对应目标窗口内的逻辑坐标，元素树也使用相同坐标，密码字段不读取值也不输入。截图与会话保存在本机数据目录，需按会话数据对待；图像会随模型请求发送给所选 Provider。原生 helper 不依赖 shell、AppleScript、第三方 MCP 或外部下载。
+
+审批策略独立于编码会话的完全权限；`ask` 批次及 `auto` 中退出/注销/锁屏/强制退出组合键必须经交互批准。单批最多 20 个动作、累计等待最多 50 秒，整批先校验再执行；取消会终止 helper 并释放占用，但已发生的操作不回滚。审计列表记录实际控制过的应用，不是允许列表。已加载会话保留配置快照，新建或重新加载后生效。CLI 单独安装仍可使用可执行文件旁或 PATH 中兼容的 helper。
+
+兼容 helper 的 CLI 契约：`status` 返回 `accessibility` / `screen_recording` 布尔值；`request-permissions` 打开权限面板；`tool screenshot --args '{"output_dir":"…"}'` 返回 `path`；`tool app_state` 返回 JSON 应用状态；`tool perform_action --args '{"actions":[…]}'` 仅整批完成时返回 `{"success":true,"focused_app":"应用 ID"}`，失败返回非零退出码或 `{"success":false,"error":"原因"}`。批次按顺序执行，不保证回滚，失败不可盲目重放。所有输出走 stdout，诊断走 stderr。
+
+### 命令超时与自动压缩
+
+`bash` 未指定 `timeout` 时默认等待 120 秒；模型可为构建、测试等显式指定更长秒数，用户停止任务仍会取消命令。界面显示的是本次命令的超时，而非工具的固定上限。
+
+自动压缩估算包含消息、系统提示词和工具定义，与桌面上下文用量一致。默认超过窗口 60% 时尝试清理旧工具输出，累计至少节省 2048 tokens 才持久化；超过 80% 或侵入输出预留区（默认 16384 tokens）时直接调用 LLM 做深度摘要，不先微压缩来推迟摘要。保留最近约 20000 tokens，不删除 JSONL 中的原始会话记录。SDK 可用 `compaction.Settings` 调整比例、预留与回收阈值；没有摘要通道的 SDK 调用方只能做微压缩。
+
+## 思考与流式响应
+
+默认不添加思考参数，沿用当前服务和模型的默认行为。原生客户端的“全局模型配置 → 思考与流式响应”可配置以下选项；远程主机通过自身配置设置。
+
+| 环境变量 | YAML 字段 | 行为 |
+|---|---|---|
+| `EA_THINKING` | `thinking` | 空值保持默认；`enabled` / `disabled` 显式请求思考开关；Anthropic 另支持 `adaptive`，仅用于支持它的模型 |
+| `EA_THINKING_BUDGET` | `thinking_budget` | Anthropic `enabled` 模式必填，至少 1024 token；请求输出上限同时为预算预留回答空间 |
+| `EA_REASONING_EFFORT` | `reasoning_effort` | OpenAI 兼容服务的可选推理强度；具体支持值由模型决定，留空不发送 |
+| `EA_STREAM_IDLE_TIMEOUT` | — | 正数 Go 时长，例如 `300s` / `5m`；默认 300 秒。任意 body 字节到达即刷新，独立于 120 秒响应头超时 |
+| `EA_MODEL_MAX_RETRIES` | — | 收到 200 响应头之前的瞬态失败（429/5xx、连接错误）的重试上限，0–10，默认 3（首次请求后最多再试 3 次）。无 `Retry-After` 时依次等待 5、10、20 秒，增加次数时单次封顶 30 秒。优先遵守秒数或 HTTP-date 形式的 `Retry-After`，单次超过 2 分钟时停止自动重试，不会提前重发。400/401/403、明确的额度/计费错误不重试；开始输出后不重试，取消立即终止。与零内容流的恢复次数独立 |
+| `EA_AUTO_CONTINUE` | — | `true` / `false`（默认开启）；长回复遇到 length 截断或网关吞掉 finish_reason 时自动续写并提示用户 |
+
+仅对支持的模型启用思考；它可能增加耗时和 token。GLM-5.3 系列强制思考，不能选择 `disabled`；其原生 API 仅支持 `max` / `high` / `low` 等指定强度，参见[智谱思考文档](https://docs.bigmodel.cn/cn/guide/capabilities/thinking)。Anthropic 签名思考块会随工具上下文完整保存和回传，参见[官方思考文档](https://platform.claude.com/docs/en/docs/build-with-claude/extended-thinking)。OpenAI Chat Completions 的 `reasoning_effort` 支持值依模型而定，参见[官方接口说明](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create)。
+
+SSE 空流仍按原有上限退避重试；空闲超时仅在一个 body 字节都未收到时重试一次。有部分数据或调用方取消时不会自动重发。错误包含第几轮模型请求、连接尝试序号、响应头时间、首个 body 字节时间、接收字节数和最后数据距今时间，便于定位网关与上游停滞；不会记录请求正文或密钥。
+
+自动重试只重发当前轮的模型请求，保留已经执行并保存的工具结果，不重跑整条任务。等待期间任务仍处于运行中，桌面/网页显示倒计时和次数，飞书卡片显示次数与本次等待时间；停止任务会中断等待。自动恢复失败后，支持续跑的任务仍可使用「从已保存的工具结果继续」。
+
+## 分叉与失败续跑
+
+`POST /sessions/{id}/fork` 支持可选 `application`：省略继承源 Agent，`""` 或 `"coding"` 为编程。知识库 Agent 已下线，旧会话保留为历史记录；知识库浏览和原有数据不受影响。`entry_id` 和 `before_message_index` 互斥；运行中仅允许本轮之前的历史分叉，整条分叉和本轮消息返回 409。带工具调用的切点自动延伸至全部工具结果；工具尚未完成时返回说明性错误。源会话继续运行。
+
+`POST /sessions/{id}/run/continue` 接受 `{"run_id":"失败任务ID","request_id":"唯一请求ID"}`，返回 202。仅对最新失败／中断任务、且上下文停在已保存工具结果时可用；原生客户端显示“从已保存的工具结果继续”。服务重用现有上下文请求模型，不再次写入原始用户问题，也不重新执行已保存的工具；模型后续主动提出的新工具请求仍按正常权限流程处理。过期任务返回冲突；重复 `request_id` 返回同一次接受结果。

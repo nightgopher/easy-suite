@@ -13,4 +13,16 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+// easyagent docs/ 快照（scripts/sync-docs.mjs 构建前拉取）：无 frontmatter，
+// 标题在渲染时从首个 H1 heading 取，取不到再回退 slug。
+const docs = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/docs' }),
+  schema: z.object({}).passthrough(),
+});
+
+const changelog = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/changelog' }),
+  schema: z.object({}).passthrough(),
+});
+
+export const collections = { blog, docs, changelog };

@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { withBase, absoluteUrl, OG_IMAGE } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('docs');
+  // glob loader 的 entry.id 已去掉 .md 扩展名（如 'config'）。
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+type Props = { entry: CollectionEntry<'docs'> };
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const h1 = headings.find((h) => h.depth === 1);
+const title = h1?.text ?? entry.id.toUpperCase();
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const canonical = absoluteUrl(`/docs/${entry.id}/`);
+---
+<Base title={`${title} · EasyAgent 文档`} description={`EasyAgent ${title} 文档：Go 驱动的个人 AI 编程助手与 Agent 工作台。`} schema={{
+  '@context': 'https://schema.org', '@type': 'TechArticle',
+  headline: title, inLanguage: 'zh-CN', image: OG_IMAGE,
+  url: canonical,
+  author: { '@type': 'Person', name: 'nightgopher', url: 'https://github.com/nightgopher' },
+}}>
+<main class="docs-page">
+  <div class="container docs-layout">
+    <nav class="docs-toc" aria-label="本页目录">
+      <p class="docs-toc-title">本页目录</p>
+      <ul>
+        {toc.map((h) => <li class={`toc-d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
+      </ul>
+    </nav>
+    <article class="prose docs-body">
+      <p class="docs-crumb"><a href={withBase('/docs/')}>← 文档索引</a> · 来自 <a href={`https://github.com/nightgopher/easyagent/blob/main/docs/${entry.id.replace(/\.md$/, '').toUpperCase()}.md`} target="_blank" rel="noopener">easyagent/docs</a></p>
+      <Content />
+    </article>
+  </div>
+</main>
+</Base>
+
+<style>
+  .docs-page { padding: 2.5rem 0 4rem; }
+  .docs-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 2.5rem; }
+  .docs-toc { position: sticky; top: 5.5rem; align-self: start; max-height: calc(100vh - 7rem); overflow: auto; font-size: .82rem; }
+  .docs-toc-title { font-weight: 600; margin-bottom: .6rem; color: var(--muted, #7a8699); }
+  .docs-toc ul { list-style: none; margin: 0; padding: 0; }
+  .docs-toc li { margin: .3rem 0; line-height: 1.5; }
+  .docs-toc .toc-d3 { padding-left: 1rem; font-size: .96em; opacity: .85; }
+  .docs-toc a { color: inherit; text-decoration: none; }
+  .docs-toc a:hover { color: #34d399; }
+  .docs-crumb { font-size: .8rem; color: var(--muted, #7a8699); margin-bottom: 1.6rem; }
+  .docs-crumb a { color: inherit; }
+  @media (max-width: 900px) {
+    .docs-layout { grid-template-columns: 1fr; }
+    .docs-toc { display: none; }
+  }
+</style>

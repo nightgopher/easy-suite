@@ -1,0 +1,43 @@
+# EasyAgent 文档
+
+使用说明以当前源码为准。项目定位见 [项目首页](../readme/)，Web 产品与视觉约定见 [PRODUCT.md](https://github.com/nightgopher/easyagent/tree/main/PRODUCT.md) 和 [DESIGN.md](https://github.com/nightgopher/easyagent/tree/main/DESIGN.md)。
+
+## 使用与运行
+
+| 文档 | 内容 |
+|---|---|
+| [配置](../config/) | 模型、环境变量、文件访问策略、认证 |
+| [桌面客户端](../desktop/) | 本地/远程连接、桌面交互、macOS 构建 |
+| [扫码远程访问](../relay_access_design/) | 手机配对、端到端 TLS、中继部署与限制 |
+| [Android 手机端](../readme/) | APK 安装、远程连接、原生 Android 构建与限制 |
+| [MCP](../mcp/) | 传输、用户/项目配置、工具信任与 OAuth |
+| [技能市场](../skill_market/) | 浏览、安装与卸载官方技能市场技能 |
+| [飞书](../feishu/) | 网页配置、长连接、首次配对、故障定位 |
+| [安全模型与部署加固](../security_model/) | 威胁模型、哪些检查是安全边界、systemd/容器隔离、HTTPS 反向代理 |
+| [迷你主机部署](../mini_deploy/) | 自动更新、systemd 自启动、健康检查与回滚 |
+| [版本与发布](../releasing/) | tag、版本说明、发布校验与安装完整性 |
+| [API](../api/) | 对话、流式事件、会话和管理接口 |
+
+## 开发与设计
+
+- [架构](../architecture/)：源码分层、数据流和公共 SDK。
+- [工具发现与按需加载](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/tool-discovery.md)：工具分层、本地搜索、会话恢复和 Skills 边界。
+- [核心机制](../internals/)：工具生命周期、确认门、循环检测、双层压缩与事件流。
+- [贡献指南](../contributing/)：本地验证、PR、合并及分支清理。
+- [Worktree 开发指南](../worktrees/)：并行任务隔离、会话提交纪律与收尾清理。
+- [SDK 边界](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/sdk-extraction.md)、[Skills 与 Application](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/skills-vs-application.md)、[移除 LSP 工具](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/remove-lsp-tools.md)、[下线音乐应用](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/remove-music-application.md)：仍适用的设计取舍。工作流引擎的取舍记录见 decisions/workflow-engine.md（功能已于 2026-10 下线）。
+- [个人指挥台](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/personal-command-center.md)：目标、结果与设备调度的产品方向（讨论中，未实施），交互原型见 [prototypes/personal-command-center](../readme/)。
+
+## 历史调研
+
+[research/](https://github.com/nightgopher/easyagent/tree/main/docs/research/) 和 [references/](https://github.com/nightgopher/easyagent/tree/main/docs/references/) 保存外部项目分析与技术资料，仅反映各文档记录时的版本；其中的路径、功能比较和计划不代表 EasyAgent 当前实现，也不作为操作指令。当前接入方式请查阅上面的使用文档。
+
+过时的执行计划、重复能力快照和已失效路线图已移出当前目录树。需要追溯时使用 Git 历史，例如 `git log --all -- docs/archive`，不再为被删除文件创建空的归档跳转页。
+
+## 维护规则
+
+- 改动用户可见行为、配置、API 或部署流程时，同时更新对应文档与示例。
+- 一项事实保留一个主要说明入口，其他文档链接引用，避免重复维护能力清单和路线图。
+- 删除失效文档时修复入口与相对链接；有价值的历史研究明确标注时效。
+- 示例不得包含真实密钥、已使用的配对码或个人运行凭据。
+- 文档验证以源码、可运行示例和检查结果为依据，不把旧方案中的“计划完成”当成事实。

@@ -1,0 +1,112 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { withBase, absoluteUrl, OG_IMAGE } from '../../lib/site';
+
+const entries = await getCollection('docs');
+const byId = new Map(entries.map((e) => [e.id.replace(/\.md$/, ''), e]));
+const titleOf = async (slug: string, fallback: string) => {
+  const entry = byId.get(slug);
+  if (!entry) return { text: fallback, desc: '' };
+  const { headings } = await render(entry);
+  const h1 = headings.find((h) => h.depth === 1);
+  // 取 H1 后第一段非空文本作描述不可得（headings 只有标题树），描述用 slug 约定文案。
+  return { text: h1?.text ?? fallback, desc: DOC_DESC[slug] ?? '' };
+};
+
+const DOC_DESC: Record<string, string> = {
+  readme: '文档总览：项目定位、能力地图与各篇导览',
+  config: '配置说明：Provider、密钥、环境变量与运行参数',
+  desktop: '桌面端：MyGo 原生 app、命令行安装与自更新',
+  architecture: '架构总览：核心、bridge、服务端与客户端的分层',
+  api: 'API 参考：核心 CLI 与服务的对外接口',
+  internals: '内部实现：会话、工具循环与存储细节',
+  security: '安全模型：凭据、审批与访问边界',
+  mcp: 'MCP 接入：作为 MCP server 与客户端的配置',
+  feishu: '飞书接入：机器人通道与卡片交互',
+  'lark-watch': 'Lark Watch：飞书会话的观察与归档通道',
+  minideploy: '迷你主机部署：systemd 用户级服务与自动更新',
+  skills: '技能中心：内置 store、目录约定与技能市场',
+  contributing: '参与贡献：分支、worktree 与 PR 约定',
+  releasing: '发布流程：版本、资产与多平台分发',
+  worktrees: 'Worktree 管理：并行任务线与收尾约定',
+  relay: 'Relay 接入设计：远程设备的通道与权限',
+  ios: 'iOS 客户端设计文档（设计阶段）',
+  qa: 'Android QA：真机与模拟器的测试路径',
+};
+
+const groups: { title: string; slugs: string[] }[] = [
+  { title: '开始使用', slugs: ['readme', 'config', 'desktop'] },
+  { title: '接入与使用', slugs: ['mcp', 'feishu', 'lark-watch', 'minideploy', 'skills'] },
+  { title: '架构与实现', slugs: ['architecture', 'api', 'internals', 'security'] },
+  { title: '参与开发', slugs: ['contributing', 'releasing', 'worktrees'] },
+  { title: '设计与专项', slugs: ['relay', 'ios', 'qa'] },
+];
+
+const cards = await Promise.all(
+  groups.map(async (g) => ({
+    title: g.title,
+    items: (
+      await Promise.all(
+        g.slugs.map(async (slug) => ({ slug, ...(await titleOf(slug, slug)) })),
+      )
+    ).filter((item) => byId.has(item.slug)),
+  })),
+);
+
+const canonical = absoluteUrl('/docs/');
+---
+<Base title="EasyAgent 文档 · Easy Suite" description="EasyAgent 官方文档：配置、桌面端、MCP 与飞书接入、迷你主机部署、架构与安全模型。构建时自动同步自 easyagent 仓库。" schema={{
+  '@context': 'https://schema.org', '@type': 'CollectionPage',
+  name: 'EasyAgent 文档', inLanguage: 'zh-CN', url: canonical, image: OG_IMAGE,
+  isPartOf: { '@type': 'WebSite', name: 'Easy Suite' },
+}}>
+<main class="docs-index">
+  <section class="container">
+    <p class="docs-eyebrow"><span class="dot"></span>构建时自动同步自 easyagent 仓库</p>
+    <h1>文档</h1>
+    <p class="docs-sub">EasyAgent 的配置、接入、部署与架构文档。内容快照自 <a href="https://github.com/nightgopher/easyagent/tree/main/docs" target="_blank" rel="noopener">easyagent/docs</a>，每次站点构建自动拉取最新版。</p>
+  </section>
+
+  {cards.map((group) => (
+    <section class="container docs-group">
+      <h2>{group.title}</h2>
+      <div class="docs-grid">
+        {group.items.map((item) => (
+          <a class="docs-card" href={withBase(`/docs/${item.slug}/`)}>
+            <h3>{item.text}</h3>
+            {item.desc && <p>{item.desc}</p>}
+          </a>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <section class="container docs-changelog-link">
+    <a href={withBase('/changelog/')}>版本更新记录（CHANGELOG）→</a>
+  </section>
+</main>
+</Base>
+
+<style>
+  .docs-index { padding: 3.5rem 0 5rem; }
+  .docs-eyebrow { font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted, #7a8699); display: flex; align-items: center; gap: .5rem; }
+  .docs-eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; display: inline-block; }
+  .docs-index h1 { font-size: 2.4rem; margin: .6rem 0 1rem; }
+  .docs-sub { max-width: 46rem; color: var(--muted, #8b95a7); line-height: 1.7; }
+  .docs-sub a { color: inherit; }
+  .docs-group { margin-top: 2.8rem; }
+  .docs-group h2 { font-size: 1.15rem; margin-bottom: 1rem; }
+  .docs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+  .docs-card {
+    border: 1px solid rgba(122, 134, 153, .22); border-radius: 12px;
+    padding: 1.05rem 1.15rem; text-decoration: none; color: inherit;
+    background: rgba(122, 134, 153, .05); transition: border-color .15s;
+    display: block;
+  }
+  .docs-card:hover { border-color: #34d399; }
+  .docs-card h3 { font-size: .95rem; margin: 0 0 .3rem; }
+  .docs-card p { margin: 0; font-size: .8rem; color: var(--muted, #8b95a7); line-height: 1.6; }
+  .docs-changelog-link { margin-top: 3rem; font-size: .9rem; }
+  .docs-changelog-link a { color: inherit; }
+</style>

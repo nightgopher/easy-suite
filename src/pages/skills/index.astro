@@ -1,0 +1,91 @@
+---
+import Base from '../../layouts/Base.astro';
+import { withBase, absoluteUrl, OG_IMAGE } from '../../lib/site';
+import skillsRaw from '../../../skills-data/registry/skills.json';
+import promptsRaw from '../../../skills-data/registry/prompts.json';
+
+/**
+ * 技能市场（官网板块）。数据 = skills-data/registry/*.json（单仓库，随构建直读）。
+ * 技能本体的安装链（npx skills add）仍指向 nightgopher/custom-skills（归档只读，安装可用）。
+ */
+interface Entry {
+  id: string;
+  name: string;
+  displayName: string;
+  description: string;
+  emoji: string;
+  tags: string[];
+  scenarios: string[];
+}
+
+const skills = (skillsRaw as Entry[]).map((s) => ({ ...s, kind: 'skill' as const }));
+const prompts = (promptsRaw as Entry[]).map((p) => ({ ...p, kind: 'prompt' as const }));
+const all = [...skills, ...prompts];
+const allTags = [...new Set(all.flatMap((e) => e.tags ?? []))].sort();
+
+const canonical = absoluteUrl('/skills/');
+---
+<Base title="技能市场 · Easy Suite" description="EasyAgent / EasyGateway 技能市场：26 个技能与提示词的浏览与一键安装，与 EasyGateway 技能中心、easyagent 技能目录共用 ~/.agents/skills。" schema={{
+  '@context': 'https://schema.org', '@type': 'CollectionPage',
+  name: 'Easy Suite 技能市场', inLanguage: 'zh-CN', url: canonical, image: OG_IMAGE,
+}}>
+<main class="skills-page">
+  <section class="container">
+    <p class="skills-eyebrow"><span class="dot"></span>{all.length} 个条目 · 与 EasyAgent / EasyGateway 共用 ~/.agents/skills</p>
+    <h1>技能市场</h1>
+    <p class="skills-sub">浏览与安装 EasyAgent、EasyGateway 可用的技能与提示词。清单随主站构建自动更新；技能本体托管于 <a href="https://github.com/nightgopher/custom-skills" target="_blank" rel="noopener">nightgopher/custom-skills</a>（归档只读，安装命令持续有效）。</p>
+    <div class="skills-filter" id="skills-filter">
+      <button class="skills-tag active" data-tag="">全部</button>
+      {allTags.map((t) => <button class="skills-tag" data-tag={t}>{t}</button>)}
+    </div>
+  </section>
+
+  <section class="container skills-grid" id="skills-grid">
+    {all.map((e) => (
+      <a class="skills-card" href={withBase(`/skills/${e.kind === 'prompt' ? 'prompt-' : ''}${e.id}/`)} data-tags={JSON.stringify(e.tags ?? [])}>
+        <h3>{e.emoji} {e.displayName}</h3>
+        <p>{e.description}</p>
+        <div class="skills-tags">{(e.tags ?? []).map((t) => <span>{t}</span>)}</div>
+      </a>
+    ))}
+  </section>
+</main>
+
+<script>
+  // Astro 页面 <script> 不支持嵌套模板字符串，以下用常规 DOM API
+  const buttons = document.querySelectorAll<HTMLButtonElement>('#skills-filter .skills-tag');
+  const cards = document.querySelectorAll<HTMLAnchorElement>('#skills-grid .skills-card');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tag = btn.dataset.tag ?? '';
+      cards.forEach((card) => {
+        const tags: string[] = JSON.parse(card.dataset.tags ?? '[]');
+        card.style.display = !tag || tags.includes(tag) ? '' : 'none';
+      });
+    });
+  });
+</script>
+</Base>
+
+<style is:global>
+  .skills-page { padding: 3.5rem 0 5rem; }
+  .skills-eyebrow { font-size: .8rem; color: var(--text-tertiary, #8fa79b); display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  .skills-eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-agent, #82d5ca); display: inline-block; }
+  .skills-eyebrow a { color: inherit; }
+  .skills-page h1 { font-size: 2.2rem; margin: .6rem 0 1rem; }
+  .skills-sub { max-width: 52rem; color: var(--text-secondary, #acbeb6); line-height: 1.7; margin-bottom: 1.6rem; }
+  .skills-sub a { color: inherit; }
+  .skills-filter { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 2rem; }
+  .skills-tag { background: transparent; border: 1px solid var(--bg-hover, #213333); color: var(--text-secondary, #acbeb6); border-radius: 999px; padding: .28rem .85rem; font-size: .78rem; cursor: pointer; }
+  .skills-tag:hover { border-color: var(--accent-agent, #82d5ca); color: var(--text-primary, #e5efeb); }
+  .skills-tag.active { background: var(--accent-agent-dim, rgba(130, 213, 202, 0.12)); border-color: var(--accent-agent, #82d5ca); color: var(--accent-agent, #82d5ca); }
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1rem; }
+  .skills-card { background: var(--bg-secondary, #132122); border: 1px solid var(--bg-hover, #213333); border-radius: 12px; padding: 1.1rem 1.2rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: .5rem; }
+  .skills-card:hover { border-color: var(--accent-agent, #82d5ca); }
+  .skills-card h3 { font-size: .98rem; margin: 0; }
+  .skills-card p { margin: 0; font-size: .84rem; color: var(--text-secondary, #acbeb6); line-height: 1.6; flex: 1; }
+  .skills-tags { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .skills-tags span { font-size: .7rem; color: var(--text-tertiary, #8fa79b); border: 1px solid var(--bg-hover, #213333); border-radius: 999px; padding: .08rem .55rem; }
+</style>

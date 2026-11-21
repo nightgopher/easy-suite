@@ -359,13 +359,22 @@ async function serveStatsPage(env: Env): Promise<Response> {
   }
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const dailyBar = (rows: { day: string; hits: number }[], color: string) => {
-    const max = Math.max(1, ...rows.map((r) => r.hits));
     if (rows.length === 0) return '<p class="empty">暂无数据</p>';
-    return `<svg viewBox="0 0 ${rows.length * 26} 120" preserveAspectRatio="none" class="bars">` +
+    // viewBox 固定 720x130：柱子尺寸不随数据条数缩放（否则单天数据时整图被
+    // preserveAspectRatio="none" 拉伸数十倍）。栅格至少 7 格，柱宽封顶 48px。
+    const W = 720, H = 130, plotH = 104;
+    const slots = Math.max(rows.length, 7);
+    const slot = W / slots;
+    const bw = Math.min(48, slot - 6);
+    const max = Math.max(1, ...rows.map((r) => r.hits));
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="bars">` +
       rows.map((r, i) => {
-        const h = Math.max(2, Math.round((r.hits / max) * 100));
-        return `<rect x="${i * 26 + 4}" y="${110 - h}" width="18" height="${h}" rx="3" fill="${color}"><title>${esc(r.day)}：${r.hits}</title></rect>` +
-          `<text x="${i * 26 + 13}" y="119" text-anchor="middle" class="bar-label">${esc(r.day.slice(5))}</text>`;
+        const h = Math.max(2, Math.round((r.hits / max) * plotH));
+        const x = i * slot + (slot - bw) / 2;
+        const label = slots <= 20 || i % 2 === 0
+          ? `<text x="${i * slot + slot / 2}" y="${H - 6}" text-anchor="middle" class="bar-label">${esc(r.day.slice(5))}</text>`
+          : '';
+        return `<rect x="${x}" y="${plotH - h}" width="${bw}" height="${h}" rx="3" fill="${color}"><title>${esc(r.day)}：${r.hits}</title></rect>${label}`;
       }).join('') + '</svg>';
   };
   const cards = stats ? [

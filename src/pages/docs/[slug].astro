@@ -3,10 +3,10 @@ import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { withBase, absoluteUrl, OG_IMAGE } from '../../lib/site';
+import { DOC_GROUPS, sourceInfoForSlug } from '../../lib/docs';
 
 export async function getStaticPaths() {
   const entries = await getCollection('docs');
-  // glob loader 的 entry.id 已去掉 .md 扩展名（如 'config'）。
   return entries.map((entry) => ({
     params: { slug: entry.id },
     props: { entry },
@@ -20,43 +20,188 @@ const h1 = headings.find((h) => h.depth === 1);
 const title = h1?.text ?? entry.id.toUpperCase();
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const canonical = absoluteUrl(`/docs/${entry.id}/`);
+const source = sourceInfoForSlug(entry.id);
+
+// 构建全站文档侧边栏与上下篇序列
+const allEntries = await getCollection('docs');
+const titleMap = new Map<string, string>();
+await Promise.all(
+  allEntries.map(async (e) => {
+    const { headings: hs } = await render(e);
+    const first = hs.find((h) => h.depth === 1);
+    titleMap.set(e.id, first?.text ?? e.id);
+  }),
+);
+
+const navGroups = DOC_GROUPS.map((g) => ({
+  ...g,
+  items: g.slugs
+    .filter((s) => titleMap.has(s))
+    .map((s) => ({ slug: s, label: titleMap.get(s)! })),
+})).filter((g) => g.items.length > 0);
+
+const flatNav = navGroups.flatMap((g) => g.items);
+const curIdx = flatNav.findIndex((item) => item.slug === entry.id);
+const prevDoc = curIdx > 0 ? flatNav[curIdx - 1] : null;
+const nextDoc = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1] : null;
 ---
-<Base title={`${title} · EasyAgent 文档`} description={`EasyAgent ${title} 文档：Go 驱动的个人 AI 编程助手与 Agent 工作台。`} schema={{
+<Base title={`${title} · Easy Suite 文档`} description={`Easy Suite ${title} 文档：EasyAgent 与 EasyGateway 个人 AI 基础设施。`} schema={{
   '@context': 'https://schema.org', '@type': 'TechArticle',
   headline: title, inLanguage: 'zh-CN', image: OG_IMAGE,
   url: canonical,
   author: { '@type': 'Person', name: 'nightgopher', url: 'https://github.com/nightgopher' },
 }}>
 <main class="docs-page">
+  <div class="container docs-mobile-nav">
+    <details>
+      <summary>切换文档 · {title}</summary>
+      <div class="docs-mobile-groups">
+        {navGroups.map((g) => (
+          <div>
+            <p class="docs-nav-group-title">{g.title}</p>
+            <ul>
+              {g.items.map((item) => (
+                <li>
+                  <a href={withBase(`/docs/${item.slug}/`)} class={item.slug === entry.id ? 'active' : ''}>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </details>
+  </div>
+
   <div class="container docs-layout">
-    <nav class="docs-toc" aria-label="本页目录">
-      <p class="docs-toc-title">本页目录</p>
-      <ul>
-        {toc.map((h) => <li class={`toc-d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
-      </ul>
-    </nav>
+    <aside class="docs-sidebar" aria-label="文档导航">
+      {navGroups.map((g) => (
+        <div class="docs-nav-group">
+          <p class="docs-nav-group-title">{g.title}</p>
+          <ul>
+            {g.items.map((item) => (
+              <li>
+                <a href={withBase(`/docs/${item.slug}/`)} class={item.slug === entry.id ? 'active' : ''}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </aside>
+
     <article class="prose docs-body">
-      <p class="docs-crumb"><a href={withBase('/docs/')}>← 文档索引</a> · 来自 <a href={`https://github.com/nightgopher/easyagent/blob/main/docs/${entry.id.replace(/\.md$/, '').toUpperCase()}.md`} target="_blank" rel="noopener">easyagent/docs</a></p>
+      <p class="docs-crumb">
+        <a href={withBase('/docs/')}>← 文档中心</a>
+        <span>·</span>
+        <span>来源：<a href={source.url} target="_blank" rel="noopener">{source.label}</a></span>
+      </p>
       <Content />
+
+      {(prevDoc || nextDoc) && (
+        <nav class="post-nav docs-pager" aria-label="上下篇文档">
+          {prevDoc ? (
+            <a class="post-nav-link" href={withBase(`/docs/${prevDoc.slug}/`)}>
+              <span class="post-nav-dir">← 上一篇</span>
+              <span class="post-nav-title">{prevDoc.label}</span>
+            </a>
+          ) : <div />}
+          {nextDoc ? (
+            <a class="post-nav-link post-nav-next" href={withBase(`/docs/${nextDoc.slug}/`)}>
+              <span class="post-nav-dir">下一篇 →</span>
+              <span class="post-nav-title">{nextDoc.label}</span>
+            </a>
+          ) : <div />}
+        </nav>
+      )}
     </article>
+
+    {toc.length > 0 && (
+      <nav class="docs-toc" aria-label="本页目录">
+        <p class="docs-toc-title">本页目录</p>
+        <ul>
+          {toc.map((h) => <li class={`toc-d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
+        </ul>
+      </nav>
+    )}
   </div>
 </main>
 </Base>
 
 <style>
-  .docs-page { padding: 2.5rem 0 4rem; }
-  .docs-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 2.5rem; }
-  .docs-toc { position: sticky; top: 5.5rem; align-self: start; max-height: calc(100vh - 7rem); overflow: auto; font-size: .82rem; }
+  .docs-page { padding: 6.5rem 0 4.5rem; }
+  .docs-layout {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr) 190px;
+    gap: 2.2rem;
+    align-items: start;
+  }
+
+  .docs-sidebar {
+    position: sticky; top: 5.5rem;
+    max-height: calc(100vh - 7rem); overflow: auto;
+    font-size: .82rem; padding-right: .5rem;
+    border-right: 1px solid rgba(122, 134, 153, .14);
+  }
+  .docs-nav-group { margin-bottom: 1.25rem; }
+  .docs-nav-group-title {
+    font-size: .74rem; font-weight: 600; letter-spacing: .04em;
+    color: var(--muted, #7a8699); margin: 0 0 .4rem;
+  }
+  .docs-sidebar ul, .docs-mobile-groups ul { list-style: none; margin: 0; padding: 0; }
+  .docs-sidebar li, .docs-mobile-groups li { margin: .18rem 0; line-height: 1.45; }
+  .docs-sidebar a, .docs-mobile-groups a {
+    display: block; padding: .24rem .5rem; border-radius: 6px;
+    color: var(--text-secondary, #acbeb6); text-decoration: none;
+    transition: color .15s, background .15s;
+  }
+  .docs-sidebar a:hover, .docs-mobile-groups a:hover {
+    color: var(--text-primary, #e6f2ed);
+    background: rgba(122, 134, 153, .08);
+  }
+  .docs-sidebar a.active, .docs-mobile-groups a.active {
+    color: #34d399; font-weight: 600;
+    background: rgba(52, 211, 153, .1);
+  }
+
+  .docs-toc {
+    position: sticky; top: 5.5rem;
+    max-height: calc(100vh - 7rem); overflow: auto;
+    font-size: .8rem;
+  }
   .docs-toc-title { font-weight: 600; margin-bottom: .6rem; color: var(--muted, #7a8699); }
   .docs-toc ul { list-style: none; margin: 0; padding: 0; }
   .docs-toc li { margin: .3rem 0; line-height: 1.5; }
-  .docs-toc .toc-d3 { padding-left: 1rem; font-size: .96em; opacity: .85; }
+  .docs-toc .toc-d3 { padding-left: .9rem; font-size: .94em; opacity: .85; }
   .docs-toc a { color: inherit; text-decoration: none; }
   .docs-toc a:hover { color: #34d399; }
-  .docs-crumb { font-size: .8rem; color: var(--muted, #7a8699); margin-bottom: 1.6rem; }
-  .docs-crumb a { color: inherit; }
-  @media (max-width: 900px) {
-    .docs-layout { grid-template-columns: 1fr; }
+
+  .docs-crumb {
+    display: flex; flex-wrap: wrap; align-items: center; gap: .5rem;
+    font-size: .82rem; color: var(--muted, #7a8699); margin: 0 0 1.4rem;
+  }
+  .docs-crumb a { color: inherit; text-decoration: none; }
+  .docs-crumb a:hover { color: #34d399; }
+
+  .docs-pager { margin-top: 3rem; }
+
+  .docs-mobile-nav { display: none; margin-bottom: 1.2rem; }
+  .docs-mobile-nav details {
+    border: 1px solid rgba(122, 134, 153, .22); border-radius: 10px;
+    background: rgba(122, 134, 153, .06); padding: .6rem .9rem;
+  }
+  .docs-mobile-nav summary { cursor: pointer; font-size: .86rem; font-weight: 600; }
+  .docs-mobile-groups { margin-top: .8rem; display: grid; gap: .8rem; font-size: .82rem; }
+
+  @media (max-width: 1180px) {
+    .docs-layout { grid-template-columns: 210px minmax(0, 1fr); }
     .docs-toc { display: none; }
+  }
+  @media (max-width: 860px) {
+    .docs-layout { grid-template-columns: 1fr; }
+    .docs-sidebar { display: none; }
+    .docs-mobile-nav { display: block; }
   }
 </style>

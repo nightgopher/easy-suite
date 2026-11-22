@@ -1,6 +1,6 @@
 # EasyAgent 文档
 
-使用说明以当前源码为准。项目定位见 [项目首页](../readme/)，Web 产品与视觉约定见 [PRODUCT.md](https://github.com/nightgopher/easyagent/tree/main/PRODUCT.md) 和 [DESIGN.md](https://github.com/nightgopher/easyagent/tree/main/DESIGN.md)。
+使用说明以当前源码为准。项目定位见 [项目首页](https://github.com/nightgopher/easyagent/tree/main/README.md)，Web 产品与视觉约定见 [PRODUCT.md](https://github.com/nightgopher/easyagent/tree/main/PRODUCT.md) 和 [DESIGN.md](https://github.com/nightgopher/easyagent/tree/main/DESIGN.md)。
 
 ## 使用与运行
 
@@ -9,7 +9,7 @@
 | [配置](../config/) | 模型、环境变量、文件访问策略、认证 |
 | [桌面客户端](../desktop/) | 本地/远程连接、桌面交互、macOS 构建 |
 | [扫码远程访问](../relay_access_design/) | 手机配对、端到端 TLS、中继部署与限制 |
-| [Android 手机端](../readme/) | APK 安装、远程连接、原生 Android 构建与限制 |
+| [Android 手机端](https://github.com/nightgopher/easyagent/tree/main/mobile-native/README.md) | APK 安装、远程连接、原生 Android 构建与限制 |
 | [MCP](../mcp/) | 传输、用户/项目配置、工具信任与 OAuth |
 | [技能市场](../skill_market/) | 浏览、安装与卸载官方技能市场技能 |
 | [飞书](../feishu/) | 网页配置、长连接、首次配对、故障定位 |
@@ -26,7 +26,7 @@
 - [贡献指南](../contributing/)：本地验证、PR、合并及分支清理。
 - [Worktree 开发指南](../worktrees/)：并行任务隔离、会话提交纪律与收尾清理。
 - [SDK 边界](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/sdk-extraction.md)、[Skills 与 Application](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/skills-vs-application.md)、[移除 LSP 工具](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/remove-lsp-tools.md)、[下线音乐应用](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/remove-music-application.md)：仍适用的设计取舍。工作流引擎的取舍记录见 decisions/workflow-engine.md（功能已于 2026-10 下线）。
-- [个人指挥台](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/personal-command-center.md)：目标、结果与设备调度的产品方向（讨论中，未实施），交互原型见 [prototypes/personal-command-center](../readme/)。
+- [个人指挥台](https://github.com/nightgopher/easyagent/tree/main/docs/decisions/personal-command-center.md)：目标、结果与设备调度的产品方向（讨论中，未实施），交互原型见 [prototypes/personal-command-center](https://github.com/nightgopher/easyagent/tree/main/docs/prototypes/personal-command-center/README.md)。
 
 ## 历史调研
 

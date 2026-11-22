@@ -3,6 +3,10 @@
   {
    "day": "2026-11-20 00:00:00",
    "hits": 8
+  },
+  {
+   "day": "2026-11-22 00:00:00",
+   "hits": 5
   }
  ],
  "dailyHeartbeats": [
@@ -27,9 +31,21 @@
    "hits": 2
   },
   {
+   "asset": "release.json",
+   "country": "HK",
+   "channel": "direct",
+   "hits": 2
+  },
+  {
    "asset": "easyagent-native-darwin-arm64.dmg",
    "country": "KR",
    "channel": "site",
+   "hits": 1
+  },
+  {
+   "asset": "checksums.txt",
+   "country": "HK",
+   "channel": "direct",
    "hits": 1
   },
   {
@@ -39,9 +55,21 @@
    "hits": 1
   },
   {
+   "asset": "easyagent-linux-amd64",
+   "country": "HK",
+   "channel": "direct",
+   "hits": 1
+  },
+  {
    "asset": "easyagent-native-darwin-arm64.dmg",
    "country": "CN",
    "channel": "site",
+   "hits": 1
+  },
+  {
+   "asset": "easyagent-bridge-linux-amd64",
+   "country": "HK",
+   "channel": "direct",
    "hits": 1
   },
   {
@@ -74,10 +102,10 @@
   }
  ],
  "totals": {
-  "downloads": 8,
+  "downloads": 13,
   "heartbeats": 8,
   "heartbeats7d": 8,
-  "countries": 2
+  "countries": 3
  },
- "generatedAt": "2026-11-22T10:05:42Z"
+ "generatedAt": "2026-11-22T11:03:45Z"
 }

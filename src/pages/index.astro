@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { CANONICAL_ORIGIN } from '../lib/site';
+import { CANONICAL_ORIGIN, withBase } from '../lib/site';
 
 const author = { '@type': 'Person', name: 'nightgopher', url: 'https://github.com/nightgopher' };
 
@@ -35,7 +35,7 @@ const schema = {
 ---
 <Base
   title="Easy Suite · EasyAgent × EasyGateway — 个人 AI 基础设施"
-  description="Go 驱动的个人 AI 基础设施：EasyAgent 覆盖桌面、Android、Web、TUI 与飞书的 Agent 工作台；EasyGateway 统一入口、按能力调度多 Provider 的 AI 网关。开源，MIT。"
+  description="Go 驱动的个人 AI 基础设施：EasyAgent 把编程 Agent 带到桌面、Android、Web、终端与飞书；EasyGateway 统一入口、按能力调度多 Provider 的 AI 网关。开源，MIT。"
   schema={schema}
 >
 <main>
@@ -43,48 +43,44 @@ const schema = {
 <section class="hero">
   <div class="container hero-grid">
     <div class="hero-copy">
-      <p class="eyebrow"><span class="dot"></span>Go 构建 · 开源 · MIT License</p>
-      <h1>个人 AI 基础设施，<br><span class="grad-agent">Agent 工作台</span> 与 <span class="grad-gateway">统一网关</span></h1>
+      <p class="eyebrow"><span class="dot"></span>Go 构建 · 全栈开源 · MIT License</p>
+      <h1>把你的编程 Agent，<br>装进<span class="grad-agent">桌面、手机</span>和<span class="grad-gateway">飞书</span></h1>
       <p class="hero-sub">
-        <strong>EasyAgent</strong> 把编程 Agent 带到桌面、Android、Web、终端与飞书；
-        <strong>EasyGateway</strong> 用一个端点接入所有 AI 应用，按模型能力调度多个 Provider。
-        两者同源共建，开箱即用。
+        <strong>EasyAgent</strong> 让你像聊天一样读写代码、审批工具并保留可续历史；
+        <strong>EasyGateway</strong> 用一个本地端点统一接入并调度所有模型与额度。
+        本地优先，开箱即用。
       </p>
       <div class="hero-cta">
-        <a class="btn btn-agent" href="#easyagent">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          了解 EasyAgent
+        <a class="btn btn-agent" href={withBase('/download/')}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          立即下载
         </a>
-        <a class="btn btn-gateway" href="#easygateway">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><line x1="7" y1="7.5" x2="7" y2="7.5"/><line x1="7" y1="16.5" x2="7" y2="16.5"/></svg>
-          了解 EasyGateway
+        <a class="btn btn-gateway" href={withBase('/docs/')}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          两分钟上手
         </a>
       </div>
       <div class="hero-meta">
         <span class="chip" data-repo="easyagent"><i class="dot dot-agent"></i>EasyAgent <b class="ver">v0.38.0</b></span>
         <span class="chip" data-repo="easygateway"><i class="dot dot-gateway"></i>EasyGateway <b class="ver">v0.3.18</b></span>
-        <span class="chip chip-dim">持续更新中</span>
+        <span class="chip chip-dim">macOS · Linux · Android · Web · TUI</span>
       </div>
     </div>
 
-    <div class="hero-visual" aria-hidden="true">
-      <div class="console">
-        <div class="console-head">
-          <span class="c-dot"></span><span class="c-dot"></span><span class="c-dot"></span>
-          <span class="c-title">easygateway — :4001</span>
-        </div>
-        <div class="console-body">
-          <div class="log"><span class="m m-get">GET</span><span class="path">/health</span><span class="ok">200 · ok</span></div>
-          <div class="log"><span class="m m-post">POST</span><span class="path">/v1/messages</span><span class="tag tag-agent">claude code</span><span class="ok">anthropic ✓</span></div>
-          <div class="log"><span class="m m-post">POST</span><span class="path">/v1/chat/completions</span><span class="warn">deepseek 429</span><span class="ok">→ moonshot ✓</span></div>
-          <div class="log"><span class="m m-post">POST</span><span class="path">/v1/responses</span><span class="tag tag-gateway">codex cli</span><span class="ok">oauth · stream</span></div>
-          <div class="log"><span class="m m-get">GET</span><span class="path">/v1/models</span><span class="ok">模型目录已更新</span></div>
-          <div class="log log-cursor"><span class="path">▍</span></div>
-        </div>
+    <div class="hero-visual">
+      <div class="shot-frame shot-frame-hero">
+        <img
+          src={withBase('/screenshots/easyagent-desktop.webp')}
+          alt="EasyAgent 原生桌面客户端界面：深色青夜视觉、多工作区会话、模型切换与工具权限审批"
+          width="2094"
+          height="1630"
+          loading="eager"
+          decoding="async"
+        />
       </div>
       <div class="flow-chips">
-        <span>EasyAgent</span><i>→</i><span>Claude Code</span><i>→</i><span>Codex CLI</span><i>→</i><span>Pi</span><i>→</i><span>飞书</span>
-        <em>统一进入网关</em>
+        <span>桌面端</span><i>·</i><span>Android</span><i>·</i><span>Web</span><i>·</i><span>TUI</span><i>·</i><span>飞书</span>
+        <em>全端同一会话</em>
       </div>
     </div>
   </div>
@@ -95,10 +91,10 @@ const schema = {
 <!-- ===== 数据条 ===== -->
 <section class="stats">
   <div class="container stats-grid">
-    <div class="stat"><b>3</b><span>兼容协议（OpenAI Chat / Responses · Anthropic Messages）</span></div>
-    <div class="stat"><b>5+</b><span>EasyAgent 客户端形态（桌面 · Android · Web · TUI · 飞书）</span></div>
+    <div class="stat"><b>5+</b><span>原生与多端形态（桌面 · Android · Web · TUI · 飞书）</span></div>
+    <div class="stat"><b>3</b><span>网关兼容协议（OpenAI Chat / Responses · Anthropic Messages）</span></div>
     <div class="stat"><b>~18 MB</b><span>EasyGateway 内存占用，启动 &lt;1s</span></div>
-    <div class="stat"><b>2</b><span>开源项目，代码全部托管于 GitHub</span></div>
+    <div class="stat"><b>MIT</b><span>全栈 Go 开源，凭据与会话留在本机</span></div>
   </div>
 </section>
 
@@ -112,73 +108,89 @@ const schema = {
         </span>
         <div>
           <h2>EasyAgent</h2>
-          <p class="p-tagline">Go 驱动的个人 AI 编程助手与 Agent 工作台</p>
+          <p class="p-tagline">你的编程 Agent，读起来就像对话</p>
         </div>
         <a class="ver-pill ver-pill-agent" data-repo="easyagent" href="https://github.com/nightgopher/easyagent/releases/latest" target="_blank" rel="noopener">v0.38.0</a>
       </div>
       <p class="p-desc">
-        在对话中阅读与修改代码、执行工具、查看过程与结果，并保留可继续的历史会话。
-        日常以桌面或浏览器工作区为中心，也可以从终端或已配对的飞书账号发起任务；
-        底层 Agent 能力通过公共 Go SDK 复用。
+        在对话中阅读与修改代码、执行工具、按步审批，并把每一段任务保留为可恢复的历史会话。
+        在工位用原生桌面端或终端，出门用 Android 手机或飞书继续指挥同一台主机。
       </p>
+    </div>
+
+    <div class="showcase-split">
+      <div class="shot-frame">
+        <img
+          src={withBase('/screenshots/easyagent-desktop.webp')}
+          alt="EasyAgent 桌面客户端：按工作区组织会话、支持 /技能、@专家、#文件 与实时模型切换"
+          width="2094"
+          height="1630"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <div class="showcase-points">
+        <div class="sp-item">
+          <span class="sp-badge sp-badge-agent">桌面 · 远程主机</span>
+          <h3>连接本机与远程主机，一个窗口全搞定</h3>
+          <p>原生 Go / MyGo 界面，凭据存入系统钥匙串。按项目目录管理会话，支持 <code>/</code> 技能命令、<code>@</code> 专家与工具审批。</p>
+        </div>
+        <div class="sp-item">
+          <span class="sp-badge sp-badge-agent">Android · 飞书</span>
+          <h3>离开电脑，也能看进度、批权限、收文件</h3>
+          <p>Kotlin / Jetpack Compose 原生手机端可切换多台远程主机；飞书长连接支持流式卡片更新与 <code>send_file</code> 直达交付。</p>
+        </div>
+        <div class="sp-item">
+          <span class="sp-badge sp-badge-agent">Web · TUI · SDK</span>
+          <h3>全端共用内核，断线不丢进度</h3>
+          <p>Web 工作区支持断线恢复与草稿保留；终端 TUI 支持 <code>/loop</code> 循环任务；核心能力通过公共 Go SDK 复用。</p>
+        </div>
+      </div>
     </div>
 
     <div class="feature-grid">
       <article class="card">
         <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
         <h3>原生桌面客户端</h3>
-        <p>MyGo 原生界面（青夜视觉），连接本机与远程主机，Slash 命令、工具审批；凭据存系统钥匙串，安装包随 Release 发布。</p>
+        <p>MyGo 原生界面（青夜视觉），本机与远程主机一键切换、Slash 命令与工具审批；安装包随 Release 发布。</p>
       </article>
       <article class="card">
         <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
         <h3>Android 手机端</h3>
-        <p>Kotlin / Jetpack Compose 原生客户端，保存并切换多个远程主机，流式对话、工具审批与消息排队。</p>
+        <p>Jetpack Compose 原生客户端，保存多个远程主机，随时流式对话、审批命令与排队消息。</p>
       </article>
       <article class="card">
         <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
         <h3>Web 工作区</h3>
-        <p>流式对话、Slash 命令提示、模型切换、工具结果展开与历史会话；断线恢复当前任务，草稿不丢。</p>
+        <p>浏览器里也能获得完整体验：模型切换、工具结果展开、历史会话与飞书/MCP 可视化配置。</p>
       </article>
       <article class="card">
         <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></span>
         <h3>终端 TUI</h3>
-        <p>全屏界面、Markdown 渲染、工具分组折叠、鼠标选区复制，支持 <code>/loop</code> 循环任务与会话搜索。</p>
+        <p>全屏终端界面、Markdown 渲染、工具分组折叠、鼠标选区复制，支持 <code>/loop</code> 循环任务与会话搜索。</p>
       </article>
       <article class="card">
         <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
-        <h3>飞书对话</h3>
-        <p>长连接接收消息，支持文本与富文本，卡片随生成过程更新；首次配对后只接受已授权账号的操作。</p>
+        <h3>飞书对话与交付</h3>
+        <p>长连接接收消息，卡片随生成过程实时刷新；首次配对鉴权，支持向聊天主动播报与直达交付文件。</p>
       </article>
       <article class="card">
         <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
-        <h3>MCP 工具</h3>
-        <p>官方 Go SDK 传输：stdio、Streamable HTTP、兼容 SSE 与 OAuth，逐工具过滤；工具进入同一 Agent 执行流程。</p>
-      </article>
-      <article class="card">
-        <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
-        <h3>可复用 Go SDK</h3>
-        <p>模型 Provider、工具系统、会话持久化、上下文压缩、Skills、本地/SSH 执行与 AgentSession，零领域知识的核心层。</p>
-      </article>
-      <article class="card">
-        <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
-        <h3>技能市场</h3>
-        <p>内置官方 store 的搜索与安装，技能一键装到 <code>~/.agents/skills</code>，与 EasyGateway 共用同一目录。</p>
+        <h3>MCP 与技能市场</h3>
+        <p>官方 Go SDK 传输（stdio / Streamable HTTP / OAuth），内置技能市场一键安装到 <code>~/.agents/skills</code>。</p>
       </article>
       <article class="card card-cta">
         <div class="cta-info">
-          <h3>从源码开始</h3>
+          <h3>快速开始</h3>
           <div class="card-links">
-            <a href="https://github.com/nightgopher/easyagent/releases/latest" target="_blank" rel="noopener">macOS .dmg / Linux .deb ↓</a>
-            <a href="https://github.com/nightgopher/easyagent/releases/latest/download/easyagent-android.apk" target="_blank" rel="noopener">Android APK ↓</a>
-            <a href="https://github.com/nightgopher/easyagent/blob/main/docs/README.md" target="_blank" rel="noopener">文档索引 ↗</a>
+            <a href={withBase('/download/')}>下载桌面端 / Android ↓</a>
+            <a href={withBase('/docs/config/')}>配置指南 →</a>
           </div>
         </div>
         <div class="codebox">
-          <div class="codebox-head"><span>terminal</span><button class="copy-btn" type="button" data-copy>复制</button></div>
-<pre><code>git clone https://github.com/nightgopher/easyagent.git
-cd easyagent && make build
-cp .env.example .env   # 填写 Provider 与密钥
-./bin/easyagent serve --listen 127.0.0.1:8080</code></pre>
+          <div class="codebox-head"><span>macOS / Linux 一键安装 CLI</span><button class="copy-btn" type="button" data-copy>复制</button></div>
+<pre><code>curl -fsSL https://raw.githubusercontent.com/nightgopher/easyagent/main/scripts/install.sh | bash
+easyagent easycode login   # 或配置 EA_BASE_URL 后直接运行 easyagent</code></pre>
         </div>
       </article>
     </div>
@@ -195,15 +207,45 @@ cp .env.example .env   # 填写 Provider 与密钥
         </span>
         <div>
           <h2>EasyGateway</h2>
-          <p class="p-tagline">个人 AI 基础设施网关：统一入口 · 能力调度 · 账号渠道</p>
+          <p class="p-tagline">所有 AI 应用，共用一个本地或云端网关</p>
         </div>
         <a class="ver-pill ver-pill-gateway" data-repo="easygateway" href="https://github.com/nightgopher/easygateway/releases/latest" target="_blank" rel="noopener">v0.3.18</a>
       </div>
       <p class="p-desc">
-        把所有 AI 应用接到一个统一入口：对外支持 OpenAI Chat Completions、OpenAI Responses、
-        Anthropic Messages 三套协议，按模型能力自动路由，多级 fallback 与熔断恢复。
-        附带原生桌面管理端、账号渠道、技能市场、记忆与常驻助理。
+        把 Claude Code、Codex CLI、Pi 与 EasyAgent 全部接到同一个端点：
+        兼容 OpenAI Chat Completions、OpenAI Responses、Anthropic Messages 三套协议，
+        按能力调度模型链，遇 429 或故障自动 fallback 与熔断恢复。
       </p>
+    </div>
+
+    <div class="showcase-split showcase-split-reverse">
+      <div class="shot-frame">
+        <img
+          src={withBase('/screenshots/easygateway-desktop.webp')}
+          alt="EasyGateway 原生桌面管理端：模型与路由配置、Provider 探活、账号渠道、请求日志与个人记忆工作区"
+          width="1936"
+          height="1416"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <div class="showcase-points">
+        <div class="sp-item">
+          <span class="sp-badge sp-badge-gateway">三协议 · 能力调度</span>
+          <h3>一个端点接全套工具，429 自动切链</h3>
+          <p>按 <code>text</code> / <code>vision</code> 等能力选择模型，多级回退链与健康探活自动生效，彻底告别单家限流中断。</p>
+        </div>
+        <div class="sp-item">
+          <span class="sp-badge sp-badge-gateway">多密钥 · 用量核算</span>
+          <h3>给每个客户端发独立密钥与预算上限</h3>
+          <p>支持模型白名单（glob）与按天/周/月 token 限额，按「模型 × 渠道」拆分统计成本。</p>
+        </div>
+        <div class="sp-item">
+          <span class="sp-badge sp-badge-gateway">记忆 · 技能 · 助理</span>
+          <h3>跨客户端共享记忆与技能库</h3>
+          <p>个人记忆层（candidate / active 治理）、全站技能中心同步，以及基于 EasyAgent SDK 的常驻助理。</p>
+        </div>
+      </div>
     </div>
 
     <div class="feature-grid">
@@ -213,34 +255,14 @@ cp .env.example .env   # 填写 Provider 与密钥
         <p>一个端点、一套密钥接入 Claude Code、Codex CLI、Pi 等所有 AI 应用；支持流式、工具调用与多模态。</p>
       </article>
       <article class="card">
-        <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></span>
-        <h3>能力调度与 fallback</h3>
-        <p>按 text / vision 等能力选模型，多级模型链自动 fallback，健康检查与熔断恢复，请求级追踪与聚合指标。</p>
-      </article>
-      <article class="card">
         <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-        <h3>账号渠道</h3>
-        <p>桌面端 OAuth 登录上游账号，订阅额度跨客户端复用、自动续期；同一渠道多账号 429 自动换号。</p>
-      </article>
-      <article class="card">
-        <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></span>
-        <h3>多密钥管理</h3>
-        <p>给每个客户端发独立 gateway key，模型白名单（glob）与按天/周/月 token 限额，预算耗尽返回 429 与重置时间。</p>
-      </article>
-      <article class="card">
-        <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
-        <h3>技能中心</h3>
-        <p>custom-skills 清单同步，远端技能市场浏览、搜索、安装与卸载；技能目录与 EasyAgent 共用。</p>
-      </article>
-      <article class="card">
-        <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></span>
-        <h3>记忆与常驻助理</h3>
-        <p>跨客户端个人记忆层（candidate / active 治理、密钥守门）与流式常驻助理，助理基于 EasyAgent SDK 构建。</p>
+        <h3>EasyCode 账号渠道</h3>
+        <p>桌面端飞书登录 EasyCode，订阅额度跨客户端复用、自动续期；多账号 429 自动换号重试。</p>
       </article>
       <article class="card">
         <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></span>
-        <h3>归档与导出</h3>
-        <p>可控的完整对话归档：脱敏、限长、保留期清理；JSONL 增量导出供知识库消费。凭据与密钥永不落库。</p>
+        <h3>归档与增量导出</h3>
+        <p>可控的完整对话归档（脱敏、限长、保留期清理），JSONL 增量导出供知识库消费，凭据永不落库。</p>
       </article>
       <article class="card">
         <span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></span>
@@ -249,10 +271,10 @@ cp .env.example .env   # 填写 Provider 与密钥
       </article>
       <article class="card card-cta">
         <div class="cta-info">
-          <h3>一键安装</h3>
+          <h3>一键安装网关</h3>
           <div class="card-links">
-            <a href="https://github.com/nightgopher/easygateway/releases/latest" target="_blank" rel="noopener">.deb 服务端 / 桌面端 ↓</a>
-            <a href="https://github.com/nightgopher/easygateway/blob/main/go-gateway/README.md" target="_blank" rel="noopener">网关文档 ↗</a>
+            <a href={withBase('/download/')}>下载 .deb / 桌面端 ↓</a>
+            <a href={withBase('/docs/gateway_overview/')}>网关文档 →</a>
           </div>
         </div>
         <div class="codebox">
@@ -295,10 +317,10 @@ cp .env.example .env   # 填写 Provider 与密钥
 <section class="final-cta">
   <div class="container final-inner">
     <h2>现在开始</h2>
-    <p>两个项目都在 GitHub 开源，MIT 许可，欢迎 Star、Issue 与 PR。</p>
+    <p>两个项目都在 GitHub 开源，MIT 许可，欢迎下载试用、提交 Issue 与 PR。</p>
     <div class="hero-cta">
-      <a class="btn btn-agent" href="https://github.com/nightgopher/easyagent" target="_blank" rel="noopener">nightgopher/easyagent</a>
-      <a class="btn btn-gateway" href="https://github.com/nightgopher/easygateway" target="_blank" rel="noopener">nightgopher/easygateway</a>
+      <a class="btn btn-agent" href={withBase('/download/')}>前往下载页</a>
+      <a class="btn btn-gateway" href={withBase('/docs/')}>浏览文档中心</a>
     </div>
   </div>
 </section>

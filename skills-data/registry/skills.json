@@ -597,5 +597,36 @@
     "sourcePath": "skills/xiaohongshu-cli",
     "lastUpdated": "2026-05-06T08:13:58.000Z",
     "author": "jackwener"
+  },
+  {
+    "id": "easymage",
+    "name": "easymage",
+    "displayName": "EasyMage · 浏览器生图工坊",
+    "description": "Browser-based image generation studio: drive ChatGPT (logged-in session in Ego Lite) to produce styled social-media image sets - xiaohongshu nine-grid notes, guide cards, WeChat red-packet covers, avatars, banners. Includes reference-image injection, generation polling, output retrieval (download/library API/files API), nine-grid slicing, and xiaohongshu publish flow.\nTrigger: 生成配图, 小红书图文, 九宫格, 红包封面, 生图, 头像, 横幅, 攻略卡片, easymage.",
+    "detailedDescription": "浏览器生图工坊：用 Ego Lite 驱动已登录的 ChatGPT，按实战风格模板（极简产品风九宫格、攻略卡、头像横幅、红包封面）批量产出社媒配图。含参考图注入、生成轮询、成品取回（下载事件/library API/files API）、九宫格切页与小红书发布流水线。方法论源自 vane-gpt-image-skills（MIT）的浏览器自动化移植与扩展。",
+    "emoji": "🎨",
+    "tags": [
+      "Content",
+      "Image",
+      "SocialMedia"
+    ],
+    "scenarios": [
+      "小红书笔记九宫格配图（教育/旅游/生活方式选题）",
+      "公众号/抖音封面与攻略卡片",
+      "全平台统一的头像与横幅",
+      "春节红包封面批量设计"
+    ],
+    "aliases": [
+      "生图",
+      "小红书图文",
+      "配图生成",
+      "红包封面",
+      "九宫格",
+      "easymage"
+    ],
+    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill easymage",
+    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/easymage",
+    "sourcePath": "skills/easymage",
+    "lastUpdated": "2026-11-22T14:30:11.000Z"
   }
 ]

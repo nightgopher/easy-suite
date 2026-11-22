@@ -13,6 +13,10 @@
   {
    "day": "2026-11-21 00:00:00",
    "hits": 4
+  },
+  {
+   "day": "2026-11-22 00:00:00",
+   "hits": 3
   }
  ],
  "assets": [
@@ -71,9 +75,9 @@
  ],
  "totals": {
   "downloads": 8,
-  "heartbeats": 5,
-  "heartbeats7d": 5,
+  "heartbeats": 8,
+  "heartbeats7d": 8,
   "countries": 2
  },
- "generatedAt": "2026-11-22T06:14:11Z"
+ "generatedAt": "2026-11-22T07:35:04Z"
 }

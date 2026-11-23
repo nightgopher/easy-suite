@@ -18,8 +18,9 @@ EasyAgent / EasyGateway 的统一分发入口：302 分流 + 更新清单代理 
 | `GET /` | 302 到官网 |
 
 **看板依赖**：secret `AE_QUERY_TOKEN`（AE SQL API 读 token）+ var `AE_ACCOUNT_ID`。SQL API 方言注意：
-时间列叫 `timestamp`（非 `_timestamp`/`interval_start`）、`count()` 无参、无 `uniq`（活跃客户端以
-心跳次数近似）、时间函数用 `toStartOfDay`/`NOW() - INTERVAL 'N' DAY`。统计任何一步失败不影响主流程。
+时间列叫 `timestamp`（非 `_timestamp`/`interval_start`）、`count()` 无参、无 `uniq`（独立客户端去重
+见「统计口径」的 GROUP BY 行数写法）、时间函数用 `toStartOfDay`/`NOW() - INTERVAL 'N' DAY`。
+统计任何一步失败不影响主流程。
 
 `<repo>` 当前支持：`easyagent`、`easygateway`（`worker/src/index.ts` 的 `TARGETS`）。
 
@@ -42,18 +43,24 @@ blobs:   [路由, repo, 版本/清单版本, 资产, 渠道(ch=), 国家码, 客
 - 不落原始 IP：仅存 `sha256(ip + 当日UTC日期)` 前 12 位，用于当日去重
 - 心跳语义：客户端每次拉更新清单 = 一次活跃证明；`?v=` 上报客户端自身版本（PR-3 起携带），
   汇聚出**活跃安装数 / 版本分布 / 升级速度**
+- 下载口径（2026-11-22 起）：`release.json` / `checksums.txt` 走 dl 路由但**不计入安装包下载**
+  （worker 的 `META_ASSETS`），只算"清单/校验命中"——真实下载看 `installs`，不要看 `downloads`
 - 查询示例（Analytics Engine SQL API）：
 
 ```sql
--- 近 7 天按天活跃客户端（心跳去重）
-SELECT interval_start, COUNT(DISTINCT blob8) AS active_clients
-FROM easy_suite_dl WHERE blob1 = 'upd' AND timestamp > NOW() - 7d
-GROUP BY interval_start;
-
 -- 各渠道下载量
 SELECT blob5 AS channel, COUNT(*) FROM easy_suite_dl
 WHERE blob1 = 'dl' AND timestamp > NOW() - 30d GROUP BY blob5;
 ```
+
+- **独立客户端去重的方言写法**（AE SQL 无 `uniq`/`COUNT(DISTINCT)`/子查询，
+  参考实现见 `src/index.ts` 的 `distinctClients`）：`GROUP BY day, blob8` 每组返回一行，
+  **返回行数即去重客户端数**。受 AE 单查询 1 万行上限约束，超限只会少算不会报错。
+- 看板数据（`/stats.json` 与官网快照同构）关键读法：
+  - `totals.installs` 真实安装包下载；`metaHits` 清单/校验命中；`downloads` 两者之和（兼容旧字段）
+  - `totals.uniqueClients` / `uniqueDownloaders` 心跳 / 下载按 IP 哈希去重，查询失败为 `null`
+  - `versions` 含空串行 = 未带 `?v=` 的心跳，官网显示"未上报"
+  - "累计"均指 AE 保留窗口内（约 90 天），且为采样近似值
 
 ## 本地开发与部署
 

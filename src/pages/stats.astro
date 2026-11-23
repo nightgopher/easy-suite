@@ -14,9 +14,9 @@ const canonical = absoluteUrl('/stats/');
 }}>
 <main class="stats-page">
   <section class="container">
-    <p class="stats-eyebrow"><span class="dot"></span>dl.hwj123hwj.asia 匿名聚合统计 · 只含当日哈希去重的 IP · <a href="https://dl.hwj123hwj.asia/stats.json">JSON</a></p>
+    <p class="stats-eyebrow"><span class="dot"></span>dl.hwj123hwj.asia 匿名聚合统计 · IP 以当日哈希去重 · <a href="https://dl.hwj123hwj.asia/stats.json">JSON</a></p>
     <h1>分发看板</h1>
-    <p class="stats-sub">下载与更新心跳的实时聚合：官网与命令行安装计一次下载，客户端每次检查更新计一次心跳。</p>
+    <p class="stats-sub">安装漏斗的实时聚合：安装包命中计一次下载，客户端每次检查更新计一次心跳，心跳按 IP 去重即独立活跃客户端。</p>
   </section>
   <section class="container" id="stats-root">
     <p class="stats-loading">加载统计数据…</p>
@@ -28,9 +28,16 @@ const canonical = absoluteUrl('/stats/');
 
   interface Row { [k: string]: string | number }
   interface Stats {
-    totals: { downloads: number; heartbeats: number; heartbeats7d: number; countries: number };
+    totals: {
+      installs: number; metaHits: number; downloads: number;
+      heartbeats: number; heartbeats7d: number;
+      uniqueClients: number | null; uniqueDownloaders: number | null;
+      countries: number;
+    };
     dailyDownloads: { day: string; hits: number }[];
+    dailyInstalls: { day: string; hits: number }[];
     dailyHeartbeats: { day: string; hits: number }[];
+    dailyClients: { day: string; clients: number }[] | null;
     assets: { asset: string; country: string; channel: string; hits: number }[];
     versions: { clientVer: string; heartbeats: number }[];
     generatedAt?: string;
@@ -69,17 +76,22 @@ const canonical = absoluteUrl('/stats/');
 
   function render(s: Stats): string {
     const cards = [
-      { label: '下载量（累计）', value: s.totals.downloads },
+      { label: '安装包下载（累计）', value: s.totals.installs },
       { label: '更新心跳（累计）', value: s.totals.heartbeats },
+      { label: '独立活跃客户端', value: s.totals.uniqueClients === null ? '—' : s.totals.uniqueClients },
       { label: '近 7 天心跳', value: s.totals.heartbeats7d },
       { label: '覆盖国家', value: s.totals.countries },
     ];
     const cardHtml = cards.map((c) => '<div class="stats-card"><b>' + c.value + '</b><span>' + c.label + '</span></div>').join('');
+    const clientChart = s.dailyClients === null
+      ? '<p class="stats-empty">暂无数据</p>'
+      : dailyBar(s.dailyClients.map((c) => ({ day: c.day, hits: c.clients })), '#fbbf24');
     return '<div class="stats-cards">' + cardHtml + '</div>'
-      + '<div class="stats-panel"><h2>每日下载</h2>' + dailyBar(s.dailyDownloads, '#34d399') + '</div>'
+      + '<div class="stats-panel"><h2>每日安装包下载</h2>' + dailyBar(s.dailyInstalls, '#34d399') + '</div>'
       + '<div class="stats-panel"><h2>每日更新心跳</h2>' + dailyBar(s.dailyHeartbeats, '#60a5fa') + '</div>'
+      + '<div class="stats-panel"><h2>每日独立活跃客户端（IP 哈希去重）</h2>' + clientChart + '</div>'
       + '<div class="stats-panel"><h2>下载资产明细</h2>' + table(['资产', '国家', '渠道', '次数'], s.assets.map((a) => [a.asset, a.country, a.channel, String(a.hits)])) + '</div>'
-      + '<div class="stats-panel"><h2>客户端版本分布（心跳上报）</h2>' + table(['版本', '心跳'], s.versions.map((v) => [v.clientVer, String(v.heartbeats)])) + '</div>';
+      + '<div class="stats-panel"><h2>客户端版本分布（心跳上报）</h2>' + table(['版本', '心跳'], s.versions.map((v) => [v.clientVer === '' ? '未上报（未带 ?v=）' : v.clientVer, String(v.heartbeats)])) + '</div>';
   }
 
   const root = document.getElementById('stats-root');
@@ -88,7 +100,9 @@ const canonical = absoluteUrl('/stats/');
       .then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json() as Promise<Stats>; })
       .then((s) => {
         root!.innerHTML = render(s)
-          + '<p class="stats-note">数据来源：' + label + (s.generatedAt ? ' · 快照时间 ' + esc(s.generatedAt) : '') + '</p>';
+          + '<p class="stats-note">口径：安装包下载 = 二进制资产命中，release.json / checksums.txt 等清单与校验命中不计入下载（见资产明细）。'
+          + '独立活跃客户端 = 心跳按客户端 IP 当日哈希去重。「累计」指 Analytics Engine 保留窗口内（约 90 天），数据为采样近似值。'
+          + '数据来源：' + label + (s.generatedAt ? ' · 快照时间 ' + esc(s.generatedAt) : '') + '</p>';
       });
   }
   if (root) {

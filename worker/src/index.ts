@@ -65,6 +65,9 @@ const LATEST_TTL = 3600; // latest tag 解析缓存
 const MANIFEST_TTL = 600; // 更新清单回源缓存
 const INSTALL_TTL = 300; // 安装脚本回源缓存
 
+/** 走 dl 路由但不算"安装包下载"的资产：更新清单与校验和（安装脚本内部步骤） */
+const META_ASSETS = new Set(['release.json', 'checksums.txt']);
+
 const ASSET_RE = /^[\w][\w.{}@+-]*$/; // 资产/清单名白名单
 const TAG_RE = /^v[\w.+-]+$/; // v 开头的 tag（含预发布）
 const REPO_RE = /^[\w-]+$/;
@@ -293,11 +296,32 @@ function json(body: unknown, status: number): Response {
 /* ── /stats 看板：Worker 经 SQL API 查自己的 AE 数据集，固定聚合查询，无参数入口 ── */
 
 interface StatsPayload {
-  totals: { downloads: number; heartbeats: number; heartbeats7d: number; countries: number };
+  totals: {
+    /** 安装包/二进制资产命中（真实下载口径） */
+    installs: number;
+    /** release.json / checksums.txt 等清单与校验命中，不计入下载 */
+    metaHits: number;
+    /** installs + metaHits，兼容旧消费方保留 */
+    downloads: number;
+    heartbeats: number;
+    heartbeats7d: number;
+    /** 独立活跃客户端（心跳 IP 当日哈希去重）；查询失败为 null，前端显示 — */
+    uniqueClients: number | null;
+    /** 独立下载者（dl 路由 IP 哈希去重）；查询失败为 null */
+    uniqueDownloaders: number | null;
+    countries: number;
+  };
+  /** 每日 dl 路由全部命中（含清单/校验，兼容字段） */
   dailyDownloads: { day: string; hits: number }[];
+  /** 每日安装包下载（剔除 META_ASSETS） */
+  dailyInstalls: { day: string; hits: number }[];
   dailyHeartbeats: { day: string; hits: number }[];
+  /** 每日独立活跃客户端；查询失败为 null */
+  dailyClients: { day: string; clients: number }[] | null;
   assets: { asset: string; country: string; channel: string; hits: number }[];
+  /** clientVer 为空串的行 = 未带 ?v= 的心跳，前端显示"未上报" */
   versions: { clientVer: string; heartbeats: number }[];
+  generatedAt: string;
 }
 
 /** AE SQL API 单次查询；非 200 或空响应抛错，由调用方聚合降级 */
@@ -316,30 +340,87 @@ async function aeQuery(env: Env, sql: string): Promise<Record<string, string>[]>
 }
 
 async function fetchStats(env: Env): Promise<StatsPayload> {
-  // AE 的 ClickHouse 子集：count() 无参、时间列为 timestamp、无 uniq——
-  // "活跃客户端"以 7 天心跳次数近似（流量小时两者几乎相等）。
-  const [dailyDl, dailyUpd, assets, versions, active] = await Promise.all([
-    aeQuery(env, "SELECT toStartOfDay(timestamp) AS day, count() AS hits FROM easy_suite_dl WHERE blob1 = 'dl' GROUP BY day ORDER BY day"),
+  // AE 的 ClickHouse 子集：count() 无参、时间列为 timestamp、无 uniq/无子查询——
+  // 独立客户端去重用等价写法：GROUP BY day, blob8 的返回行数 = 该日去重客户端数
+  // （每组一行，数行数即数组数）。两个去重查询失败不拖垮看板，降级为 null。
+  const [dailyDlAsset, dailyUpd, assets, versions, active, updClients, dlClients] = await Promise.all([
+    aeQuery(env, "SELECT toStartOfDay(timestamp) AS day, blob4 AS asset, count() AS hits FROM easy_suite_dl WHERE blob1 = 'dl' GROUP BY day, asset ORDER BY day LIMIT 10000"),
     aeQuery(env, "SELECT toStartOfDay(timestamp) AS day, count() AS hits FROM easy_suite_dl WHERE blob1 = 'upd' GROUP BY day ORDER BY day"),
     aeQuery(env, "SELECT blob4 AS asset, blob6 AS country, blob5 AS channel, count() AS hits FROM easy_suite_dl WHERE blob1 = 'dl' GROUP BY blob4, blob6, blob5 ORDER BY hits DESC LIMIT 30"),
-    aeQuery(env, "SELECT blob7 AS clientVer, count() AS heartbeats FROM easy_suite_dl WHERE blob1 = 'upd' AND blob7 != '' GROUP BY blob7 ORDER BY heartbeats DESC LIMIT 15"),
+    aeQuery(env, "SELECT blob7 AS clientVer, count() AS heartbeats FROM easy_suite_dl WHERE blob1 = 'upd' AND blob7 != '' GROUP BY clientVer ORDER BY heartbeats DESC LIMIT 15"),
     aeQuery(env, "SELECT count() AS heartbeats7d FROM easy_suite_dl WHERE blob1 = 'upd' AND timestamp > NOW() - INTERVAL '7' DAY"),
+    distinctClients(env, 'upd'),
+    distinctClients(env, 'dl'),
   ]);
-  const downloads = dailyDl.reduce((sum, r) => sum + Number(r.hits || 0), 0);
+
+  const dailyDownloads = rollupDaily(dailyDlAsset);
+  const dailyInstalls = rollupDaily(dailyDlAsset.filter((r) => !META_ASSETS.has(String(r.asset || ''))));
+  const downloads = dailyDownloads.reduce((sum, r) => sum + r.hits, 0);
+  const installs = dailyInstalls.reduce((sum, r) => sum + r.hits, 0);
   const heartbeats = dailyUpd.reduce((sum, r) => sum + Number(r.hits || 0), 0);
   const countries = new Set(assets.map((r) => r.country).filter(Boolean)).size;
+
+  // 版本表补"未上报"行：心跳总数 - 已带 ?v= 之和（两次独立查询间 AE 近似可能有
+  // 毫秒级漂移，负值钳 0），让表与总量对得上而不是像数据坏了
+  const versionRows = versions.map((r) => ({ clientVer: r.clientVer || '', heartbeats: Number(r.heartbeats || 0) }));
+  const reported = versionRows.reduce((sum, r) => sum + r.heartbeats, 0);
+  const unreported = Math.max(0, heartbeats - reported);
+  if (unreported > 0) versionRows.push({ clientVer: '', heartbeats: unreported });
+
   return {
     totals: {
+      installs,
+      metaHits: downloads - installs,
       downloads,
       heartbeats,
       heartbeats7d: Number(active[0]?.heartbeats7d || 0),
+      uniqueClients: updClients?.total ?? null,
+      uniqueDownloaders: dlClients?.total ?? null,
       countries,
     },
-    dailyDownloads: dailyDl.map((r) => ({ day: String(r.day), hits: Number(r.hits || 0) })),
+    dailyDownloads,
+    dailyInstalls,
     dailyHeartbeats: dailyUpd.map((r) => ({ day: String(r.day), hits: Number(r.hits || 0) })),
+    dailyClients: updClients
+      ? [...updClients.byDay.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([day, clients]) => ({ day, clients }))
+      : null,
     assets: assets.map((r) => ({ asset: r.asset || '', country: r.country || '', channel: r.channel || '', hits: Number(r.hits || 0) })),
-    versions: versions.map((r) => ({ clientVer: r.clientVer || '', heartbeats: Number(r.heartbeats || 0) })),
+    versions: versionRows,
+    generatedAt: new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC',
   };
+}
+
+/** 按天汇总（行内可带 asset 等任意分组维度，只累加 hits） */
+function rollupDaily(rows: Record<string, string>[]): { day: string; hits: number }[] {
+  const byDay = new Map<string, number>();
+  for (const r of rows) {
+    const day = String(r.day || '');
+    byDay.set(day, (byDay.get(day) ?? 0) + Number(r.hits || 0));
+  }
+  return [...byDay.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([day, hits]) => ({ day, hits }));
+}
+
+/**
+ * 独立客户端去重（指定路由）：GROUP BY day, blob8 每组返回一行，
+ * 该日的行数 = 当日去重 IP 哈希数，总行数 = 窗口内去重客户端数。
+ * 行数受 AE 单查询 1 万行上限约束——按当前流量够用数年，超限只会少算不会报错。
+ * 失败返回 null（看板显示 —），不影响其余面板。
+ */
+async function distinctClients(env: Env, route: 'dl' | 'upd'): Promise<{ byDay: Map<string, number>; total: number } | null> {
+  try {
+    const rows = await aeQuery(
+      env,
+      `SELECT toStartOfDay(timestamp) AS day, blob8 AS ipHash, count() AS hits FROM easy_suite_dl WHERE blob1 = '${route}' AND blob8 != '' GROUP BY day, ipHash LIMIT 10000`,
+    );
+    const byDay = new Map<string, number>();
+    for (const r of rows) {
+      const day = String(r.day || '');
+      byDay.set(day, (byDay.get(day) ?? 0) + 1);
+    }
+    return { byDay, total: rows.length };
+  } catch {
+    return null;
+  }
 }
 
 async function serveStatsJson(env: Env): Promise<Response> {

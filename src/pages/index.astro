@@ -30,6 +30,43 @@ const schema = {
       author,
       softwareVersion: 'v0.3.18',
     },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'EasyAgent 和 EasyGateway 是什么关系？需要两个都装吗？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '两者可以独立使用，也可以配合。只用 EasyAgent 就能通过飞书登录 EasyCode 或直连 OpenAI/Anthropic/智谱模型；只用 EasyGateway 可以为 Claude Code、Codex CLI、Pi 提供统一入口与多模型 fallback。把 EasyAgent 的 EA_BASE_URL 指向 EasyGateway (:4001)，即可共享路由调度、用量统计与技能库。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'EasyGateway 和 LiteLLM 等网关有什么区别？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'EasyGateway 使用 Go 编写为单二进制，内存占用约 18 MB、启动时间小于 1 秒，原生同时兼容 OpenAI Chat Completions、OpenAI Responses 与 Anthropic Messages 三套协议，并附带 MyGo 原生桌面管理端、多密钥 token 限额、技能同步与跨客户端记忆层。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'EasyAgent 支持哪些端和远程控制方式？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '支持 macOS/Linux 原生桌面客户端、Android 手机端（Jetpack Compose）、Web 工作区、终端 TUI 与飞书长连接机器人。离开电脑时可通过 Android 端或飞书查看进度、审批工具调用并接收文件交付。',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '密钥、对话历史和代码数据会上传到第三方吗？',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '不会。EasyAgent 与 EasyGateway 均采用本地优先架构、MIT 开源。桌面端连接凭据保存在系统钥匙串，网关归档支持脱敏与保留期清理，凭据与密钥永不落库。',
+          },
+        },
+      ],
+    },
   ],
 };
 ---
@@ -308,6 +345,34 @@ easyagent easycode login   # 或配置 EA_BASE_URL 后直接运行 easyagent</co
         <span class="s-step">03</span>
         <h3>助理与内核同源</h3>
         <p>EasyGateway 的常驻助理直接构建在 EasyAgent SDK 之上——网关管流量与额度，Agent 内核管对话与工具执行。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 常见问题 ===== -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="synergy-head">
+      <p class="eyebrow"><span class="dot"></span>选型与常见问题</p>
+      <h2>常见疑问</h2>
+    </div>
+    <div class="faq-grid">
+      <article class="faq-card">
+        <h3>EasyAgent 和 EasyGateway 必须两个都装吗？</h3>
+        <p>不需要。只装 <strong>EasyAgent</strong> 就能用飞书登录 EasyCode 或直连 OpenAI / Anthropic / 智谱模型；只装 <strong>EasyGateway</strong> 也能为 Claude Code、Codex CLI、Pi 提供统一端点与 429 自动切换。两者配合时，只需把 <code>EA_BASE_URL</code> 指向网关 <code>:4001</code>。</p>
+      </article>
+      <article class="faq-card">
+        <h3>EasyGateway 相比 LiteLLM 等方案有什么优势？</h3>
+        <p>全栈 Go 单二进制，常驻内存约 <strong>18 MB</strong>、启动不到 1 秒；原生兼容 OpenAI Chat、OpenAI Responses 与 Anthropic Messages 三套协议，自带原生桌面管理端、多密钥预算限额、技能中心与跨端记忆。</p>
+      </article>
+      <article class="faq-card">
+        <h3>离开电脑后怎么继续操作？</h3>
+        <p>可以通过 <strong>Android 原生客户端</strong> 切换多台远程主机并审批工具，或者绑定 <strong>飞书长连接机器人</strong>——对话卡片实时刷新，生成的产物还能用 <code>send_file</code> 直接发到飞书聊天里。</p>
+      </article>
+      <article class="faq-card">
+        <h3>密钥和对话记录存在哪里？</h3>
+        <p>全部本地优先、MIT 开源。桌面端连接凭据存在系统钥匙串，网关对话归档支持自动脱敏与保留期清理，凭据与 API Key 永不落库。</p>
       </article>
     </div>
   </div>

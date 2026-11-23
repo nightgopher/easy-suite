@@ -1,0 +1,31 @@
+# Easy Suite (EasyAgent × EasyGateway)
+
+> Go-powered, local-first personal AI infrastructure (MIT License). EasyAgent is a multi-platform AI coding assistant & agent workbench (macOS/Linux native desktop, Android, Web, TUI, Feishu, MCP, reusable Go SDK). EasyGateway is a lightweight (~18 MB RAM) unified LLM gateway supporting OpenAI Chat Completions, OpenAI Responses, and Anthropic Messages APIs with capability-based routing and automatic fallback.
+
+## Core Products
+
+- **EasyAgent**: Personal AI coding assistant and agent workbench written in Go. Supports native desktop (MyGo), Android (Kotlin / Jetpack Compose), Web workspace, terminal TUI, Feishu bot integration, MCP (stdio / Streamable HTTP / SSE / OAuth), and a reusable Go SDK (`sdk/`).
+- **EasyGateway**: Lightweight personal AI infrastructure gateway written in Go (~18 MB RAM, <1s startup). Unifies Claude Code, Codex CLI, Pi, and EasyAgent behind one local or self-hosted endpoint (`:4001`), with 3-protocol compatibility, multi-tier fallback, circuit breaking, per-key token quotas, EasyCode channel auth, shared skills (`~/.agents/skills`), and cross-client memory.
+
+## Quick Install
+
+- EasyAgent CLI (macOS / Linux): `curl -fsSL https://raw.githubusercontent.com/nightgopher/easyagent/main/scripts/install.sh | bash`
+- EasyGateway (macOS / Linux): `curl -fsSL https://raw.githubusercontent.com/nightgopher/easygateway/main/scripts/install.sh | bash`
+- Downloads (DMG, .deb, Android APK): https://nightgopher.github.io/easy-suite/download/
+
+## Key Pages & Documentation
+
+- [Homepage](https://nightgopher.github.io/easy-suite/): Product overview, desktop screenshots, and synergy guide
+- [Download Center](https://nightgopher.github.io/easy-suite/download/): Installers for macOS, Linux, Android, and servers
+- [Docs Center](https://nightgopher.github.io/easy-suite/docs/): Full documentation for both EasyAgent and EasyGateway
+- [EasyAgent Configuration](https://nightgopher.github.io/easy-suite/docs/config/): Environment variables (`EA_*`), providers, EasyCode login, tool permissions
+- [EasyGateway Overview](https://nightgopher.github.io/easy-suite/docs/gateway_overview/): Unified gateway features, installation, and setup
+- [EasyGateway Server Manual](https://nightgopher.github.io/easy-suite/docs/gateway_server/): Routing, multi-key budgets, pricing, memory, and assistant
+- [Skills Market](https://nightgopher.github.io/easy-suite/skills/): Browse and install Agent skills (`~/.agents/skills`)
+- [Blog](https://nightgopher.github.io/easy-suite/blog/): Release notes and engineering articles
+
+## Repositories
+
+- [nightgopher/easyagent](https://github.com/nightgopher/easyagent)
+- [nightgopher/easygateway](https://github.com/nightgopher/easygateway)
+- [nightgopher/easy-suite](https://github.com/nightgopher/easy-suite)

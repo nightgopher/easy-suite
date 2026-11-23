@@ -766,6 +766,32 @@ code {
 .sp-item h3 { font-size: 15.5px; margin: 0 0 6px; color: var(--text-primary); }
 .sp-item p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--text-secondary); }
 
+/* ---------- 常见问题 ---------- */
+
+.faq { padding: 72px 0 20px; }
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.faq-card {
+  padding: 22px 24px;
+  border-radius: 14px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(19, 33, 34, 0.52);
+}
+.faq-card h3 {
+  font-size: 15.5px;
+  margin: 0 0 8px;
+  color: var(--text-primary);
+}
+.faq-card p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
 /* ---------- 进场动画 ---------- */
 
 /* 无滚动显隐动画：内容始终可见，动效只保留 hover 过渡与光标闪烁 */
@@ -791,6 +817,7 @@ code {
   .feature-grid { grid-template-columns: repeat(2, 1fr); }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 26px 18px; }
   .synergy-grid { grid-template-columns: 1fr; }
+  .faq-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 

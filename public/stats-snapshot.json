@@ -9,6 +9,16 @@
    "hits": 5
   }
  ],
+ "dailyInstalls": [
+  {
+   "day": "2026-11-20 00:00:00",
+   "hits": 4
+  },
+  {
+   "day": "2026-11-22 00:00:00",
+   "hits": 2
+  }
+ ],
  "dailyHeartbeats": [
   {
    "day": "2026-11-20 00:00:00",
@@ -99,13 +109,35 @@
   {
    "clientVer": "0.51.0",
    "heartbeats": 1
+  },
+  {
+   "clientVer": "",
+   "heartbeats": 6
+  }
+ ],
+ "dailyClients": [
+  {
+   "day": "2026-11-20 00:00:00",
+   "clients": 1
+  },
+  {
+   "day": "2026-11-21 00:00:00",
+   "clients": 2
+  },
+  {
+   "day": "2026-11-22 00:00:00",
+   "clients": 1
   }
  ],
  "totals": {
+  "installs": 6,
+  "metaHits": 7,
   "downloads": 13,
   "heartbeats": 8,
   "heartbeats7d": 8,
+  "uniqueClients": 4,
+  "uniqueDownloaders": 3,
   "countries": 3
  },
- "generatedAt": "2026-11-23T03:17:55Z"
+ "generatedAt": "2026-11-23 04:32 UTC"
 }

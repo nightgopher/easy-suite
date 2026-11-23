@@ -112,3 +112,9 @@ ego-browser nodejs -e 'const task = await taskSpace(<spaceId>); await task.finis
 - `ego-browser` CLI（若不可用，先读 ego-browser 技能的安装说明，不要静默降级为 WebFetch——
   未登录抓取拿不到用户定制推荐流，产出没有意义）。
 - 用户在 Ego Lite 浏览器里保持 X 登录态（通常已存在）。
+
+## 日报之后的 reply 轮（可选联动）
+
+日报输出确认无误、收尾步骤完成后，若安装了 **x-reply** 技能且当日尚未跑 reply 轮，
+可主动提醒用户一次："今天还没跑 reply 轮，要来一轮吗？"用户同意即调用 x-reply。
+用户拒绝就收尾，不追问。

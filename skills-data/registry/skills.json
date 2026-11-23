@@ -1,632 +1,660 @@
 [
-  {
-    "id": "asr",
-    "name": "asr",
-    "displayName": "ASR — 语音识别技能",
-    "description": "Unified ASR (Speech Recognition) skill with pluggable providers (strategy pattern).\nSupports: SiliconFlow (TeleAI/TeleSpeechASR).\nUse for transcribing audio/video files to text.\nTrigger: \"转录\", \"识别语音\", \"语音转文字\", \"ASR\", \"transcribe\", \"语音识别\".\nAuto-extracts audio from video files via ffmpeg.",
-    "detailedDescription": "统一语音识别技能，基于策略模式，支持多个 ASR 后端切换。",
-    "emoji": "📦",
-    "tags": [
-      "Audio",
-      "Utility"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "转录",
-      "语音识别",
-      "语音转文字",
-      "ASR"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill asr",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/asr",
-    "sourcePath": "skills/asr",
-    "lastUpdated": "2026-05-02T15:49:31.000Z"
-  },
-  {
-    "id": "butler",
-    "name": "butler",
-    "displayName": "Butler — Easy Code 管家技能",
-    "description": "管家技能 — 项目感知、日报分析、知识库维护。自动扫描会话数据、分析每日工作、夜间维护 wiki。",
-    "detailedDescription": "管家技能 — 项目感知、日报分析、知识库维护。自动扫描会话数据、分析每日工作、夜间维护 wiki。",
-    "emoji": "📦",
-    "tags": [
-      "Utility"
-    ],
-    "scenarios": [],
-    "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill butler",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/butler",
-    "sourcePath": "skills/butler",
-    "lastUpdated": "2026-06-16T07:10:28.000Z"
-  },
-  {
-    "id": "butler-archive",
-    "name": "butler-archive",
-    "displayName": "管家归档",
-    "description": "管家归档 — 把当前会话做过的基础设施与管家级工作（申请/释放服务器、域名 DNS、证书、服务部署、配置变更、故障排障、账号变更等）规范归档进管家知识库（my-cloud-resources）和项目登记（PROJECTS.md）。触发：归档 / 整理一下 / 记到管家仓库 / 同步到 my-cloud-resources / 会话收尾 / 这次搞了什么服务器 / 服务器申请完归档一下，或会话中完成了云资源、DNS、域名、证书、部署、排障等工作时主动提醒使用。",
-    "detailedDescription": "管家归档 — 把当前会话做过的基础设施与管家级工作（申请/释放服务器、域名 DNS、证书、服务部署、配置变更、故障排障、账号变更等）规范归档进管家知识库（my-cloud-resources）和项目登记（PROJECTS.md）。触发：归档 / 整理一下 / 记到管家仓库 / 同步到 my-cloud-resources / 会话收尾 / 这次搞了什么服务器 / 服务器申请完归档一下，或会话中完成了云资源、DNS、域名、证书、部署、排障等工作时主动提醒使用。",
-    "emoji": "📦",
-    "tags": [
-      "Butler",
-      "Archival"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "管家归档",
-      "归档",
-      "知识库整理",
-      "会话收尾归档",
-      "butler-archive"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill butler-archive",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/butler-archive",
-    "sourcePath": "skills/butler-archive",
-    "lastUpdated": "2026-11-21T01:14:24.000Z"
-  },
-  {
-    "id": "content-adapt",
-    "name": "content-adapt",
-    "displayName": "content-adapt",
-    "description": "根据视频内容分析结果，生成适合目标平台发布的标题、描述、标签等信息。纯提示驱动，无需执行脚本。",
-    "detailedDescription": "根据视频内容分析结果，生成适合目标平台发布的标题、描述、标签等信息。纯提示驱动，无需执行脚本。",
-    "emoji": "📦",
-    "tags": [
-      "Video",
-      "Content",
-      "Copywriting"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "内容适配",
-      "生成标题",
-      "发布文案"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill content-adapt",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/content-adapt",
-    "sourcePath": "skills/content-adapt",
-    "lastUpdated": "2026-06-04T12:23:42.000Z"
-  },
-  {
-    "id": "content-repurposer",
-    "name": "content-repurposer",
-    "displayName": "Content Repurposer",
-    "description": "Markdown 提示工程驱动的内容复用技能，含 7 个子技能（LinkedIn/Twitter/Medium/Substack/Newsletter/GitHub Pages + 编排器）。支持语音配置系统、emoji 控制系统、正则黑名单。零依赖零修改即可用。",
-    "detailedDescription": "把一份技术文章复用为 7 个平台的原生内容。纯 Markdown 提示工程，内置语音配置、emoji 控制和正则黑名单。",
-    "emoji": "📝",
-    "tags": [
-      "Content",
-      "Writing",
-      "Social"
-    ],
-    "scenarios": [
-      "把文章复用为 LinkedIn 帖子",
-      "把技术博客转成 Twitter 推文线程",
-      "把内容适配 Medium/Substack/Newsletter 发布",
-      "生成 GitHub Pages 博客文章"
-    ],
-    "aliases": [
-      "内容复用",
-      "跨平台发布",
-      "content repurpose"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill content-repurposer",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/content-repurposer",
-    "sourcePath": "skills/content-repurposer",
-    "lastUpdated": "2026-06-05T14:35:44.601Z"
-  },
-  {
-    "id": "darwin-skill",
-    "name": "darwin-skill",
-    "displayName": "Darwin Skill",
-    "description": "Darwin Skill (达尔文.skill): autonomous skill optimizer inspired by Karpathy's autoresearch. Evaluates SKILL.md files using an 8-dimension rubric (structure + effectiveness), runs hill-climbing with git version control, validates improvements through test prompts, and generates visual result cards. Use when user mentions \"优化skill\", \"skill评分\", \"自动优化\", \"auto optimize\", \"skill质量检查\", \"达尔文\", \"darwin\", \"帮我改改skill\", \"skill怎么样\", \"提升skill质量\", \"skill review\", \"skill打分\".",
-    "detailedDescription": "> 借鉴 Karpathy autoresearch 的自主实验循环，对 skills 进行持续优化。 > 核心理念：**评估 → 改进 → 实测验证 → 人类确认 → 保留或回滚 → 生成成果卡片** > GitHub: https://github.com/alchaincyf/darwin-skill",
-    "emoji": "📦",
-    "tags": [
-      "Coding",
-      "Testing"
-    ],
-    "scenarios": [],
-    "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill darwin-skill",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/darwin-skill",
-    "sourcePath": "skills/darwin-skill",
-    "lastUpdated": "2026-05-30T12:12:15.258Z"
-  },
-  {
-    "id": "douyin-upload",
-    "name": "douyin-upload",
-    "displayName": "有头模式：首次登录推荐使用（会生成二维码）",
-    "description": "当你需要登录抖音账号、检查 Cookie、上传视频或发布图文时使用本技能。基于 `uv run douyin` 执行，无需额外自定义脚本。",
-    "detailedDescription": "uv run douyin login --account <account_name> --headed",
-    "emoji": "📦",
-    "tags": [
-      "Video",
-      "Social",
-      "Douyin"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "抖音上传",
-      "上传视频",
-      "发布视频"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill douyin-upload",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/douyin-upload",
-    "sourcePath": "skills/douyin-upload",
-    "lastUpdated": "2026-06-04T12:23:42.000Z"
-  },
-  {
-    "id": "drawio-skill",
-    "name": "drawio-skill",
-    "displayName": "Draw.io Diagrams",
-    "description": "Use when user requests diagrams, flowcharts, architecture charts, or visualizations. Also use proactively when explaining systems with 3+ components, complex data flows, or relationships that benefit from visual representation. Generates .drawio XML files and exports to PNG/SVG/PDF locally using the native draw.io desktop CLI.",
-    "detailedDescription": "Generate `.drawio` XML files and export to PNG/SVG/PDF/JPG locally using the native draw.io desktop app CLI.\n\n**Supported formats:** PNG, SVG, PDF, JPG — no browser automation needed.\n\nPNG, SVG, and PDF exports support `--embed-diagram` (`-e`) — the exported file contains the full diagram XML, so opening it in draw.io recovers the editable diagram. Use double extensions (`name.drawio.png`) to signal embedded XML.",
-    "emoji": "📦",
-    "tags": [
-      "Content",
-      "Architecture"
-    ],
-    "scenarios": [],
-    "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill drawio-skill",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/drawio-skill",
-    "sourcePath": "skills/drawio-skill",
-    "lastUpdated": "2026-05-05T15:45:55.000Z",
-    "author": "Agents365-ai",
-    "upstream": "Agents365-ai/drawio-skill",
-    "upstreamSha": "7b9d607d2cb343c8c8161488b4c22b238b7b8a25"
-  },
-  {
-    "id": "image-provider",
-    "name": "image-provider",
-    "displayName": "Image Provider",
-    "description": "Unified image generation skill with pluggable providers (strategy pattern).\nSupports: Vertex AI Imagen (Google), dvcode (company tool).\nUse for any image generation need: article inline images, cover images, general purpose.\nTrigger: \"生成图片\", \"配图\", \"封面图\", \"generate image\", \"create cover\".",
-    "detailedDescription": "统一生图技能，基于策略模式，支持多个后端 Provider 自由切换。",
-    "emoji": "📦",
-    "tags": [
-      "Media",
-      "Utility"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "生成图片",
-      "配图",
-      "封面图",
-      "generate image"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill image-provider",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/image-provider",
-    "sourcePath": "skills/image-provider",
-    "lastUpdated": "2026-05-02T15:49:31.000Z"
-  },
-  {
-    "id": "impeccable",
-    "name": "impeccable",
-    "displayName": "impeccable",
-    "description": "Designs and iterates production-grade frontend interfaces. Real working code, committed design choices, exceptional craft. Covers websites, landing pages, dashboards, product UI, components, forms, and design systems.",
-    "detailedDescription": "Designs and iterates production-grade frontend interfaces. Real working code, committed design choices, exceptional craft. Covers websites, landing pages, dashboards, product UI, components, forms, and design systems.",
-    "emoji": "📦",
-    "tags": [
-      "设计与前端开发",
-      "UX"
-    ],
-    "scenarios": [],
-    "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill impeccable",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/impeccable",
-    "sourcePath": "skills/impeccable",
-    "lastUpdated": "2026-07-04T00:00:00.000Z",
-    "author": "pbakaus",
-    "upstream": "pbakaus/impeccable",
-    "upstreamPath": "skill",
-    "upstreamSha": "f2c7051853848826aac2f4646581d62a732155ad"
-  },
-  {
-    "id": "llm-price-tracker",
-    "name": "llm-price-tracker",
-    "displayName": "LLM Price Tracker",
-    "description": "Track and compare LLM API pricing across 147+ providers. Uses models.dev JSON API as primary source + manual scraping for uncatalogued Chinese providers. Triggers: 查模型价格, 价格对比, model pricing, 降价, 新模型, 供应商查询.",
-    "detailedDescription": "Track LLM API pricing across **147+ providers** via the [models.dev](https://models.dev) community database. Deep metadata: context limits, modalities, reasoning, tool calling, knowledge cutoff, open weights.",
-    "emoji": "📦",
-    "tags": [
-      "Monitoring",
-      "Research",
-      "Analysis"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "LLM价格",
-      "模型定价",
-      "API价格",
-      "降价",
-      "新模型价格",
-      "供应商对比"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill llm-price-tracker",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/llm-price-tracker",
-    "sourcePath": "skills/llm-price-tracker",
-    "lastUpdated": "2026-05-02T15:49:31.000Z"
-  },
-  {
-    "id": "memory-organizer",
-    "name": "memory-organizer",
-    "displayName": "Memory Organizer",
-    "description": "长期记忆整理指南。使用当需要清理、组织或重构 MEMORY.md 文件时，或决策哪些信息应该/不应该存储在长期记忆中。提供区分静态知识（长期价值）vs 动态信息（可自动获取）的原则。",
-    "detailedDescription": "长期记忆（MEMORY.md）是 Agent 的\"外部大脑\"，存储决策、配置、经验和长期上下文。但存储过多动态信息会导致记忆臃肿和频繁更新。\n\n本技能提供区分**应该存储**（静态、长期价值）vs **不应该存储**（动态、可自动获取）的原则和示例。",
-    "emoji": "📦",
-    "tags": [
-      "Knowledge",
-      "Productivity",
-      "Planning"
-    ],
-    "scenarios": [
-      "清理或重构 MEMORY.md",
-      "判断某条信息该不该存入长期记忆",
-      "设计长期记忆的结构和归档原则"
-    ],
-    "aliases": [
-      "整理记忆",
-      "MEMORY 管理",
-      "长期记忆"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill memory-organizer",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/memory-organizer",
-    "sourcePath": "skills/memory-organizer",
-    "lastUpdated": "2026-04-15T02:36:07.000Z"
-  },
-  {
-    "id": "mp-weixin-ops",
-    "name": "mp-weixin-ops",
-    "displayName": "mp-weixin-ops — 微信公众号一站式运营",
-    "description": "微信公众号一站式运营 Skill。覆盖从热点调研、选题策划、文章写作、配图生成、封面制作、排版转换到推送草稿箱的完整工作流。触发词：写公众号文章、帮我写一篇、公众号运营、从选题到发布、推送草稿箱、帮我配图、生成封面、公众号排版、content planning、publish to WeChat。所有子功能内置于 skills/ 子目录，无需单独安装。",
-    "detailedDescription": "一个 Skill 搞定公众号全链路：热点 → 选题 → 写作 → 配图 → 封面 → 排版 → 发布。",
-    "emoji": "📦",
-    "tags": [
-      "WeChat",
-      "Content",
-      "Writing"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "公众号运营",
-      "写公众号文章",
-      "公众号排版",
-      "推送草稿箱"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill mp-weixin-ops",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/mp-weixin-ops",
-    "sourcePath": "skills/mp-weixin-ops",
-    "lastUpdated": "2026-05-02T15:49:31.000Z"
-  },
-  {
-    "id": "officecli-docx",
-    "name": "officecli-docx",
-    "displayName": "OfficeCLI DOCX Skill",
-    "description": "Use this skill any time a .docx file is involved -- as input, output, or both. This includes: creating Word documents, reports, letters, memos, or proposals; reading, parsing, or extracting text from any .docx file; editing, modifying, or updating existing documents; working with templates, tracked changes, comments, headers/footers, or tables of contents. Trigger whenever the user mentions 'Word doc', 'document', 'report', 'letter', 'memo', or references a .docx filename.",
-    "detailedDescription": "Use this skill any time a .docx file is involved -- as input, output, or both. This includes: creating Word documents, reports, letters, memos, or proposals; reading, parsing, or extracting text from any .docx file; editing, modifying, or updating existing documents; working with templates, tracked changes, comments, headers/footers, or tables of contents. Trigger whenever the user mentions 'Word doc', 'document', 'report', 'letter', 'memo', or references a .docx filename.",
-    "emoji": "📦",
-    "tags": [
-      "Product",
-      "CLI",
-      "Automation"
-    ],
-    "scenarios": [],
-    "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill officecli-docx",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/officecli-docx",
-    "sourcePath": "skills/officecli-docx",
-    "lastUpdated": "2026-05-06T08:34:08.000Z",
-    "author": "iOfficeAI",
-    "upstream": "iOfficeAI/OfficeCLI",
-    "upstreamPath": "skills/officecli-docx",
-    "upstreamSha": "dced0d74ff85b1fef0b777efcdb637c2c4ef8a6e"
-  },
-  {
-    "id": "short-drama-pipeline",
-    "name": "short-drama-pipeline",
-    "displayName": "short-drama-pipeline — AI 短剧/短视频全链路生产",
-    "description": "AI 短剧/短视频全链路生产技能。从选题调研、脚本撰写、视频生成到成片输出的完整工作流。\n触发词：做一条短视频、做个短剧、AI短剧、帮我选题、生成视频、短视频制作、短剧制作、帮我创作。\n复用 tavily（调研）、xiaohongshu-cli/bilibili-cli（平台数据）、libtv-skill（视频生成）。\n所有子功能内置于 skills/ 子目录，无需单独安装。",
-    "detailedDescription": "选题 → 脚本 → 生成 → 成片，一个技能打通全流程。",
-    "emoji": "📦",
-    "tags": [
-      "Video",
-      "Media",
-      "Content"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "AI短剧",
-      "短视频制作",
-      "短剧制作",
-      "生成视频"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill short-drama-pipeline",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/short-drama-pipeline",
-    "sourcePath": "skills/short-drama-pipeline",
-    "lastUpdated": "2026-05-02T15:49:31.000Z"
-  },
-  {
-    "id": "short-video-replicator",
-    "name": "short-video-replicator",
-    "displayName": "short-video-replicator",
-    "description": "短视频爆款复刻一站式工具。输入抖音/B站/YouTube链接或本地视频路径，自动完成： 视频下载与语音转录 → 结构化文字稿 → 三维度爆款分析 → 文案二创 → 口播脚本×3 + 小剧情脚本×3 → Viral-5D评分 → PDF报告导出（可选飞书推送）。 使用场景：拆解爆款视频、学习短视频文案技巧、生成可直接拍摄的二创脚本。 关键词：短视频复刻、爆款分析、口播脚本、小剧情、文案二创、视频转录、PDF报告、抖音、B站",
-    "detailedDescription": "短视频爆款复刻全流程 Skill。从一条链接到一套可拍摄脚本，7步完成。",
-    "emoji": "📦",
-    "tags": [
-      "Video",
-      "Media",
-      "Content"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "短视频复刻",
-      "爆款分析",
-      "口播脚本",
-      "文案二创"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill short-video-replicator",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/short-video-replicator",
-    "sourcePath": "skills/short-video-replicator",
-    "lastUpdated": "2026-05-02T15:49:31.000Z"
-  },
-  {
-    "id": "stock-analysis",
-    "name": "stock-analysis",
-    "displayName": "Stock Analysis Skill",
-    "description": "股票智能分析技能。输入股票代码（A股/港股/美股），自动完成：\n1. 获取实时行情 + 历史K线数据\n2. 计算技术指标（MA/MACD/RSI/量能/乖离率）\n3. 综合评分（100分制）+ 买卖信号\n4. 搜索最新新闻消息面\n5. AI综合分析，输出决策看板\n\n触发场景：用户提供股票代码要求分析、问某只股票怎么样、要求看盘分析等。\n示例输入：「分析下 TSLA PLTR」「600519怎么样」「帮我看看HK00700」",
-    "detailedDescription": "你是一位专业的股票分析师，通过 Python 脚本获取真实市场数据，结合技术分析和消息面，为用户生成决策看板。",
-    "emoji": "📦",
-    "tags": [
-      "Finance",
-      "Analysis",
-      "Research"
-    ],
-    "scenarios": [],
-    "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill stock-analysis",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/stock-analysis",
-    "sourcePath": "skills/stock-analysis",
-    "lastUpdated": "2026-06-05T14:32:34.833Z"
-  },
-  {
-    "id": "tavily",
-    "name": "tavily",
-    "displayName": "tavily — Tavily CLI unified skill",
-    "description": "Unified Tavily CLI skill — web search, URL extraction, and deep research via `tvly`. Use this skill when the user wants to search the web, extract content from URLs, conduct research, find articles, look up information, or needs current information from the internet. Routes to the appropriate sub-command based on user intent.",
-    "detailedDescription": "Web search, URL content extraction, and AI-powered deep research via the Tavily CLI.",
-    "emoji": "📦",
-    "tags": [
-      "Search",
-      "Web",
-      "Research"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "搜索网页",
-      "联网查资料",
-      "提取URL内容",
-      "深度调研"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill tavily",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/tavily",
-    "sourcePath": "skills/tavily",
-    "lastUpdated": "2026-05-02T15:49:31.000Z"
-  },
-  {
-    "id": "tts",
-    "name": "tts",
-    "displayName": "TTS — 语音合成技能",
-    "description": "Unified TTS (Text-to-Speech) skill with pluggable providers (strategy pattern).\nSupports: Edge TTS (free, no API key), Vertex AI Gemini TTS (Google).\nUse for generating voiceovers, narration, dubbing.\nTrigger: \"配音\", \"生成语音\", \"TTS\", \"text-to-speech\", \"合成语音\", \"语音合成\".",
-    "detailedDescription": "统一语音合成技能，基于策略模式，支持多个 TTS 后端切换。",
-    "emoji": "📦",
-    "tags": [
-      "Audio",
-      "Utility"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "配音",
-      "语音合成",
-      "TTS",
-      "合成语音"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill tts",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/tts",
-    "sourcePath": "skills/tts",
-    "lastUpdated": "2026-05-02T15:49:31.000Z"
-  },
-  {
-    "id": "vertex-video-reader",
-    "name": "vertex-video-reader",
-    "displayName": "Vertex AI Video Reader Skill",
-    "description": "Use this skill to read, analyze, and understand video files using Google Cloud Vertex AI's lightweight video model (gemini-3.1-flash-lite-preview). Use it whenever the user asks to summarize a video, extract text/actions from a video, describe what happens in an mp4/mov file, or ask questions about a specific video clip.",
-    "detailedDescription": "This skill allows you to analyze and understand video contents using the fast and cost-effective `gemini-3.1-flash-lite-preview` model via Google Vertex AI.",
-    "emoji": "📦",
-    "tags": [
-      "Video",
-      "Media",
-      "Analysis"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "分析视频内容",
-      "理解视频",
-      "视频总结"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill vertex-video-reader",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/vertex-video-reader",
-    "sourcePath": "skills/vertex-video-reader",
-    "lastUpdated": "2026-05-02T15:49:31.000Z"
-  },
-  {
-    "id": "video-analyze",
-    "name": "video-analyze",
-    "displayName": "video-analyze",
-    "description": "当你需要分析视频内容（抽取关键帧、识别语音）时使用本技能。输出结构化素材，供 Agent 理解视频内容，并可与 content-adapt 配合生成发布文案。",
-    "detailedDescription": "当你需要分析视频内容（抽取关键帧、识别语音）时使用本技能。输出结构化素材，供 Agent 理解视频内容，并可与 content-adapt 配合生成发布文案。",
-    "emoji": "📦",
-    "tags": [
-      "Video",
-      "Media",
-      "ASR"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "视频分析",
-      "分析视频",
-      "抽帧"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill video-analyze",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/video-analyze",
-    "sourcePath": "skills/video-analyze",
-    "lastUpdated": "2026-06-04T12:23:42.000Z"
-  },
-  {
-    "id": "videocut",
-    "name": "videocut",
-    "displayName": "videocut — 口播视频一站式剪辑",
-    "description": "口播视频一站式剪辑 Skill。覆盖转录、口误识别、字幕生成、高清导出的完整工作流。触发词：剪口播、处理视频、帮我剪辑、生成字幕、导出高清。从视频到成片，一步到位。",
-    "detailedDescription": "> 火山引擎转录 + AI 口误识别 + 字幕生成 + 高清导出",
-    "emoji": "📦",
-    "tags": [
-      "Video",
-      "Media",
-      "Utility"
-    ],
-    "scenarios": [],
-    "aliases": [
-      "剪口播",
-      "处理视频",
-      "生成字幕",
-      "视频剪辑"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill videocut",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/videocut",
-    "sourcePath": "skills/videocut",
-    "lastUpdated": "2026-05-02T15:49:31.000Z"
-  },
-  {
-    "id": "weread-skills",
-    "name": "weread-skills",
-    "displayName": "WeRead — 微信读书助手",
-    "description": "微信读书助手 — 搜索书籍、管理书架、查看笔记划线、浏览书评、阅读统计、发现推荐好书",
-    "detailedDescription": "通过 Agent API Gateway 调用微信读书接口，提供搜索、书架、笔记、书评等能力。",
-    "emoji": "📦",
-    "tags": [
-      "Reading",
-      "WeChat",
-      "Knowledge"
-    ],
-    "scenarios": [],
-    "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill weread-skills",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/weread-skills",
-    "sourcePath": "skills/weread-skills",
-    "lastUpdated": "2026-06-05T14:32:34.846Z"
-  },
-  {
-    "id": "x-digest",
-    "name": "x-digest",
-    "displayName": "X 日报",
-    "description": "刷用户的 X (Twitter) 并生成定制化中文日报。通过 ego-browser 打开用户已登录的 X For you 推荐流，滚动采集最近 24 小时推文，按用户兴趣画像（AI/Agent 工程、系统编程、独立开发搞钱、开发者工具）过滤广告、分类排序，在对话中输出「X 日报」。当用户说\"刷一下X\"、\"看看今天X上有什么\"、\"刷X总结\"、\"X日报\"、\"帮我看看推特\"、\"今天推特上有什么值得看的\"、\"x-digest\"，或询问今天 X/Twitter 的热点、想了解推荐流里有什么内容时，务必使用本技能。",
-    "detailedDescription": "为用户采集其 X For you 推荐流，产出一份按个人兴趣筛选排序的中文日报。 核心价值在于**过滤噪声、按画像排序、给出点评**，而不是罗列推文。",
-    "emoji": "📦",
-    "tags": [
-      "Social",
-      "Summary",
-      "Crawler"
-    ],
-    "scenarios": [
-      "用户想了解今天 X/Twitter 上有什么值得看的内容",
-      "用户说\"刷一下X\"、\"X日报\"、\"刷X总结\"",
-      "用户想了解自己的 X 推荐流平时都推些什么"
-    ],
-    "aliases": [
-      "X日报",
-      "刷X",
-      "刷X总结",
-      "推特日报",
-      "Twitter日报"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill x-digest",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/x-digest",
-    "sourcePath": "skills/x-digest",
-    "lastUpdated": "2026-11-19T13:23:59.408Z"
-  },
-  {
-    "id": "x-follow",
-    "name": "x-follow",
-    "displayName": "X 日报跟进",
-    "description": "把 X 日报（x-digest）的可行动项推进到落地：深读原帖（正文+高赞回复+关键外链）→ 对照用户项目源码找差距 → 出方案/改代码/提 PR（需用户授权）→ 结论按沉淀映射落盘到对应仓库 → 更新 backlog 销项。当用户说\"跟进第N条\"、\"跟进",
-    "detailedDescription": "把 x-digest 日报「可行动项」/ backlog 里的条目推进到明确结论： 可落地的改进方案（直至 PR）、认知沉淀入库、或判定为伪信号销项。一次跟进只处理一个条目。",
-    "emoji": "📦",
-    "tags": [
-      "Workflow",
-      "Research",
-      "Knowledge"
-    ],
-    "scenarios": [
-      "用户看完 X 日报（x-digest）想跟进某条可行动项",
-      "用户给出推文 permalink，要求深挖并落到自己的项目上"
-    ],
-    "aliases": [
-      "跟进日报",
-      "x-followup"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill x-follow",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/x-follow",
-    "sourcePath": "skills/x-follow",
-    "lastUpdated": "2026-11-20T15:54:33.346Z"
-  },
-  {
-    "id": "xiaohongshu-cli",
-    "name": "xiaohongshu-cli",
-    "displayName": "xiaohongshu-cli — Xiaohongshu CLI Tool",
-    "description": "Use xiaohongshu-cli for ALL Xiaohongshu (Little Red Book, 小红书) operations — searching notes, reading content, browsing users, liking, collecting, commenting, following, and posting. Invoke whenever the user requests any Xiaohongshu interaction.",
-    "detailedDescription": "**Binary:** `xhs` **Credentials:** browser cookies (auto-extracted) or browser-assisted QR login (`--qrcode`)",
-    "emoji": "📦",
-    "tags": [
-      "Xiaohongshu",
-      "Social",
-      "Content"
-    ],
-    "scenarios": [],
-    "aliases": [],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill xiaohongshu-cli",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/xiaohongshu-cli",
-    "sourcePath": "skills/xiaohongshu-cli",
-    "lastUpdated": "2026-05-06T08:13:58.000Z",
-    "author": "jackwener"
-  },
-  {
-    "id": "easymage",
-    "name": "easymage",
-    "displayName": "EasyMage · 浏览器生图工坊",
-    "description": "Browser-based image generation studio: drive ChatGPT (logged-in session in Ego Lite) to produce styled social-media image sets - xiaohongshu nine-grid notes, guide cards, WeChat red-packet covers, avatars, banners. Includes reference-image injection, generation polling, output retrieval (download/library API/files API), nine-grid slicing, and xiaohongshu publish flow.\nTrigger: 生成配图, 小红书图文, 九宫格, 红包封面, 生图, 头像, 横幅, 攻略卡片, easymage.",
-    "detailedDescription": "浏览器生图工坊：用 Ego Lite 驱动已登录的 ChatGPT，按实战风格模板（极简产品风九宫格、攻略卡、头像横幅、红包封面）批量产出社媒配图。含参考图注入、生成轮询、成品取回（下载事件/library API/files API）、九宫格切页与小红书发布流水线。方法论源自 vane-gpt-image-skills（MIT）的浏览器自动化移植与扩展。",
-    "emoji": "🎨",
-    "tags": [
-      "Content",
-      "Image",
-      "SocialMedia"
-    ],
-    "scenarios": [
-      "小红书笔记九宫格配图（教育/旅游/生活方式选题）",
-      "公众号/抖音封面与攻略卡片",
-      "全平台统一的头像与横幅",
-      "春节红包封面批量设计"
-    ],
-    "aliases": [
-      "生图",
-      "小红书图文",
-      "配图生成",
-      "红包封面",
-      "九宫格",
-      "easymage"
-    ],
-    "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill easymage",
-    "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/easymage",
-    "sourcePath": "skills/easymage",
-    "lastUpdated": "2026-11-22T14:30:11.000Z"
-  }
+ {
+  "id": "asr",
+  "name": "asr",
+  "displayName": "ASR — 语音识别技能",
+  "description": "Unified ASR (Speech Recognition) skill with pluggable providers (strategy pattern).\nSupports: SiliconFlow (TeleAI/TeleSpeechASR).\nUse for transcribing audio/video files to text.\nTrigger: \"转录\", \"识别语音\", \"语音转文字\", \"ASR\", \"transcribe\", \"语音识别\".\nAuto-extracts audio from video files via ffmpeg.",
+  "detailedDescription": "统一语音识别技能，基于策略模式，支持多个 ASR 后端切换。",
+  "emoji": "📦",
+  "tags": [
+   "Audio",
+   "Utility"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "转录",
+   "语音识别",
+   "语音转文字",
+   "ASR"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill asr",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/asr",
+  "sourcePath": "skills/asr",
+  "lastUpdated": "2026-05-02T15:49:31.000Z"
+ },
+ {
+  "id": "butler",
+  "name": "butler",
+  "displayName": "Butler — Easy Code 管家技能",
+  "description": "管家技能 — 项目感知、日报分析、知识库维护。自动扫描会话数据、分析每日工作、夜间维护 wiki。",
+  "detailedDescription": "管家技能 — 项目感知、日报分析、知识库维护。自动扫描会话数据、分析每日工作、夜间维护 wiki。",
+  "emoji": "📦",
+  "tags": [
+   "Utility"
+  ],
+  "scenarios": [],
+  "aliases": [],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill butler",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/butler",
+  "sourcePath": "skills/butler",
+  "lastUpdated": "2026-06-16T07:10:28.000Z"
+ },
+ {
+  "id": "butler-archive",
+  "name": "butler-archive",
+  "displayName": "管家归档",
+  "description": "管家归档 — 把当前会话做过的基础设施与管家级工作（申请/释放服务器、域名 DNS、证书、服务部署、配置变更、故障排障、账号变更等）规范归档进管家知识库（my-cloud-resources）和项目登记（PROJECTS.md）。触发：归档 / 整理一下 / 记到管家仓库 / 同步到 my-cloud-resources / 会话收尾 / 这次搞了什么服务器 / 服务器申请完归档一下，或会话中完成了云资源、DNS、域名、证书、部署、排障等工作时主动提醒使用。",
+  "detailedDescription": "管家归档 — 把当前会话做过的基础设施与管家级工作（申请/释放服务器、域名 DNS、证书、服务部署、配置变更、故障排障、账号变更等）规范归档进管家知识库（my-cloud-resources）和项目登记（PROJECTS.md）。触发：归档 / 整理一下 / 记到管家仓库 / 同步到 my-cloud-resources / 会话收尾 / 这次搞了什么服务器 / 服务器申请完归档一下，或会话中完成了云资源、DNS、域名、证书、部署、排障等工作时主动提醒使用。",
+  "emoji": "📦",
+  "tags": [
+   "Butler",
+   "Archival"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "管家归档",
+   "归档",
+   "知识库整理",
+   "会话收尾归档",
+   "butler-archive"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill butler-archive",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/butler-archive",
+  "sourcePath": "skills/butler-archive",
+  "lastUpdated": "2026-11-21T01:14:24.000Z"
+ },
+ {
+  "id": "content-adapt",
+  "name": "content-adapt",
+  "displayName": "content-adapt",
+  "description": "根据视频内容分析结果，生成适合目标平台发布的标题、描述、标签等信息。纯提示驱动，无需执行脚本。",
+  "detailedDescription": "根据视频内容分析结果，生成适合目标平台发布的标题、描述、标签等信息。纯提示驱动，无需执行脚本。",
+  "emoji": "📦",
+  "tags": [
+   "Video",
+   "Content",
+   "Copywriting"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "内容适配",
+   "生成标题",
+   "发布文案"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill content-adapt",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/content-adapt",
+  "sourcePath": "skills/content-adapt",
+  "lastUpdated": "2026-06-04T12:23:42.000Z"
+ },
+ {
+  "id": "content-repurposer",
+  "name": "content-repurposer",
+  "displayName": "Content Repurposer",
+  "description": "Markdown 提示工程驱动的内容复用技能，含 7 个子技能（LinkedIn/Twitter/Medium/Substack/Newsletter/GitHub Pages + 编排器）。支持语音配置系统、emoji 控制系统、正则黑名单。零依赖零修改即可用。",
+  "detailedDescription": "把一份技术文章复用为 7 个平台的原生内容。纯 Markdown 提示工程，内置语音配置、emoji 控制和正则黑名单。",
+  "emoji": "📝",
+  "tags": [
+   "Content",
+   "Writing",
+   "Social"
+  ],
+  "scenarios": [
+   "把文章复用为 LinkedIn 帖子",
+   "把技术博客转成 Twitter 推文线程",
+   "把内容适配 Medium/Substack/Newsletter 发布",
+   "生成 GitHub Pages 博客文章"
+  ],
+  "aliases": [
+   "内容复用",
+   "跨平台发布",
+   "content repurpose"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill content-repurposer",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/content-repurposer",
+  "sourcePath": "skills/content-repurposer",
+  "lastUpdated": "2026-06-05T14:35:44.601Z"
+ },
+ {
+  "id": "darwin-skill",
+  "name": "darwin-skill",
+  "displayName": "Darwin Skill",
+  "description": "Darwin Skill (达尔文.skill): autonomous skill optimizer inspired by Karpathy's autoresearch. Evaluates SKILL.md files using an 8-dimension rubric (structure + effectiveness), runs hill-climbing with git version control, validates improvements through test prompts, and generates visual result cards. Use when user mentions \"优化skill\", \"skill评分\", \"自动优化\", \"auto optimize\", \"skill质量检查\", \"达尔文\", \"darwin\", \"帮我改改skill\", \"skill怎么样\", \"提升skill质量\", \"skill review\", \"skill打分\".",
+  "detailedDescription": "> 借鉴 Karpathy autoresearch 的自主实验循环，对 skills 进行持续优化。 > 核心理念：**评估 → 改进 → 实测验证 → 人类确认 → 保留或回滚 → 生成成果卡片** > GitHub: https://github.com/alchaincyf/darwin-skill",
+  "emoji": "📦",
+  "tags": [
+   "Coding",
+   "Testing"
+  ],
+  "scenarios": [],
+  "aliases": [],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill darwin-skill",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/darwin-skill",
+  "sourcePath": "skills/darwin-skill",
+  "lastUpdated": "2026-05-30T12:12:15.258Z"
+ },
+ {
+  "id": "douyin-upload",
+  "name": "douyin-upload",
+  "displayName": "有头模式：首次登录推荐使用（会生成二维码）",
+  "description": "当你需要登录抖音账号、检查 Cookie、上传视频或发布图文时使用本技能。基于 `uv run douyin` 执行，无需额外自定义脚本。",
+  "detailedDescription": "uv run douyin login --account <account_name> --headed",
+  "emoji": "📦",
+  "tags": [
+   "Video",
+   "Social",
+   "Douyin"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "抖音上传",
+   "上传视频",
+   "发布视频"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill douyin-upload",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/douyin-upload",
+  "sourcePath": "skills/douyin-upload",
+  "lastUpdated": "2026-06-04T12:23:42.000Z"
+ },
+ {
+  "id": "drawio-skill",
+  "name": "drawio-skill",
+  "displayName": "Draw.io Diagrams",
+  "description": "Use when user requests diagrams, flowcharts, architecture charts, or visualizations. Also use proactively when explaining systems with 3+ components, complex data flows, or relationships that benefit from visual representation. Generates .drawio XML files and exports to PNG/SVG/PDF locally using the native draw.io desktop CLI.",
+  "detailedDescription": "Generate `.drawio` XML files and export to PNG/SVG/PDF/JPG locally using the native draw.io desktop app CLI.\n\n**Supported formats:** PNG, SVG, PDF, JPG — no browser automation needed.\n\nPNG, SVG, and PDF exports support `--embed-diagram` (`-e`) — the exported file contains the full diagram XML, so opening it in draw.io recovers the editable diagram. Use double extensions (`name.drawio.png`) to signal embedded XML.",
+  "emoji": "📦",
+  "tags": [
+   "Content",
+   "Architecture"
+  ],
+  "scenarios": [],
+  "aliases": [],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill drawio-skill",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/drawio-skill",
+  "sourcePath": "skills/drawio-skill",
+  "lastUpdated": "2026-05-05T15:45:55.000Z",
+  "author": "Agents365-ai",
+  "upstream": "Agents365-ai/drawio-skill",
+  "upstreamSha": "7b9d607d2cb343c8c8161488b4c22b238b7b8a25"
+ },
+ {
+  "id": "image-provider",
+  "name": "image-provider",
+  "displayName": "Image Provider",
+  "description": "Unified image generation skill with pluggable providers (strategy pattern).\nSupports: Vertex AI Imagen (Google), dvcode (company tool).\nUse for any image generation need: article inline images, cover images, general purpose.\nTrigger: \"生成图片\", \"配图\", \"封面图\", \"generate image\", \"create cover\".",
+  "detailedDescription": "统一生图技能，基于策略模式，支持多个后端 Provider 自由切换。",
+  "emoji": "📦",
+  "tags": [
+   "Media",
+   "Utility"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "生成图片",
+   "配图",
+   "封面图",
+   "generate image"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill image-provider",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/image-provider",
+  "sourcePath": "skills/image-provider",
+  "lastUpdated": "2026-05-02T15:49:31.000Z"
+ },
+ {
+  "id": "impeccable",
+  "name": "impeccable",
+  "displayName": "impeccable",
+  "description": "Designs and iterates production-grade frontend interfaces. Real working code, committed design choices, exceptional craft. Covers websites, landing pages, dashboards, product UI, components, forms, and design systems.",
+  "detailedDescription": "Designs and iterates production-grade frontend interfaces. Real working code, committed design choices, exceptional craft. Covers websites, landing pages, dashboards, product UI, components, forms, and design systems.",
+  "emoji": "📦",
+  "tags": [
+   "设计与前端开发",
+   "UX"
+  ],
+  "scenarios": [],
+  "aliases": [],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill impeccable",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/impeccable",
+  "sourcePath": "skills/impeccable",
+  "lastUpdated": "2026-07-04T00:00:00.000Z",
+  "author": "pbakaus",
+  "upstream": "pbakaus/impeccable",
+  "upstreamPath": "skill",
+  "upstreamSha": "f2c7051853848826aac2f4646581d62a732155ad"
+ },
+ {
+  "id": "llm-price-tracker",
+  "name": "llm-price-tracker",
+  "displayName": "LLM Price Tracker",
+  "description": "Track and compare LLM API pricing across 147+ providers. Uses models.dev JSON API as primary source + manual scraping for uncatalogued Chinese providers. Triggers: 查模型价格, 价格对比, model pricing, 降价, 新模型, 供应商查询.",
+  "detailedDescription": "Track LLM API pricing across **147+ providers** via the [models.dev](https://models.dev) community database. Deep metadata: context limits, modalities, reasoning, tool calling, knowledge cutoff, open weights.",
+  "emoji": "📦",
+  "tags": [
+   "Monitoring",
+   "Research",
+   "Analysis"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "LLM价格",
+   "模型定价",
+   "API价格",
+   "降价",
+   "新模型价格",
+   "供应商对比"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill llm-price-tracker",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/llm-price-tracker",
+  "sourcePath": "skills/llm-price-tracker",
+  "lastUpdated": "2026-05-02T15:49:31.000Z"
+ },
+ {
+  "id": "memory-organizer",
+  "name": "memory-organizer",
+  "displayName": "Memory Organizer",
+  "description": "长期记忆整理指南。使用当需要清理、组织或重构 MEMORY.md 文件时，或决策哪些信息应该/不应该存储在长期记忆中。提供区分静态知识（长期价值）vs 动态信息（可自动获取）的原则。",
+  "detailedDescription": "长期记忆（MEMORY.md）是 Agent 的\"外部大脑\"，存储决策、配置、经验和长期上下文。但存储过多动态信息会导致记忆臃肿和频繁更新。\n\n本技能提供区分**应该存储**（静态、长期价值）vs **不应该存储**（动态、可自动获取）的原则和示例。",
+  "emoji": "📦",
+  "tags": [
+   "Knowledge",
+   "Productivity",
+   "Planning"
+  ],
+  "scenarios": [
+   "清理或重构 MEMORY.md",
+   "判断某条信息该不该存入长期记忆",
+   "设计长期记忆的结构和归档原则"
+  ],
+  "aliases": [
+   "整理记忆",
+   "MEMORY 管理",
+   "长期记忆"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill memory-organizer",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/memory-organizer",
+  "sourcePath": "skills/memory-organizer",
+  "lastUpdated": "2026-04-15T02:36:07.000Z"
+ },
+ {
+  "id": "mp-weixin-ops",
+  "name": "mp-weixin-ops",
+  "displayName": "mp-weixin-ops — 微信公众号一站式运营",
+  "description": "微信公众号一站式运营 Skill。覆盖从热点调研、选题策划、文章写作、配图生成、封面制作、排版转换到推送草稿箱的完整工作流。触发词：写公众号文章、帮我写一篇、公众号运营、从选题到发布、推送草稿箱、帮我配图、生成封面、公众号排版、content planning、publish to WeChat。所有子功能内置于 skills/ 子目录，无需单独安装。",
+  "detailedDescription": "一个 Skill 搞定公众号全链路：热点 → 选题 → 写作 → 配图 → 封面 → 排版 → 发布。",
+  "emoji": "📦",
+  "tags": [
+   "WeChat",
+   "Content",
+   "Writing"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "公众号运营",
+   "写公众号文章",
+   "公众号排版",
+   "推送草稿箱"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill mp-weixin-ops",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/mp-weixin-ops",
+  "sourcePath": "skills/mp-weixin-ops",
+  "lastUpdated": "2026-05-02T15:49:31.000Z"
+ },
+ {
+  "id": "officecli-docx",
+  "name": "officecli-docx",
+  "displayName": "OfficeCLI DOCX Skill",
+  "description": "Use this skill any time a .docx file is involved -- as input, output, or both. This includes: creating Word documents, reports, letters, memos, or proposals; reading, parsing, or extracting text from any .docx file; editing, modifying, or updating existing documents; working with templates, tracked changes, comments, headers/footers, or tables of contents. Trigger whenever the user mentions 'Word doc', 'document', 'report', 'letter', 'memo', or references a .docx filename.",
+  "detailedDescription": "Use this skill any time a .docx file is involved -- as input, output, or both. This includes: creating Word documents, reports, letters, memos, or proposals; reading, parsing, or extracting text from any .docx file; editing, modifying, or updating existing documents; working with templates, tracked changes, comments, headers/footers, or tables of contents. Trigger whenever the user mentions 'Word doc', 'document', 'report', 'letter', 'memo', or references a .docx filename.",
+  "emoji": "📦",
+  "tags": [
+   "Product",
+   "CLI",
+   "Automation"
+  ],
+  "scenarios": [],
+  "aliases": [],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill officecli-docx",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/officecli-docx",
+  "sourcePath": "skills/officecli-docx",
+  "lastUpdated": "2026-05-06T08:34:08.000Z",
+  "author": "iOfficeAI",
+  "upstream": "iOfficeAI/OfficeCLI",
+  "upstreamPath": "skills/officecli-docx",
+  "upstreamSha": "dced0d74ff85b1fef0b777efcdb637c2c4ef8a6e"
+ },
+ {
+  "id": "short-drama-pipeline",
+  "name": "short-drama-pipeline",
+  "displayName": "short-drama-pipeline — AI 短剧/短视频全链路生产",
+  "description": "AI 短剧/短视频全链路生产技能。从选题调研、脚本撰写、视频生成到成片输出的完整工作流。\n触发词：做一条短视频、做个短剧、AI短剧、帮我选题、生成视频、短视频制作、短剧制作、帮我创作。\n复用 tavily（调研）、xiaohongshu-cli/bilibili-cli（平台数据）、libtv-skill（视频生成）。\n所有子功能内置于 skills/ 子目录，无需单独安装。",
+  "detailedDescription": "选题 → 脚本 → 生成 → 成片，一个技能打通全流程。",
+  "emoji": "📦",
+  "tags": [
+   "Video",
+   "Media",
+   "Content"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "AI短剧",
+   "短视频制作",
+   "短剧制作",
+   "生成视频"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill short-drama-pipeline",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/short-drama-pipeline",
+  "sourcePath": "skills/short-drama-pipeline",
+  "lastUpdated": "2026-05-02T15:49:31.000Z"
+ },
+ {
+  "id": "short-video-replicator",
+  "name": "short-video-replicator",
+  "displayName": "short-video-replicator",
+  "description": "短视频爆款复刻一站式工具。输入抖音/B站/YouTube链接或本地视频路径，自动完成： 视频下载与语音转录 → 结构化文字稿 → 三维度爆款分析 → 文案二创 → 口播脚本×3 + 小剧情脚本×3 → Viral-5D评分 → PDF报告导出（可选飞书推送）。 使用场景：拆解爆款视频、学习短视频文案技巧、生成可直接拍摄的二创脚本。 关键词：短视频复刻、爆款分析、口播脚本、小剧情、文案二创、视频转录、PDF报告、抖音、B站",
+  "detailedDescription": "短视频爆款复刻全流程 Skill。从一条链接到一套可拍摄脚本，7步完成。",
+  "emoji": "📦",
+  "tags": [
+   "Video",
+   "Media",
+   "Content"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "短视频复刻",
+   "爆款分析",
+   "口播脚本",
+   "文案二创"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill short-video-replicator",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/short-video-replicator",
+  "sourcePath": "skills/short-video-replicator",
+  "lastUpdated": "2026-05-02T15:49:31.000Z"
+ },
+ {
+  "id": "stock-analysis",
+  "name": "stock-analysis",
+  "displayName": "Stock Analysis Skill",
+  "description": "股票智能分析技能。输入股票代码（A股/港股/美股），自动完成：\n1. 获取实时行情 + 历史K线数据\n2. 计算技术指标（MA/MACD/RSI/量能/乖离率）\n3. 综合评分（100分制）+ 买卖信号\n4. 搜索最新新闻消息面\n5. AI综合分析，输出决策看板\n\n触发场景：用户提供股票代码要求分析、问某只股票怎么样、要求看盘分析等。\n示例输入：「分析下 TSLA PLTR」「600519怎么样」「帮我看看HK00700」",
+  "detailedDescription": "你是一位专业的股票分析师，通过 Python 脚本获取真实市场数据，结合技术分析和消息面，为用户生成决策看板。",
+  "emoji": "📦",
+  "tags": [
+   "Finance",
+   "Analysis",
+   "Research"
+  ],
+  "scenarios": [],
+  "aliases": [],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill stock-analysis",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/stock-analysis",
+  "sourcePath": "skills/stock-analysis",
+  "lastUpdated": "2026-06-05T14:32:34.833Z"
+ },
+ {
+  "id": "tavily",
+  "name": "tavily",
+  "displayName": "tavily — Tavily CLI unified skill",
+  "description": "Unified Tavily CLI skill — web search, URL extraction, and deep research via `tvly`. Use this skill when the user wants to search the web, extract content from URLs, conduct research, find articles, look up information, or needs current information from the internet. Routes to the appropriate sub-command based on user intent.",
+  "detailedDescription": "Web search, URL content extraction, and AI-powered deep research via the Tavily CLI.",
+  "emoji": "📦",
+  "tags": [
+   "Search",
+   "Web",
+   "Research"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "搜索网页",
+   "联网查资料",
+   "提取URL内容",
+   "深度调研"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill tavily",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/tavily",
+  "sourcePath": "skills/tavily",
+  "lastUpdated": "2026-05-02T15:49:31.000Z"
+ },
+ {
+  "id": "tts",
+  "name": "tts",
+  "displayName": "TTS — 语音合成技能",
+  "description": "Unified TTS (Text-to-Speech) skill with pluggable providers (strategy pattern).\nSupports: Edge TTS (free, no API key), Vertex AI Gemini TTS (Google).\nUse for generating voiceovers, narration, dubbing.\nTrigger: \"配音\", \"生成语音\", \"TTS\", \"text-to-speech\", \"合成语音\", \"语音合成\".",
+  "detailedDescription": "统一语音合成技能，基于策略模式，支持多个 TTS 后端切换。",
+  "emoji": "📦",
+  "tags": [
+   "Audio",
+   "Utility"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "配音",
+   "语音合成",
+   "TTS",
+   "合成语音"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill tts",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/tts",
+  "sourcePath": "skills/tts",
+  "lastUpdated": "2026-05-02T15:49:31.000Z"
+ },
+ {
+  "id": "vertex-video-reader",
+  "name": "vertex-video-reader",
+  "displayName": "Vertex AI Video Reader Skill",
+  "description": "Use this skill to read, analyze, and understand video files using Google Cloud Vertex AI's lightweight video model (gemini-3.1-flash-lite-preview). Use it whenever the user asks to summarize a video, extract text/actions from a video, describe what happens in an mp4/mov file, or ask questions about a specific video clip.",
+  "detailedDescription": "This skill allows you to analyze and understand video contents using the fast and cost-effective `gemini-3.1-flash-lite-preview` model via Google Vertex AI.",
+  "emoji": "📦",
+  "tags": [
+   "Video",
+   "Media",
+   "Analysis"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "分析视频内容",
+   "理解视频",
+   "视频总结"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill vertex-video-reader",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/vertex-video-reader",
+  "sourcePath": "skills/vertex-video-reader",
+  "lastUpdated": "2026-05-02T15:49:31.000Z"
+ },
+ {
+  "id": "video-analyze",
+  "name": "video-analyze",
+  "displayName": "video-analyze",
+  "description": "当你需要分析视频内容（抽取关键帧、识别语音）时使用本技能。输出结构化素材，供 Agent 理解视频内容，并可与 content-adapt 配合生成发布文案。",
+  "detailedDescription": "当你需要分析视频内容（抽取关键帧、识别语音）时使用本技能。输出结构化素材，供 Agent 理解视频内容，并可与 content-adapt 配合生成发布文案。",
+  "emoji": "📦",
+  "tags": [
+   "Video",
+   "Media",
+   "ASR"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "视频分析",
+   "分析视频",
+   "抽帧"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill video-analyze",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/video-analyze",
+  "sourcePath": "skills/video-analyze",
+  "lastUpdated": "2026-06-04T12:23:42.000Z"
+ },
+ {
+  "id": "videocut",
+  "name": "videocut",
+  "displayName": "videocut — 口播视频一站式剪辑",
+  "description": "口播视频一站式剪辑 Skill。覆盖转录、口误识别、字幕生成、高清导出的完整工作流。触发词：剪口播、处理视频、帮我剪辑、生成字幕、导出高清。从视频到成片，一步到位。",
+  "detailedDescription": "> 火山引擎转录 + AI 口误识别 + 字幕生成 + 高清导出",
+  "emoji": "📦",
+  "tags": [
+   "Video",
+   "Media",
+   "Utility"
+  ],
+  "scenarios": [],
+  "aliases": [
+   "剪口播",
+   "处理视频",
+   "生成字幕",
+   "视频剪辑"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill videocut",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/videocut",
+  "sourcePath": "skills/videocut",
+  "lastUpdated": "2026-05-02T15:49:31.000Z"
+ },
+ {
+  "id": "weread-skills",
+  "name": "weread-skills",
+  "displayName": "WeRead — 微信读书助手",
+  "description": "微信读书助手 — 搜索书籍、管理书架、查看笔记划线、浏览书评、阅读统计、发现推荐好书",
+  "detailedDescription": "通过 Agent API Gateway 调用微信读书接口，提供搜索、书架、笔记、书评等能力。",
+  "emoji": "📦",
+  "tags": [
+   "Reading",
+   "WeChat",
+   "Knowledge"
+  ],
+  "scenarios": [],
+  "aliases": [],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill weread-skills",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/weread-skills",
+  "sourcePath": "skills/weread-skills",
+  "lastUpdated": "2026-06-05T14:32:34.846Z"
+ },
+ {
+  "id": "x-digest",
+  "name": "x-digest",
+  "displayName": "X 日报",
+  "description": "刷用户的 X (Twitter) 并生成定制化中文日报。通过 ego-browser 打开用户已登录的 X For you 推荐流，滚动采集最近 24 小时推文，按用户兴趣画像（AI/Agent 工程、系统编程、独立开发搞钱、开发者工具）过滤广告、分类排序，在对话中输出「X 日报」。当用户说\"刷一下X\"、\"看看今天X上有什么\"、\"刷X总结\"、\"X日报\"、\"帮我看看推特\"、\"今天推特上有什么值得看的\"、\"x-digest\"，或询问今天 X/Twitter 的热点、想了解推荐流里有什么内容时，务必使用本技能。",
+  "detailedDescription": "为用户采集其 X For you 推荐流，产出一份按个人兴趣筛选排序的中文日报。 核心价值在于**过滤噪声、按画像排序、给出点评**，而不是罗列推文。",
+  "emoji": "📦",
+  "tags": [
+   "Social",
+   "Summary",
+   "Crawler"
+  ],
+  "scenarios": [
+   "用户想了解今天 X/Twitter 上有什么值得看的内容",
+   "用户说\"刷一下X\"、\"X日报\"、\"刷X总结\"",
+   "用户想了解自己的 X 推荐流平时都推些什么"
+  ],
+  "aliases": [
+   "X日报",
+   "刷X",
+   "刷X总结",
+   "推特日报",
+   "Twitter日报"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill x-digest",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/x-digest",
+  "sourcePath": "skills/x-digest",
+  "lastUpdated": "2026-11-19T13:23:59.408Z"
+ },
+ {
+  "id": "x-follow",
+  "name": "x-follow",
+  "displayName": "X 日报跟进",
+  "description": "把 X 日报（x-digest）的可行动项推进到落地：深读原帖（正文+高赞回复+关键外链）→ 对照用户项目源码找差距 → 出方案/改代码/提 PR（需用户授权）→ 结论按沉淀映射落盘到对应仓库 → 更新 backlog 销项。当用户说\"跟进第N条\"、\"跟进",
+  "detailedDescription": "把 x-digest 日报「可行动项」/ backlog 里的条目推进到明确结论： 可落地的改进方案（直至 PR）、认知沉淀入库、或判定为伪信号销项。一次跟进只处理一个条目。",
+  "emoji": "📦",
+  "tags": [
+   "Workflow",
+   "Research",
+   "Knowledge"
+  ],
+  "scenarios": [
+   "用户看完 X 日报（x-digest）想跟进某条可行动项",
+   "用户给出推文 permalink，要求深挖并落到自己的项目上"
+  ],
+  "aliases": [
+   "跟进日报",
+   "x-followup"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill x-follow",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/x-follow",
+  "sourcePath": "skills/x-follow",
+  "lastUpdated": "2026-11-20T15:54:33.346Z"
+ },
+ {
+  "id": "xiaohongshu-cli",
+  "name": "xiaohongshu-cli",
+  "displayName": "xiaohongshu-cli — Xiaohongshu CLI Tool",
+  "description": "Use xiaohongshu-cli for ALL Xiaohongshu (Little Red Book, 小红书) operations — searching notes, reading content, browsing users, liking, collecting, commenting, following, and posting. Invoke whenever the user requests any Xiaohongshu interaction.",
+  "detailedDescription": "**Binary:** `xhs` **Credentials:** browser cookies (auto-extracted) or browser-assisted QR login (`--qrcode`)",
+  "emoji": "📦",
+  "tags": [
+   "Xiaohongshu",
+   "Social",
+   "Content"
+  ],
+  "scenarios": [],
+  "aliases": [],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill xiaohongshu-cli",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/xiaohongshu-cli",
+  "sourcePath": "skills/xiaohongshu-cli",
+  "lastUpdated": "2026-05-06T08:13:58.000Z",
+  "author": "jackwener"
+ },
+ {
+  "id": "easymage",
+  "name": "easymage",
+  "displayName": "EasyMage · 浏览器生图工坊",
+  "description": "Browser-based image generation studio: drive ChatGPT (logged-in session in Ego Lite) to produce styled social-media image sets - xiaohongshu nine-grid notes, guide cards, WeChat red-packet covers, avatars, banners. Includes reference-image injection, generation polling, output retrieval (download/library API/files API), nine-grid slicing, and xiaohongshu publish flow.\nTrigger: 生成配图, 小红书图文, 九宫格, 红包封面, 生图, 头像, 横幅, 攻略卡片, easymage.",
+  "detailedDescription": "浏览器生图工坊：用 Ego Lite 驱动已登录的 ChatGPT，按实战风格模板（极简产品风九宫格、攻略卡、头像横幅、红包封面）批量产出社媒配图。含参考图注入、生成轮询、成品取回（下载事件/library API/files API）、九宫格切页与小红书发布流水线。方法论源自 vane-gpt-image-skills（MIT）的浏览器自动化移植与扩展。",
+  "emoji": "🎨",
+  "tags": [
+   "Content",
+   "Image",
+   "SocialMedia"
+  ],
+  "scenarios": [
+   "小红书笔记九宫格配图（教育/旅游/生活方式选题）",
+   "公众号/抖音封面与攻略卡片",
+   "全平台统一的头像与横幅",
+   "春节红包封面批量设计"
+  ],
+  "aliases": [
+   "生图",
+   "小红书图文",
+   "配图生成",
+   "红包封面",
+   "九宫格",
+   "easymage"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill easymage",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/easymage",
+  "sourcePath": "skills/easymage",
+  "lastUpdated": "2026-11-22T14:30:11.000Z"
+ },
+ {
+  "id": "x-reply",
+  "name": "x-reply",
+  "displayName": "X Reply 战略",
+  "description": "X (Twitter) reply 战略每日执行 — reply-guy 冷增长流水线。搜高互动英文靶子帖 → 起草 ≤275 加权字符的回复草稿（无 Premium 上限 280，CJK 按 2 计）→ 用户过目批准后用 ego-browser 自动发布并核验落地，发布记录入 replied.json ledger。触发词：\"x-reply\"、\"跑 reply 轮\"、\"找靶子\"、\"发回复\"、\"回复战略\"，或 x-digest 日报完成后想推进 reply 增长时。",
+  "detailedDescription": "reply-guy 冷增长流水线：按个性化配置搜索 X 高互动英文帖，起草第一人称 builder 视角的回复草稿并做字符数校验，用户逐条批准后经 ego-browser 发布（含 Lexical 编辑器自动化手册与落地核验），登记进 replied.json 支持周复盘。",
+  "emoji": "🎯",
+  "tags": [
+   "Social",
+   "Growth",
+   "Crawler"
+  ],
+  "scenarios": [
+   "用户说\"跑 reply 轮\"、\"找靶子\"、\"x-reply\"",
+   "x-digest 日报完成后想顺手推进 reply 战略",
+   "用户想知道今天有什么值得回复的英文技术帖"
+  ],
+  "aliases": [
+   "X回复",
+   "回复战略",
+   "找靶子",
+   "reply轮"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill x-reply",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/x-reply",
+  "sourcePath": "skills/x-reply",
+  "lastUpdated": "2026-11-23T05:39:26.000Z"
+ }
 ]

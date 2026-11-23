@@ -63,6 +63,12 @@ jobs:
               core.setOutput('changed', 'true');
               return;
             }
+            // schedule 触发没有 before/after（2026-11-23 修复：此前 compare 404 导致
+            // 每小时定时运行整体标红）；worker 只随 push 部署，定时跳过
+            if (context.eventName === 'schedule' || !context.payload.before || !context.payload.after) {
+              core.setOutput('changed', 'false');
+              return;
+            }
             const compare = await github.rest.repos.compareCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,

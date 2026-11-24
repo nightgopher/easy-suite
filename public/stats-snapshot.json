@@ -35,6 +35,10 @@
   {
    "day": "2026-11-23 00:00:00",
    "hits": 3
+  },
+  {
+   "day": "2026-11-24 00:00:00",
+   "hits": 3
   }
  ],
  "assets": [
@@ -116,7 +120,7 @@
   },
   {
    "clientVer": "",
-   "heartbeats": 9
+   "heartbeats": 12
   }
  ],
  "dailyClients": [
@@ -135,17 +139,21 @@
   {
    "day": "2026-11-23 00:00:00",
    "clients": 1
+  },
+  {
+   "day": "2026-11-24 00:00:00",
+   "clients": 1
   }
  ],
  "totals": {
   "installs": 6,
   "metaHits": 7,
   "downloads": 13,
-  "heartbeats": 11,
-  "heartbeats7d": 11,
-  "uniqueClients": 5,
+  "heartbeats": 14,
+  "heartbeats7d": 14,
+  "uniqueClients": 6,
   "uniqueDownloaders": 3,
   "countries": 3
  },
- "generatedAt": "2026-11-24 01:44 UTC"
+ "generatedAt": "2026-11-24 12:38 UTC"
 }

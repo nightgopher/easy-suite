@@ -10,7 +10,7 @@
   },
   {
    "day": "2026-11-27 00:00:00",
-   "hits": 1
+   "hits": 4
   }
  ],
  "dailyInstalls": [
@@ -24,7 +24,7 @@
   },
   {
    "day": "2026-11-27 00:00:00",
-   "hits": 1
+   "hits": 4
   }
  ],
  "dailyHeartbeats": [
@@ -51,6 +51,10 @@
   {
    "day": "2026-11-26 00:00:00",
    "hits": 1
+  },
+  {
+   "day": "2026-11-27 00:00:00",
+   "hits": 6
   }
  ],
  "assets": [
@@ -109,9 +113,27 @@
    "hits": 1
   },
   {
+   "asset": "easyagent-server_0.55.0-1_amd64.deb",
+   "country": "SG",
+   "channel": "site",
+   "hits": 1
+  },
+  {
    "asset": "easyagent-bridge-darwin-arm64",
    "country": "KR",
    "channel": "direct",
+   "hits": 1
+  },
+  {
+   "asset": "easyagent-native-darwin-arm64.dmg",
+   "country": "SG",
+   "channel": "site",
+   "hits": 1
+  },
+  {
+   "asset": "easyagent-native-linux-amd64.deb",
+   "country": "SG",
+   "channel": "site",
    "hits": 1
   },
   {
@@ -138,7 +160,7 @@
   },
   {
    "clientVer": "",
-   "heartbeats": 14
+   "heartbeats": 20
   }
  ],
  "dailyClients": [
@@ -165,17 +187,21 @@
   {
    "day": "2026-11-26 00:00:00",
    "clients": 1
+  },
+  {
+   "day": "2026-11-27 00:00:00",
+   "clients": 1
   }
  ],
  "totals": {
-  "installs": 7,
+  "installs": 10,
   "metaHits": 7,
-  "downloads": 14,
-  "heartbeats": 16,
-  "heartbeats7d": 16,
-  "uniqueClients": 8,
-  "uniqueDownloaders": 4,
+  "downloads": 17,
+  "heartbeats": 22,
+  "heartbeats7d": 22,
+  "uniqueClients": 9,
+  "uniqueDownloaders": 7,
   "countries": 4
  },
- "generatedAt": "2026-11-27 02:56 UTC"
+ "generatedAt": "2026-11-27 12:44 UTC"
 }

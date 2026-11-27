@@ -7,6 +7,10 @@
   {
    "day": "2026-11-22 00:00:00",
    "hits": 5
+  },
+  {
+   "day": "2026-11-27 00:00:00",
+   "hits": 1
   }
  ],
  "dailyInstalls": [
@@ -17,6 +21,10 @@
   {
    "day": "2026-11-22 00:00:00",
    "hits": 2
+  },
+  {
+   "day": "2026-11-27 00:00:00",
+   "hits": 1
   }
  ],
  "dailyHeartbeats": [
@@ -39,6 +47,10 @@
   {
    "day": "2026-11-24 00:00:00",
    "hits": 4
+  },
+  {
+   "day": "2026-11-26 00:00:00",
+   "hits": 1
   }
  ],
  "assets": [
@@ -70,6 +82,12 @@
    "asset": "release.json",
    "country": "CN",
    "channel": "direct",
+   "hits": 1
+  },
+  {
+   "asset": "easyagent-android.apk",
+   "country": "SG",
+   "channel": "site",
    "hits": 1
   },
   {
@@ -120,7 +138,7 @@
   },
   {
    "clientVer": "",
-   "heartbeats": 13
+   "heartbeats": 14
   }
  ],
  "dailyClients": [
@@ -143,17 +161,21 @@
   {
    "day": "2026-11-24 00:00:00",
    "clients": 2
+  },
+  {
+   "day": "2026-11-26 00:00:00",
+   "clients": 1
   }
  ],
  "totals": {
-  "installs": 6,
+  "installs": 7,
   "metaHits": 7,
-  "downloads": 13,
-  "heartbeats": 15,
-  "heartbeats7d": 15,
-  "uniqueClients": 7,
-  "uniqueDownloaders": 3,
-  "countries": 3
+  "downloads": 14,
+  "heartbeats": 16,
+  "heartbeats7d": 16,
+  "uniqueClients": 8,
+  "uniqueDownloaders": 4,
+  "countries": 4
  },
- "generatedAt": "2026-11-26 20:15 UTC"
+ "generatedAt": "2026-11-27 02:56 UTC"
 }

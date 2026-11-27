@@ -1,0 +1,4 @@
+interface:
+  display_name: "ChatGPT 网页辅助调研"
+  short_description: "用 ego-lite 咨询 ChatGPT 并独立核验"
+  default_prompt: "请使用 $chatgpt-web-research 通过 ego-lite 咨询 ChatGPT 网页版，再核对资料并给我结论。"

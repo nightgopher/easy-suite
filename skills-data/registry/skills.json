@@ -64,6 +64,34 @@
   "lastUpdated": "2026-11-21T01:14:24.000Z"
  },
  {
+  "id": "chatgpt-web-research",
+  "name": "chatgpt-web-research",
+  "displayName": "ChatGPT 网页辅助调研",
+  "description": "通过 ego-lite 操作 ChatGPT 网页版辅助调研、方案分析与独立评审，结合原始资料和本地代码核验结论。",
+  "detailedDescription": "用户明确要求使用 ChatGPT 网页版时，通过 ego-browser 完成提问、等待和会话管理；处理页面加载变化及长回复，避免重复发送，并区分网页建议、可核实事实和未验证假设。需要已安装 ego-lite 和 ego-browser 技能，以及可用的 ChatGPT 登录状态。",
+  "emoji": "🔎",
+  "tags": [
+   "Research",
+   "AI",
+   "Browser"
+  ],
+  "scenarios": [
+   "网页版独立评审",
+   "方案对比",
+   "辅助调研"
+  ],
+  "aliases": [
+   "GPT网页版调研",
+   "ChatGPT网页版",
+   "网页辅助研究",
+   "chatgpt-web-research"
+  ],
+  "installCommand": "npx skills add https://github.com/nightgopher/easy-suite --skill chatgpt-web-research",
+  "githubUrl": "https://github.com/nightgopher/easy-suite/tree/main/skills/chatgpt-web-research",
+  "sourcePath": "skills/chatgpt-web-research",
+  "lastUpdated": "2026-11-27T09:24:08.000Z"
+ },
+ {
   "id": "content-adapt",
   "name": "content-adapt",
   "displayName": "content-adapt",

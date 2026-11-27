@@ -10,7 +10,7 @@
   },
   {
    "day": "2026-11-27 00:00:00",
-   "hits": 4
+   "hits": 16
   }
  ],
  "dailyInstalls": [
@@ -24,7 +24,7 @@
   },
   {
    "day": "2026-11-27 00:00:00",
-   "hits": 4
+   "hits": 10
   }
  ],
  "dailyHeartbeats": [
@@ -60,13 +60,37 @@
  "assets": [
   {
    "asset": "release.json",
+   "country": "RU",
+   "channel": "direct",
+   "hits": 4
+  },
+  {
+   "asset": "release.json",
    "country": "KR",
+   "channel": "direct",
+   "hits": 2
+  },
+  {
+   "asset": "easyagent-linux-amd64",
+   "country": "RU",
+   "channel": "direct",
+   "hits": 2
+  },
+  {
+   "asset": "checksums.txt",
+   "country": "RU",
    "channel": "direct",
    "hits": 2
   },
   {
    "asset": "release.json",
    "country": "HK",
+   "channel": "direct",
+   "hits": 2
+  },
+  {
+   "asset": "easyagent-bridge-linux-amd64",
+   "country": "RU",
    "channel": "direct",
    "hits": 2
   },
@@ -110,6 +134,18 @@
    "asset": "easyagent-bridge-linux-amd64",
    "country": "HK",
    "channel": "direct",
+   "hits": 1
+  },
+  {
+   "asset": "easyagent-server_0.56.0-1_arm64.deb",
+   "country": "SG",
+   "channel": "site",
+   "hits": 1
+  },
+  {
+   "asset": "easyagent-mygo-android.apk",
+   "country": "SG",
+   "channel": "site",
    "hits": 1
   },
   {
@@ -194,14 +230,14 @@
   }
  ],
  "totals": {
-  "installs": 10,
-  "metaHits": 7,
-  "downloads": 17,
+  "installs": 16,
+  "metaHits": 13,
+  "downloads": 29,
   "heartbeats": 22,
-  "heartbeats7d": 22,
+  "heartbeats7d": 21,
   "uniqueClients": 9,
-  "uniqueDownloaders": 7,
-  "countries": 4
+  "uniqueDownloaders": 11,
+  "countries": 5
  },
- "generatedAt": "2026-11-27 12:44 UTC"
+ "generatedAt": "2026-11-27 22:06 UTC"
 }

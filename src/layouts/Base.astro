@@ -197,6 +197,15 @@ const canonical = `${CANONICAL_ORIGIN}${PRIMARY_PATH_BASE}${suffix}`;
     wrap.appendChild(btn);
   });
 
+  /* ---- 正文表格：包一层横向滚动容器，防止宽表溢出遮挡右侧目录 ---- */
+  document.querySelectorAll(".prose table").forEach((table) => {
+    if (table.parentElement?.classList.contains("table-wrap")) return;
+    const wrap = document.createElement("div");
+    wrap.className = "table-wrap";
+    table.parentNode?.insertBefore(wrap, table);
+    wrap.appendChild(table);
+  });
+
   /* ---- 版本号在线刷新（GitHub API，失败时保留写死的兜底值） ---- */
   const FALLBACK: Record<string, string> = { easyagent: "v0.38.0", easygateway: "v0.3.18" };
   document.querySelectorAll("[data-repo]").forEach((el) => {

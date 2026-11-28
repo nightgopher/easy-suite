@@ -74,7 +74,7 @@ const nextDoc = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1]
     </details>
   </div>
 
-  <div class="container docs-layout">
+  <div class={`container docs-layout ${toc.length === 0 ? 'no-toc' : ''}`}>
     <aside class="docs-sidebar" aria-label="文档导航">
       {navGroups.map((g) => (
         <div class="docs-nav-group">
@@ -128,42 +128,81 @@ const nextDoc = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1]
     )}
   </div>
 </main>
+
+<script>
+  /* 本页目录 scrollspy：滚动时高亮当前所在小节 */
+  const toc = document.querySelector('.docs-toc');
+  if (toc) {
+    const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>('a'));
+    const byId = new Map<string, HTMLAnchorElement>();
+    links.forEach((a) => {
+      const id = decodeURIComponent(a.hash.slice(1));
+      if (id) byId.set(id, a);
+    });
+    const setActive = (id: string) => {
+      links.forEach((a) => a.classList.remove('active'));
+      byId.get(id)?.classList.add('active');
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        }
+      },
+      { rootMargin: '-90px 0px -65% 0px' },
+    );
+    byId.forEach((_, id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+  }
+</script>
 </Base>
 
 <style>
   .docs-page { padding: 6.5rem 0 4.5rem; }
+  .docs-layout,
+  .docs-mobile-nav {
+    max-width: 1380px;
+  }
   .docs-layout {
     display: grid;
-    grid-template-columns: 220px minmax(0, 1fr) 190px;
-    gap: 2.2rem;
+    grid-template-columns: 236px minmax(0, 1fr) 216px;
+    gap: 2.5rem;
     align-items: start;
+  }
+  .docs-layout.no-toc {
+    grid-template-columns: 236px minmax(0, 1fr);
+  }
+  .docs-body {
+    min-width: 0;
   }
 
   .docs-sidebar {
     position: sticky; top: 5.5rem;
     max-height: calc(100vh - 7rem); overflow: auto;
-    font-size: .82rem; padding-right: .5rem;
-    border-right: 1px solid rgba(122, 134, 153, .14);
+    font-size: .82rem; padding-right: .75rem;
+    border-right: 1px solid var(--border-subtle);
   }
   .docs-nav-group { margin-bottom: 1.25rem; }
   .docs-nav-group-title {
     font-size: .74rem; font-weight: 600; letter-spacing: .04em;
-    color: var(--muted, #7a8699); margin: 0 0 .4rem;
+    color: var(--text-tertiary); margin: 0 0 .4rem;
   }
   .docs-sidebar ul, .docs-mobile-groups ul { list-style: none; margin: 0; padding: 0; }
   .docs-sidebar li, .docs-mobile-groups li { margin: .18rem 0; line-height: 1.45; }
   .docs-sidebar a, .docs-mobile-groups a {
-    display: block; padding: .24rem .5rem; border-radius: 6px;
-    color: var(--text-secondary, #acbeb6); text-decoration: none;
+    display: block; padding: .28rem .55rem; border-radius: 6px;
+    color: var(--text-secondary); text-decoration: none;
     transition: color .15s, background .15s;
   }
   .docs-sidebar a:hover, .docs-mobile-groups a:hover {
-    color: var(--text-primary, #e6f2ed);
-    background: rgba(122, 134, 153, .08);
+    color: var(--text-primary);
+    background: rgba(130, 213, 202, .06);
   }
   .docs-sidebar a.active, .docs-mobile-groups a.active {
-    color: #34d399; font-weight: 600;
-    background: rgba(52, 211, 153, .1);
+    color: var(--accent-agent); font-weight: 600;
+    background: var(--accent-agent-dim);
   }
 
   .docs-toc {
@@ -171,36 +210,50 @@ const nextDoc = curIdx >= 0 && curIdx < flatNav.length - 1 ? flatNav[curIdx + 1]
     max-height: calc(100vh - 7rem); overflow: auto;
     font-size: .8rem;
   }
-  .docs-toc-title { font-weight: 600; margin-bottom: .6rem; color: var(--muted, #7a8699); }
+  .docs-toc-title {
+    font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    margin-bottom: .65rem; color: var(--text-tertiary);
+  }
   .docs-toc ul { list-style: none; margin: 0; padding: 0; }
-  .docs-toc li { margin: .3rem 0; line-height: 1.5; }
-  .docs-toc .toc-d3 { padding-left: .9rem; font-size: .94em; opacity: .85; }
-  .docs-toc a { color: inherit; text-decoration: none; }
-  .docs-toc a:hover { color: #34d399; }
+  .docs-toc li { margin: 0; line-height: 1.5; }
+  .docs-toc a {
+    display: block;
+    padding: 4.5px 12px;
+    border-left: 1px solid var(--border-subtle);
+    color: var(--text-tertiary);
+    text-decoration: none;
+    overflow-wrap: break-word;
+    transition: color .15s, border-color .15s;
+  }
+  .docs-toc .toc-d3 a { padding-left: 22px; font-size: .94em; }
+  .docs-toc a:hover { color: var(--text-primary); }
+  .docs-toc a.active { color: var(--accent-agent); border-left-color: var(--accent-agent); }
 
   .docs-crumb {
     display: flex; flex-wrap: wrap; align-items: center; gap: .5rem;
-    font-size: .82rem; color: var(--muted, #7a8699); margin: 0 0 1.4rem;
+    font-size: .82rem; color: var(--text-tertiary); margin: 0 0 1.4rem;
   }
   .docs-crumb a { color: inherit; text-decoration: none; }
-  .docs-crumb a:hover { color: #34d399; }
+  .docs-crumb a:hover { color: var(--accent-agent); }
 
   .docs-pager { margin-top: 3rem; }
 
   .docs-mobile-nav { display: none; margin-bottom: 1.2rem; }
   .docs-mobile-nav details {
-    border: 1px solid rgba(122, 134, 153, .22); border-radius: 10px;
-    background: rgba(122, 134, 153, .06); padding: .6rem .9rem;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--bg-secondary); padding: .6rem .9rem;
   }
   .docs-mobile-nav summary { cursor: pointer; font-size: .86rem; font-weight: 600; }
   .docs-mobile-groups { margin-top: .8rem; display: grid; gap: .8rem; font-size: .82rem; }
 
   @media (max-width: 1180px) {
-    .docs-layout { grid-template-columns: 210px minmax(0, 1fr); }
+    .docs-layout,
+    .docs-layout.no-toc { grid-template-columns: 220px minmax(0, 1fr); gap: 2rem; }
     .docs-toc { display: none; }
   }
   @media (max-width: 860px) {
-    .docs-layout { grid-template-columns: 1fr; }
+    .docs-layout,
+    .docs-layout.no-toc { grid-template-columns: minmax(0, 1fr); }
     .docs-sidebar { display: none; }
     .docs-mobile-nav { display: block; }
   }

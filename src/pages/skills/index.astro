@@ -6,86 +6,714 @@ import promptsRaw from '../../../skills-data/registry/prompts.json';
 
 /**
  * 技能市场（官网板块）。数据 = skills-data/registry/*.json（单仓库，随构建直读）。
- * 技能本体的安装链（npx skills add）仍指向 nightgopher/custom-skills（归档只读，安装可用）。
+ * 技能本体同仓维护于 skills/，支持 npx skills add 一键安装到 ~/.agents/skills。
  */
 interface Entry {
   id: string;
   name: string;
   displayName: string;
   description: string;
+  detailedDescription?: string;
   emoji: string;
   tags: string[];
-  scenarios: string[];
+  scenarios?: string[];
+  aliases?: string[];
+  installCommand?: string;
 }
 
 const skills = (skillsRaw as Entry[]).map((s) => ({ ...s, kind: 'skill' as const }));
 const prompts = (promptsRaw as Entry[]).map((p) => ({ ...p, kind: 'prompt' as const }));
 const all = [...skills, ...prompts];
-const allTags = [...new Set(all.flatMap((e) => e.tags ?? []))].sort();
+
+const tagCounts = new Map<string, number>();
+for (const e of all) {
+  for (const t of e.tags ?? []) {
+    tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+  }
+}
+const sortedTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+const popularTags = sortedTags.filter(([, count]) => count >= 2);
+const extraTags = sortedTags.filter(([, count]) => count < 2);
+
+const TAG_ICON: Record<string, string> = {
+  Audio: '🎙️',
+  ASR: '🎙️',
+  Video: '🎬',
+  Media: '🎞️',
+  Image: '🎨',
+  Content: '✍️',
+  Writing: '✍️',
+  Copywriting: '✍️',
+  Research: '🔎',
+  Search: '🔎',
+  Social: '💬',
+  SocialMedia: '💬',
+  WeChat: '💬',
+  Douyin: '🎬',
+  Xiaohongshu: '📕',
+  Coding: '💻',
+  Architecture: '🏗️',
+  Review: '🔍',
+  Testing: '🧪',
+  Finance: '📈',
+  Analysis: '📊',
+  Knowledge: '📚',
+  Reading: '📖',
+  Butler: '🛎️',
+  Archival: '🗂️',
+  Automation: '⚙️',
+  Workflow: '🔄',
+  Prompting: '✨',
+  Productivity: '⚡',
+  UX: '🎨',
+  Browser: '🌐',
+  Crawler: '🕸️',
+  Utility: '🧰',
+};
+
+function iconFor(entry: Entry & { kind: 'skill' | 'prompt' }): string {
+  if (entry.emoji && entry.emoji !== '📦') return entry.emoji;
+  for (const tag of entry.tags ?? []) {
+    if (TAG_ICON[tag]) return TAG_ICON[tag];
+  }
+  return entry.kind === 'prompt' ? '✨' : '🧩';
+}
+
+function summarize(raw: string): string {
+  const cleaned = raw
+    .replace(/\r?\n+/g, ' ')
+    .replace(/\s*(?:Trigger|触发|Triggers?)\s*[:：].*$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return cleaned || raw.replace(/\r?\n+/g, ' ').trim();
+}
 
 const canonical = absoluteUrl('/skills/');
 ---
-<Base title="技能市场 · Easy Suite" description="EasyAgent / EasyGateway 技能市场：26 个技能与提示词的浏览与一键安装，与 EasyGateway 技能中心、easyagent 技能目录共用 ~/.agents/skills。" schema={{
-  '@context': 'https://schema.org', '@type': 'CollectionPage',
-  name: 'Easy Suite 技能市场', inLanguage: 'zh-CN', url: canonical, image: OG_IMAGE,
-}}>
+<Base
+  title="技能市场 · Easy Suite"
+  description={`EasyAgent / EasyGateway 技能市场：${skills.length} 个技能与 ${prompts.length} 个提示词的浏览与一键安装，与 EasyGateway 技能中心、EasyAgent 技能目录共用 ~/.agents/skills。`}
+  schema={{
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Easy Suite 技能市场',
+    inLanguage: 'zh-CN',
+    url: canonical,
+    image: OG_IMAGE,
+  }}
+>
 <main class="skills-page">
-  <section class="container">
-    <p class="skills-eyebrow"><span class="dot"></span>{all.length} 个条目 · 与 EasyAgent / EasyGateway 共用 ~/.agents/skills</p>
-    <h1>技能市场</h1>
-    <p class="skills-sub">浏览与安装 EasyAgent、EasyGateway 可用的技能与提示词。清单随主站构建自动更新；技能本体托管于 <a href="https://github.com/nightgopher/custom-skills" target="_blank" rel="noopener">nightgopher/custom-skills</a>（归档只读，安装命令持续有效）。</p>
-    <div class="skills-filter" id="skills-filter">
-      <button class="skills-tag active" data-tag="">全部</button>
-      {allTags.map((t) => <button class="skills-tag" data-tag={t}>{t}</button>)}
+  <section class="skills-hero">
+    <div class="skills-glow skills-glow-a" aria-hidden="true"></div>
+    <div class="skills-glow skills-glow-b" aria-hidden="true"></div>
+    <div class="container skills-hero-inner">
+      <div class="skills-hero-copy">
+        <p class="eyebrow">
+          <span class="dot"></span>
+          {skills.length} 个技能 · {prompts.length} 个提示词 · 共用 ~/.agents/skills
+        </p>
+        <h1>技能市场</h1>
+        <p class="skills-sub">
+          为 EasyAgent 与 EasyGateway 打造的即装即用技能与提示词集合。所有技能本体与清单同仓维护于
+          <a href="https://github.com/nightgopher/easy-suite/tree/main/skills" target="_blank" rel="noopener">nightgopher/easy-suite</a>，安装后桌面端、TUI、Web 与网关技能中心同步生效。
+        </p>
+      </div>
+      <div class="skills-install-hint">
+        <span class="skills-hint-label">快速安装任意技能</span>
+        <div class="codebox skills-hint-box">
+          <div class="codebox-head">
+            <span>shell</span>
+            <button class="copy-btn" type="button" data-copy>复制</button>
+          </div>
+          <pre><code>npx skills add https://github.com/nightgopher/easy-suite --skill &lt;id&gt;</code></pre>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="container skills-grid" id="skills-grid">
-    {all.map((e) => (
-      <a class="skills-card" href={withBase(`/skills/${e.kind === 'prompt' ? 'prompt-' : ''}${e.id}/`)} data-tags={JSON.stringify(e.tags ?? [])}>
-        <h3>{e.emoji} {e.displayName}</h3>
-        <p>{e.description}</p>
-        <div class="skills-tags">{(e.tags ?? []).map((t) => <span>{t}</span>)}</div>
-      </a>
-    ))}
+  <section class="container skills-toolbar-wrap">
+    <div class="skills-toolbar">
+      <label class="skills-search">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8" />
+          <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        <input
+          type="search"
+          id="skills-search-input"
+          placeholder="搜索技能名称、描述、标签或别名…"
+          autocomplete="off"
+        />
+      </label>
+
+      <div class="skills-kind-tabs" id="skills-kind-tabs" role="tablist" aria-label="类型筛选">
+        <button type="button" class="kind-tab active" data-kind="">
+          全部 <span>{all.length}</span>
+        </button>
+        <button type="button" class="kind-tab" data-kind="skill">
+          技能 <span>{skills.length}</span>
+        </button>
+        <button type="button" class="kind-tab" data-kind="prompt">
+          提示词 <span>{prompts.length}</span>
+        </button>
+      </div>
+
+      <span class="skills-count" id="skills-count">显示 {all.length} / {all.length}</span>
+    </div>
+
+    <div class="skills-filter" id="skills-filter" aria-label="标签筛选">
+      <button type="button" class="skills-tag active" data-tag="">全部标签</button>
+      {popularTags.map(([tag, count]) => (
+        <button type="button" class="skills-tag" data-tag={tag}>
+          {tag}<span class="tag-count">{count}</span>
+        </button>
+      ))}
+      {extraTags.length > 0 && (
+        <>
+          <button type="button" class="skills-tag skills-tag-more" id="skills-more-tags" aria-expanded="false">
+            +{extraTags.length} 更多
+          </button>
+          <span class="skills-extra-tags" id="skills-extra-tags" hidden>
+            {extraTags.map(([tag]) => (
+              <button type="button" class="skills-tag" data-tag={tag}>{tag}</button>
+            ))}
+          </span>
+        </>
+      )}
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="skills-grid" id="skills-grid">
+      {all.map((e) => {
+        const slug = `${e.kind === 'prompt' ? 'prompt-' : ''}${e.id}`;
+        const cmd = e.installCommand ?? (e.kind === 'prompt' ? `custom-skills use ${e.id}` : '');
+        const searchBlob = [
+          e.id,
+          e.name,
+          e.displayName,
+          e.description,
+          ...(e.tags ?? []),
+          ...(e.aliases ?? []),
+          ...(e.scenarios ?? []),
+        ].join(' ').toLowerCase();
+        return (
+          <a
+            class={`skills-card skills-card-${e.kind}`}
+            href={withBase(`/skills/${slug}/`)}
+            data-kind={e.kind}
+            data-tags={JSON.stringify(e.tags ?? [])}
+            data-search={searchBlob}
+          >
+            <div class="sc-head">
+              <span class={`sc-icon sc-icon-${e.kind}`} aria-hidden="true">{iconFor(e)}</span>
+              <div class="sc-title-wrap">
+                <h3>{e.displayName}</h3>
+                <span class="sc-slug">{e.id}</span>
+              </div>
+              <span class={`sc-badge sc-badge-${e.kind}`}>
+                {e.kind === 'prompt' ? 'Prompt' : 'Skill'}
+              </span>
+            </div>
+
+            <p class="sc-desc">{summarize(e.description)}</p>
+
+            <div class="sc-foot">
+              <div class="skills-tags">
+                {(e.tags ?? []).slice(0, 3).map((t) => <span>{t}</span>)}
+                {(e.tags?.length ?? 0) > 3 && <span class="tag-overflow">+{(e.tags?.length ?? 0) - 3}</span>}
+              </div>
+              {cmd && (
+                <button
+                  type="button"
+                  class="sc-copy"
+                  data-copy-cmd={cmd}
+                  title="复制安装命令"
+                >
+                  复制命令
+                </button>
+              )}
+            </div>
+          </a>
+        );
+      })}
+    </div>
+
+    <div class="skills-empty" id="skills-empty" hidden>
+      <p>没有匹配的技能或提示词。</p>
+      <button type="button" class="btn btn-ghost" id="skills-reset">重置筛选</button>
+    </div>
   </section>
 </main>
 
 <script>
-  // Astro 页面 <script> 不支持嵌套模板字符串，以下用常规 DOM API
-  const buttons = document.querySelectorAll<HTMLButtonElement>('#skills-filter .skills-tag');
+  const searchInput = document.getElementById('skills-search-input') as HTMLInputElement | null;
+  const kindTabs = document.querySelectorAll<HTMLButtonElement>('#skills-kind-tabs .kind-tab');
+  const tagButtons = document.querySelectorAll<HTMLButtonElement>('#skills-filter .skills-tag[data-tag]');
+  const moreBtn = document.getElementById('skills-more-tags') as HTMLButtonElement | null;
+  const extraWrap = document.getElementById('skills-extra-tags');
   const cards = document.querySelectorAll<HTMLAnchorElement>('#skills-grid .skills-card');
-  buttons.forEach((btn) => {
+  const countEl = document.getElementById('skills-count');
+  const emptyEl = document.getElementById('skills-empty');
+  const resetBtn = document.getElementById('skills-reset');
+
+  let activeKind = '';
+  let activeTag = '';
+  let query = '';
+
+  function applyFilter() {
+    let visible = 0;
+    cards.forEach((card) => {
+      const kind = card.dataset.kind ?? '';
+      const tags: string[] = JSON.parse(card.dataset.tags ?? '[]');
+      const haystack = card.dataset.search ?? '';
+      const okKind = !activeKind || kind === activeKind;
+      const okTag = !activeTag || tags.includes(activeTag);
+      const okQuery = !query || haystack.includes(query);
+      const show = okKind && okTag && okQuery;
+      card.style.display = show ? '' : 'none';
+      if (show) visible += 1;
+    });
+    if (countEl) countEl.textContent = '显示 ' + visible + ' / ' + cards.length;
+    if (emptyEl) emptyEl.hidden = visible > 0;
+  }
+
+  kindTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      kindTabs.forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeKind = tab.dataset.kind ?? '';
+      applyFilter();
+    });
+  });
+
+  tagButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
-      buttons.forEach((b) => b.classList.remove('active'));
+      tagButtons.forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
-      const tag = btn.dataset.tag ?? '';
-      cards.forEach((card) => {
-        const tags: string[] = JSON.parse(card.dataset.tags ?? '[]');
-        card.style.display = !tag || tags.includes(tag) ? '' : 'none';
-      });
+      activeTag = btn.dataset.tag ?? '';
+      applyFilter();
+    });
+  });
+
+  if (moreBtn && extraWrap) {
+    moreBtn.addEventListener('click', () => {
+      const open = extraWrap.hidden;
+      extraWrap.hidden = !open;
+      moreBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      moreBtn.textContent = open ? '收起标签' : '+' + extraWrap.querySelectorAll('button').length + ' 更多';
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      query = searchInput.value.trim().toLowerCase();
+      applyFilter();
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      activeKind = '';
+      activeTag = '';
+      query = '';
+      if (searchInput) searchInput.value = '';
+      kindTabs.forEach((t) => t.classList.toggle('active', t.dataset.kind === ''));
+      tagButtons.forEach((b) => b.classList.toggle('active', b.dataset.tag === ''));
+      applyFilter();
+    });
+  }
+
+  /* 卡片内一键复制安装命令（阻止触发卡片跳转） */
+  document.querySelectorAll<HTMLButtonElement>('.sc-copy').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const cmd = btn.dataset.copyCmd ?? '';
+      if (!cmd) return;
+      const done = () => {
+        btn.textContent = '已复制';
+        btn.classList.add('done');
+        setTimeout(() => {
+          btn.textContent = '复制命令';
+          btn.classList.remove('done');
+        }, 1500);
+      };
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(cmd).then(done).catch(() => {});
+      }
     });
   });
 </script>
 </Base>
 
 <style is:global>
-  .skills-page { padding: 6.5rem 0 5rem; }
-  .skills-eyebrow { font-size: .8rem; color: var(--text-tertiary, #8fa79b); display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
-  .skills-eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-agent, #82d5ca); display: inline-block; }
-  .skills-eyebrow a { color: inherit; }
-  .skills-page h1 { font-size: 2.2rem; margin: .6rem 0 1rem; }
-  .skills-sub { max-width: 52rem; color: var(--text-secondary, #acbeb6); line-height: 1.7; margin-bottom: 1.6rem; }
-  .skills-sub a { color: inherit; }
-  .skills-filter { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 2rem; }
-  .skills-tag { background: transparent; border: 1px solid var(--bg-hover, #213333); color: var(--text-secondary, #acbeb6); border-radius: 999px; padding: .28rem .85rem; font-size: .78rem; cursor: pointer; }
-  .skills-tag:hover { border-color: var(--accent-agent, #82d5ca); color: var(--text-primary, #e5efeb); }
-  .skills-tag.active { background: var(--accent-agent-dim, rgba(130, 213, 202, 0.12)); border-color: var(--accent-agent, #82d5ca); color: var(--accent-agent, #82d5ca); }
-  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1rem; }
-  .skills-card { background: var(--bg-secondary, #132122); border: 1px solid var(--bg-hover, #213333); border-radius: 12px; padding: 1.1rem 1.2rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: .5rem; }
-  .skills-card:hover { border-color: var(--accent-agent, #82d5ca); }
-  .skills-card h3 { font-size: .98rem; margin: 0; }
-  .skills-card p { margin: 0; font-size: .84rem; color: var(--text-secondary, #acbeb6); line-height: 1.6; flex: 1; }
-  .skills-tags { display: flex; flex-wrap: wrap; gap: .35rem; }
-  .skills-tags span { font-size: .7rem; color: var(--text-tertiary, #8fa79b); border: 1px solid var(--bg-hover, #213333); border-radius: 999px; padding: .08rem .55rem; }
+  .skills-page { padding-bottom: 5.5rem; }
+
+  .skills-hero {
+    position: relative;
+    padding: 7.2rem 0 2.6rem;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border-subtle);
+    background: radial-gradient(ellipse 900px 420px at 15% 0%, rgba(130, 213, 202, 0.08), transparent 65%);
+  }
+  .skills-glow {
+    position: absolute;
+    width: 460px;
+    height: 460px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.12;
+    pointer-events: none;
+  }
+  .skills-glow-a { top: -220px; left: -120px; background: var(--accent-agent); }
+  .skills-glow-b { bottom: -260px; right: -120px; background: var(--accent-gateway); }
+
+  .skills-hero-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr);
+    gap: 28px 40px;
+    align-items: end;
+  }
+  .skills-hero h1 {
+    font-size: clamp(28px, 3.2vw, 38px);
+    margin: 0 0 12px;
+  }
+  .skills-sub {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.75;
+    margin: 0;
+  }
+  .skills-sub a {
+    color: var(--accent-agent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(130, 213, 202, 0.4);
+  }
+  .skills-sub a:hover { color: var(--accent-agent-hover); }
+
+  .skills-hint-label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+  .skills-hint-box { margin: 0; }
+  .skills-hint-box pre { padding: 11px 14px; }
+  .skills-hint-box code { font-size: 12px; white-space: pre-wrap; word-break: break-all; }
+
+  /* 工具栏：搜索 + 类型切换 + 热门标签 */
+  .skills-toolbar-wrap {
+    padding-top: 2rem;
+    padding-bottom: 1.6rem;
+  }
+  .skills-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .skills-search {
+    position: relative;
+    flex: 1 1 280px;
+    display: flex;
+    align-items: center;
+  }
+  .skills-search svg {
+    position: absolute;
+    left: 13px;
+    width: 16px;
+    height: 16px;
+    color: var(--text-tertiary);
+    pointer-events: none;
+  }
+  .skills-search input {
+    width: 100%;
+    height: 40px;
+    padding: 0 14px 0 38px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .skills-search input::placeholder { color: var(--text-tertiary); }
+  .skills-search input:focus {
+    border-color: var(--accent-agent);
+    background: var(--bg-tertiary);
+  }
+
+  .skills-kind-tabs {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    gap: 2px;
+  }
+  .kind-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .kind-tab span {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+  .kind-tab:hover { color: var(--text-primary); }
+  .kind-tab.active {
+    background: var(--bg-tertiary);
+    color: var(--accent-agent);
+    font-weight: 500;
+  }
+  .kind-tab.active span { color: var(--accent-agent); }
+
+  .skills-count {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .skills-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+  }
+  .skills-extra-tags {
+    display: contents;
+  }
+  .skills-extra-tags[hidden] {
+    display: none;
+  }
+  .skills-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .skills-tag .tag-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+  .skills-tag:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+  .skills-tag.active {
+    background: var(--accent-agent-dim);
+    border-color: rgba(130, 213, 202, 0.55);
+    color: var(--accent-agent);
+  }
+  .skills-tag.active .tag-count { color: var(--accent-agent); }
+  .skills-tag-more {
+    border-style: dashed;
+    color: var(--text-tertiary);
+    background: transparent;
+  }
+
+  /* 卡片网格 */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .skills-card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+  .skills-card:hover {
+    transform: translateY(-3px);
+    background: var(--bg-hover);
+    border-color: rgba(130, 213, 202, 0.42);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.25);
+  }
+  .skills-card-prompt:hover {
+    border-color: rgba(157, 180, 255, 0.45);
+  }
+
+  .sc-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .sc-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .sc-icon-skill {
+    background: var(--accent-agent-dim);
+    border: 1px solid rgba(130, 213, 202, 0.22);
+  }
+  .sc-icon-prompt {
+    background: var(--accent-gateway-dim);
+    border: 1px solid rgba(157, 180, 255, 0.24);
+  }
+
+  .sc-title-wrap {
+    min-width: 0;
+    flex: 1;
+  }
+  .sc-title-wrap h3 {
+    font-size: 15.5px;
+    line-height: 1.35;
+    margin: 0;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sc-slug {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-tertiary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sc-badge {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+  .sc-badge-skill {
+    color: var(--accent-agent);
+    background: var(--accent-agent-dim);
+    border: 1px solid rgba(130, 213, 202, 0.25);
+  }
+  .sc-badge-prompt {
+    color: var(--accent-gateway);
+    background: var(--accent-gateway-dim);
+    border: 1px solid rgba(157, 180, 255, 0.28);
+  }
+
+  .sc-desc {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .sc-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .skills-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    min-width: 0;
+  }
+  .skills-tags span {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    background: rgba(14, 24, 25, 0.55);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 1px 7px;
+    white-space: nowrap;
+  }
+  .skills-tags .tag-overflow {
+    color: var(--text-secondary);
+  }
+
+  .sc-copy {
+    flex-shrink: 0;
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 9px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .sc-copy:hover {
+    color: var(--accent-agent);
+    border-color: rgba(130, 213, 202, 0.5);
+    background: var(--accent-agent-dim);
+  }
+  .sc-copy.done {
+    color: #7fc98e;
+    border-color: rgba(127, 201, 142, 0.45);
+  }
+
+  .skills-empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-lg);
+    color: var(--text-secondary);
+  }
+  .skills-empty p { margin-bottom: 1rem; }
+
+  @media (max-width: 1020px) {
+    .skills-hero-inner { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 680px) {
+    .skills-hero { padding-top: 6rem; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .skills-count { margin-left: 0; }
+  }
 </style>

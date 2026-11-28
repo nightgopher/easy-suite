@@ -36,6 +36,9 @@ const { entry } = Astro.props;
 const canonical = absoluteUrl(`/skills/${entry.kind === 'prompt' ? 'prompt-' : ''}${entry.id}/`);
 const installCmd = entry.installCommand
   ?? (entry.kind === 'prompt' ? `custom-skills use ${entry.id}` : undefined);
+const showDetailed = Boolean(
+  entry.detailedDescription && entry.detailedDescription.trim() !== entry.description.trim(),
+);
 ---
 <Base title={`${entry.displayName} · 技能市场`} description={`${entry.emoji} ${entry.displayName}：${entry.description}`} schema={{
   '@context': 'https://schema.org', '@type': 'SoftwareApplication',
@@ -44,62 +47,140 @@ const installCmd = entry.installCommand
   author: { '@type': 'Person', name: 'nightgopher', url: 'https://github.com/nightgopher' },
 }}>
 <main class="skill-detail">
-  <section class="container">
-    <p class="sd-crumb"><a href={withBase('/skills/')}>← 技能市场</a></p>
-    <h1>{entry.emoji} {entry.displayName}</h1>
-    <p class="sd-desc">{entry.description}</p>
-    <div class="sd-tags">
-      {(entry.tags ?? []).map((t) => <span>{t}</span>)}
-      {(entry.scenarios ?? []).map((s) => <span class="sd-scenario">{s}</span>)}
+  <section class="container sd-container">
+    <p class="sd-crumb"><a href={withBase('/skills/')}>← 返回技能市场</a></p>
+
+    <div class="sd-header">
+      <div class="sd-title-row">
+        <span class={`sd-badge sd-badge-${entry.kind}`}>
+          {entry.kind === 'prompt' ? 'Prompt · 提示词' : 'Skill · 技能'}
+        </span>
+        <span class="sd-id">{entry.id}</span>
+      </div>
+      <h1>{entry.emoji && entry.emoji !== '📦' ? `${entry.emoji} ` : ''}{entry.displayName}</h1>
+      <p class="sd-desc">{entry.description}</p>
+      <div class="sd-tags">
+        {(entry.tags ?? []).map((t) => <span>{t}</span>)}
+        {(entry.scenarios ?? []).map((s) => <span class="sd-scenario">{s}</span>)}
+      </div>
     </div>
-  </section>
 
-  {installCmd && (
-  <section class="container">
-    <div class="codebox">
-      <div class="codebox-head"><span>安装 / 使用</span><button class="copy-btn" type="button" data-copy>复制</button></div>
-<pre><code>{installCmd}</code></pre>
+    {installCmd && (
+      <div class="sd-block">
+        <div class="codebox sd-codebox">
+          <div class="codebox-head">
+            <span>{entry.kind === 'prompt' ? '使用方式' : '一键安装'}</span>
+            <button class="copy-btn" type="button" data-copy>复制</button>
+          </div>
+          <pre><code>{installCmd}</code></pre>
+        </div>
+        <p class="sd-note">安装到 <code>~/.agents/skills</code> 后，EasyAgent 桌面端、TUI、Web 工作区与 EasyGateway 技能中心同时可用。</p>
+      </div>
+    )}
+
+    {showDetailed && (
+      <div class="sd-section">
+        <h2>详细介绍</h2>
+        <p>{entry.detailedDescription}</p>
+      </div>
+    )}
+
+    {(entry.aliases?.length ?? 0) > 0 && (
+      <div class="sd-section">
+        <h2>常用触发词 / 别名</h2>
+        <div class="sd-aliases">
+          {entry.aliases!.map((a) => <code>{a}</code>)}
+        </div>
+      </div>
+    )}
+
+    {entry.promptContent && (
+      <div class="sd-section">
+        <h2>提示词全文</h2>
+        <div class="codebox sd-prompt-box">
+          <div class="codebox-head"><span>prompt</span><button class="copy-btn" type="button" data-copy>复制</button></div>
+          <pre><code>{entry.promptContent}</code></pre>
+        </div>
+      </div>
+    )}
+
+    <div class="sd-section sd-links">
+      {entry.githubUrl && (
+        <a class="btn btn-ghost" href={entry.githubUrl} target="_blank" rel="noopener">查看技能源码 →</a>
+      )}
+      <a class="btn btn-ghost" href="https://github.com/nightgopher/easy-suite/tree/main/skills" target="_blank" rel="noopener">浏览全部技能目录 →</a>
     </div>
-    <p class="sd-note">安装到 ~/.agents/skills 后，EasyAgent 桌面端、TUI、Web 工作区与 EasyGateway 技能中心同时可用。</p>
-  </section>
-  )}
-
-  {entry.detailedDescription && (
-  <section class="container sd-section">
-    <h2>详细介绍</h2>
-    <p>{entry.detailedDescription}</p>
-  </section>
-  )}
-
-  {entry.promptContent && (
-  <section class="container sd-section">
-    <h2>提示词全文</h2>
-    <div class="codebox"><div class="codebox-head"><span>prompt</span><button class="copy-btn" type="button" data-copy>复制</button></div>
-<pre><code>{entry.promptContent}</code></pre></div>
-  </section>
-  )}
-
-  <section class="container sd-section sd-links">
-    {entry.githubUrl && <a href={entry.githubUrl} target="_blank" rel="noopener">技能源码 → GitHub</a>}
-    <a href="https://github.com/nightgopher/custom-skills" target="_blank" rel="noopener">技能清单仓库（归档只读）</a>
   </section>
 </main>
 </Base>
 
 <style is:global>
-  .skill-detail { padding: 6.5rem 0 5rem; }
-  .sd-crumb { font-size: .82rem; margin-bottom: 1.2rem; }
-  .sd-crumb a { color: var(--text-tertiary, #8fa79b); text-decoration: none; }
-  .sd-crumb a:hover { color: var(--accent-agent, #82d5ca); }
-  .skill-detail h1 { font-size: 2rem; margin: 0 0 .8rem; }
-  .sd-desc { font-size: 1.02rem; color: var(--text-secondary, #acbeb6); max-width: 52rem; line-height: 1.7; }
-  .sd-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1rem 0 1.8rem; }
-  .sd-tags span { font-size: .74rem; color: var(--text-secondary, #acbeb6); border: 1px solid var(--bg-hover, #213333); border-radius: 999px; padding: .12rem .6rem; }
-  .sd-tags .sd-scenario { color: var(--text-tertiary, #8fa79b); border-style: dashed; }
+  .skill-detail { padding: 6.8rem 0 5rem; }
+  .sd-container { max-width: 860px; }
+  .sd-crumb { font-size: .85rem; margin-bottom: 1.4rem; }
+  .sd-crumb a { color: var(--text-tertiary); text-decoration: none; transition: color .15s; }
+  .sd-crumb a:hover { color: var(--accent-agent); }
+
+  .sd-header {
+    padding-bottom: 1.8rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .sd-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .sd-badge {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 999px;
+  }
+  .sd-badge-skill {
+    color: var(--accent-agent);
+    background: var(--accent-agent-dim);
+    border: 1px solid rgba(130, 213, 202, 0.3);
+  }
+  .sd-badge-prompt {
+    color: var(--accent-gateway);
+    background: var(--accent-gateway-dim);
+    border: 1px solid rgba(157, 180, 255, 0.3);
+  }
+  .sd-id {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-tertiary);
+  }
+
+  .skill-detail h1 { font-size: clamp(24px, 3vw, 32px); margin: 0 0 12px; }
+  .sd-desc {
+    font-size: 15.5px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    white-space: pre-line;
+  }
+  .sd-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 1.1rem; }
+  .sd-tags span {
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .sd-tags .sd-scenario { color: var(--text-tertiary); border-style: dashed; }
+
+  .sd-block { margin-top: 1.8rem; }
+  .sd-codebox code { white-space: pre-wrap; word-break: break-all; }
+  .sd-prompt-box code { white-space: pre-wrap; word-break: break-word; line-height: 1.8; }
+  .sd-note { font-size: 13px; color: var(--text-tertiary); margin-top: 8px; }
+
   .sd-section { margin-top: 2.2rem; }
-  .sd-section h2 { font-size: 1.1rem; margin-bottom: .8rem; }
-  .sd-section p { color: var(--text-secondary, #acbeb6); line-height: 1.8; max-width: 56rem; }
-  .sd-note { font-size: .8rem; color: var(--text-tertiary, #8fa79b); margin-top: .6rem; }
-  .sd-links { display: flex; flex-direction: column; gap: .5rem; font-size: .9rem; }
-  .sd-links a { color: var(--accent-agent, #82d5ca); text-decoration: none; }
+  .sd-section h2 { font-size: 17px; margin-bottom: 10px; }
+  .sd-section p { color: var(--text-secondary); line-height: 1.8; font-size: 15px; }
+
+  .sd-aliases { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sd-links { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 1rem; border-top: 1px solid var(--border-subtle); }
 </style>

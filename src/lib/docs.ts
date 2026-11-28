@@ -19,6 +19,7 @@ export const DOC_DESC: Record<string, string> = {
   api: 'API 参考：核心 CLI 与服务的对外接口',
   internals: '内部实现：会话、工具循环与存储细节',
   security_model: '安全模型：威胁模型、凭据边界与部署加固',
+  substrate: '沙箱部署探索：作为 Substrate Actor 运行，企业级形态参照与踩坑实录',
   contributing: '参与贡献：分支、worktree 与 PR 约定',
   releasing: '发布流程：版本、资产与多平台分发',
   worktrees: 'Worktree 管理：并行任务线与收尾约定',
@@ -56,7 +57,7 @@ export const DOC_GROUPS: DocGroup[] = [
     id: 'agent-integrate',
     title: 'EasyAgent · 接入与部署',
     badge: 'agent',
-    slugs: ['mcp', 'feishu', 'lark_watch', 'mini_deploy', 'security_model'],
+    slugs: ['mcp', 'feishu', 'lark_watch', 'mini_deploy', 'security_model', 'substrate'],
   },
   {
     id: 'agent-arch',
